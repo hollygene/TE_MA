@@ -40,6 +40,21 @@ time fastx_trimmer -f 10 \
 
  module load bwa/0.7.15
 
- time bwa aln /lustre1/bsj21156/workDir/ref_genome/GCF_000002945.1_ASM294v2_genomic \
- /lustre1/bsj21156/workDir/Holly_T10_gDNA_S1_R1_001.trim.output.fastq \
- > /lustre1/bsj21156/workDir/Holly_T10_gDNA_S1_R1_001.trim.output.fastq.align.sai
+ #index the ref genome
+ bwa index /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus_gen.fna
+
+ time bwa aln /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus_gen.fna \
+/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_H0_trim.fastq \
+ > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/align/HM_H0_trim.output.fastq.align.sai
+
+ time bwa aln /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus_gen.fna \
+/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D20_trim.fastq \
+ > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/align/HM_D20_trim.output.fastq.align.sai
+
+ time bwa aln /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus_gen.fna \
+/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HMM_D1_trim.fastq \
+ > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/align/HMM_D1_trim.output.fastq.align.sai
+
+ time bwa aln /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus_gen.fna \
+/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HMM_D0_trim.fastq \
+ > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/align/HMM_D0_trim.output.fastq.align.sai
