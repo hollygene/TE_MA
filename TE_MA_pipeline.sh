@@ -91,10 +91,14 @@ module load samtools/1.6
 #index reference genome
 #samtools faidx /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus_gen.fna
 
+#convert sam files to bam files
+
 #samtools view -bt paradoxus_gen.fna.fai /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_H0.sam  > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_H0.bam
 
 #samtools view -bt paradoxus_gen.fna.fai /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D0.sam  > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D0.bam
 
 #samtools view -bt paradoxus_gen.fna.fai /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D1.sam  > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D1.bam
 
-#samtools view -bt paradoxus_gen.fna.fai /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D20.sam  > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D20.bam 
+#samtools view -bt paradoxus_gen.fna.fai /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D20.sam  > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D20.bam
+
+#########################################################################################
