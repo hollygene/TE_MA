@@ -46,13 +46,11 @@ fq1=$data_dir/HM_H0_S16_R1_001.fastq
 
 # Download the reference genome
 
-if [ ! -f $data_dir/dm6.fasta ]
-then
 wget -P $data_dir http://hgdownload.soe.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz
 gunzip $data_dir/dm6.fa.gz
 samtools faidx $data_dir/dm6.fa chr2L chr2R chr3L chr3R chr4 chrM chrY chrX > $data_dir/dm6.fasta
 rm $data_dir/dm6.fa
-fi
+
 
 ref_dir=$data_dir/dm6.fasta
 
