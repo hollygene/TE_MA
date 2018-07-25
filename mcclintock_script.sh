@@ -24,17 +24,17 @@ module load FastQC/0.11.5-Java-1.8.0_144
 module load seqtk
 
 mcc_dir="/home/hcm14449/Github/mcclintock"
-run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA"
+run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/"
 mkdir -p $run_dir
 rm -rf $run_dir/*
 
-data_dir=$run_dir/data
+data_dir=$run_dir/Holly_gDNA
 out_dir=$run_dir/out
 mkdir -p $data_dir
 mkdir -p $out_dir
 
 # unzip fastq read to data folder
-fqz1="/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/HM_H0_S16_R1_001.fastq"
+fq1="/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/HM_H0_S16_R1_001.fastq"
 
 # fq1=$data_dir/$(basename "$fqz1" .gz)
 # zcat $fqz1 > $fq1
@@ -52,16 +52,16 @@ tar xvzf $data_dir/chromFa.tar.gz
 rm $data_dir/chromFa.tar.gz
 # Combine the chromosomes together
 cat chr*fa $data_dir/2micron.fa > $data_dir/sacCer2.fasta
-rm chr*fa $data_dir/2micron.fa
+
 
 ref_dir=$data_dir/sacCer2.fasta
 
 # Download gff locations of reference TE copies
 wget -P $data_dir -nc -q http://files.figshare.com/287395/File_S2.txt
-awk '{print $3"\treannotate\ttransposable_element\t"$4"\t"$5"\t.\t"$6"\t.\tID="$1;}' File_S2.txt > tmp
-sed '1d;$d' tmp > reference_TE_locations.gff
-rm File_S2.txt
-rm tmp
+awk '{print $3"\treannotate\ttransposable_element\t"$4"\t"$5"\t.\t"$6"\t.\tID="$1;}' $data_dir/File_S2.txt > tmp
+sed '1d;$d' $data_dir/tmp > $data_dir/reference_TE_locations.gff
+rm $data_dir/File_S2.txt
+rm $data_dir/tmp
 
 # TE database
 #te_seqs_dir="/home/sh60271/git/transposons/current/D_mel_transposon_sequence_set.fa"
