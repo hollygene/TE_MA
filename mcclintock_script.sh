@@ -44,26 +44,15 @@ fqz1="/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/HM_H0_S16_R1_001.fastq"
 fq1=$data_dir/HM_H0_S16_R1_001.fastq
 
 
-# Download the reference genome
-
-wget -P $data_dir http://hgdownload.soe.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz
-gunzip $data_dir/dm6.fa.gz
-samtools faidx $data_dir/dm6.fa chr2L chr2R chr3L chr3R chr4 chrM chrY chrX > $data_dir/dm6.fasta
-rm $data_dir/dm6.fa
-
-
-ref_dir=$data_dir/dm6.fasta
-
 # Download the reference genome from UCSC (allows easy browsing of results)
 printf "Downloading reference genome...\n\n"
-if [ ! -f $data_dir/sacCer2.fasta ]
+
 wget -P $data_dir -nc -q http://hgdownload.soe.ucsc.edu/goldenPath/sacCer2/bigZips/chromFa.tar.gz
 tar xvzf $data_dir/chromFa.tar.gz
 rm $data_dir/chromFa.tar.gz
 # Combine the chromosomes together
 cat chr*fa $data_dir/2micron.fa > $data_dir/sacCer2.fasta
 rm chr*fa $data_dir/2micron.fa
-fi
 
 ref_dir=$data_dir/sacCer2.fasta
 
