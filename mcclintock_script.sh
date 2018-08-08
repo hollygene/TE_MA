@@ -75,4 +75,4 @@ mkdir -p $out_dir
 #bash $mcc_dir/mcclintock.sh -d -C -o $out_dir -m "retroseq temp ngs_te_mapper te-locate relocate" \
 #-r $ref_dir -c $te_seqs_dir -1 $fq1 -p $PBS_NP -b
 
-bash $mcc_dir/mcclintock.sh  -d  -m "retroseq temp ngs_te_mapper te-locate relocate" -r $data_dir/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -g /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/data/reference_TE_locations.gff -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv -1 $run_dir/HM_H0_S16_R1_001.fastq -o $out_dir -p 4
+bash $mcc_dir/mcclintock.sh  -d -r $data_dir/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -g /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/data/reference_TE_locations.gff -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv -1 $run_dir/HM_H0_S16_R1_001.fastq -o $out_dir -p 4
