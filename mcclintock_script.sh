@@ -24,44 +24,43 @@ module load FastQC/0.11.5-Java-1.8.0_144
 module load seqtk
 
 mcc_dir="/home/hcm14449/Github/mcclintock"
-run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/"
-mkdir -p $run_dir
-rm -rf $run_dir/*
+run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy"
+#mkdir -p $run_dir
 
-data_dir=$run_dir/Holly_gDNA
+data_dir=$run_dir/data
 out_dir=$run_dir/out
-mkdir -p $data_dir
+#mkdir -p $data_dir
 mkdir -p $out_dir
 
 # unzip fastq read to data folder
-fq1="/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/HM_H0_S16_R1_001.fastq"
+#fq1="/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/HM_H0_S16_R1_001.fastq"
 
 # fq1=$data_dir/$(basename "$fqz1" .gz)
 # zcat $fqz1 > $fq1
 # fq2=$data_dir/$(basename "$fqz2" .gz)
 # zcat $fqz2 > $fq2
 
-fq1=$data_dir/HM_H0_S16_R1_001.fastq
+#fq1=$data_dir/HM_H0_S16_R1_001.fastq
 
 
 # Download the reference genome from UCSC (allows easy browsing of results)
-printf "Downloading reference genome...\n\n"
+#printf "Downloading reference genome...\n\n"
 
-wget -P $data_dir -nc -q http://hgdownload.soe.ucsc.edu/goldenPath/sacCer2/bigZips/chromFa.tar.gz
-tar xvzf $data_dir/chromFa.tar.gz
-rm $data_dir/chromFa.tar.gz
+#wget -P $data_dir -nc -q http://hgdownload.soe.ucsc.edu/goldenPath/sacCer2/bigZips/chromFa.tar.gz
+#tar xvzf $data_dir/chromFa.tar.gz
+#rm $data_dir/chromFa.tar.gz
 # Combine the chromosomes together
-cat chr*fa $data_dir/2micron.fa > $data_dir/sacCer2.fasta
+#cat chr*fa $data_dir/2micron.fa > $data_dir/sacCer2.fasta
 
 
-ref_dir=$data_dir/sacCer2.fasta
+#ref_dir=$data_dir/sacCer2.fasta
 
 # Download gff locations of reference TE copies
-wget -P $data_dir -nc -q http://files.figshare.com/287395/File_S2.txt
-awk '{print $3"\treannotate\ttransposable_element\t"$4"\t"$5"\t.\t"$6"\t.\tID="$1;}' $data_dir/File_S2.txt > tmp
-sed '1d;$d' $data_dir/tmp > $data_dir/reference_TE_locations.gff
-rm $data_dir/File_S2.txt
-rm $data_dir/tmp
+#wget -P $data_dir -nc -q http://files.figshare.com/287395/File_S2.txt
+#awk '{print $3"\treannotate\ttransposable_element\t"$4"\t"$5"\t.\t"$6"\t.\tID="$1;}' $data_dir/File_S2.txt > tmp
+#sed '1d;$d' $data_dir/tmp > $data_dir/reference_TE_locations.gff
+#rm $data_dir/File_S2.txt
+#rm $data_dir/tmp
 
 # TE database
 #te_seqs_dir="/home/sh60271/git/transposons/current/D_mel_transposon_sequence_set.fa"
@@ -71,4 +70,9 @@ rm $data_dir/tmp
 #te_seqs_dir=$data_dir/$(basename "$te_seqs_dir")
 
 # Run McC pipeline
-bash $mcc_dir/mcclintock.sh -d -C -o $out_dir -m "retroseq temp ngs_te_mapper te-locate relocate" -r $ref_dir -c $te_seqs_dir -1 $fq1 -p $PBS_NP -b
+
+
+#bash $mcc_dir/mcclintock.sh -d -C -o $out_dir -m "retroseq temp ngs_te_mapper te-locate relocate" \
+#-r $ref_dir -c $te_seqs_dir -1 $fq1 -p $PBS_NP -b
+
+bash mcclintock.sh  -d  -m "retroseq temp ngs_te_mapper te-locate relocate" -r $data_dir/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -g /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/data/reference_TE_locations.gff -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv -1 $run_dir/HM_H0_S16_R1_001.fastq -o $out_dir -p 4
