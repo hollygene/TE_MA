@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -q highmem_q
 #PBS -N MCL_H0
-#PBS -l nodes=1:ppn=10 -l mem=80gb
+#PBS -l nodes=1:ppn=4 -l mem=80gb
 #PBS -l walltime=24:00:00
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
@@ -76,8 +76,11 @@ ref_dir=/lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa
 
 #bash /home/hcm14449/Github/mcclintock/mcclintock.sh -r $data_dir/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -g /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/data/reference_TE_locations.gff -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv -1 $run_dir/HM_H0_S16_R1_001.fastq -o $out_dir -p 4
 
-bash /home/hcm14449/Github/mcclintock/mcclintock.sh -p 4 -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
--m "RelocaTE TEMP ngs_te_mapper RetroSeq TE-locate" \
--c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -C -d \
+#sh mcclintock.sh -m "RelocaTE TEMP ngs_te_mapper" -r reference.fasta -c te_consensus.fasta -g te_locations.gff -t te_families.tsv \
+#-1 sample_1.fastq -2 sample_2.fastq -p 2 -i -b
+
+sh /home/hcm14449/Github/mcclintock/mcclintock.sh -m "RelocaTE TEMP ngs_te_mapper RetroSeq TE-locate" \
+-r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta  \
 -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv \
--1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_H0_S16_R1_001.fastq -o /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/out
+-1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_H0_S16_R1_001.fastq -o /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/out \
+ -p 4 -C -d
