@@ -83,5 +83,5 @@ mkdir $out_dir
 sh /home/hcm14449/Github/mcclintock/mcclintock.sh -m "RelocaTE TEMP ngs_te_mapper RetroSeq TE-locate" \
 -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta  \
 -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv \
--1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_D20_S15_R1_001.fastq -o /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/out \
--p 4 -d
+-1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_D20_S15_R1_001.fastq -o $out_dir \
+-p 4 -C -d
