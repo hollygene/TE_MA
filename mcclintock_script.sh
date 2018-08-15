@@ -23,14 +23,14 @@ module load FastQC/0.11.5-Java-1.8.0_144
 
 module load seqtk
 
-mcc_dir="/home/hcm14449/Github/mcclintock"
-run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy"
+#mcc_dir="/home/hcm14449/Github/mcclintock"
+#run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy"
 #mkdir -p $run_dir
 
-data_dir=$run_dir/data
-out_dir=$run_dir/out
+#data_dir=$run_dir/data
+#out_dir=$run_dir/out
 #mkdir -p $data_dir
-mkdir -p $out_dir
+#mkdir -p $out_dir
 
 # unzip fastq read to data folder
 #fq1="/lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/HM_H0_S16_R1_001.fastq"
@@ -52,7 +52,7 @@ mkdir -p $out_dir
 # Combine the chromosomes together
 #cat /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/*.1 >  /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/Spar.ref.fa
 
-ref_dir=/lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa
+#ref_dir=/lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa
 
 # Download gff locations of reference TE copies
 #wget -P $data_dir -nc -q http://files.figshare.com/287395/File_S2.txt
