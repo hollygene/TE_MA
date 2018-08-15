@@ -24,11 +24,13 @@ module load FastQC/0.11.5-Java-1.8.0_144
 module load seqtk
 
 #mcc_dir="/home/hcm14449/Github/mcclintock"
-#run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy"
+run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy"
 #mkdir -p $run_dir
 
 #data_dir=$run_dir/data
-#out_dir=$run_dir/out
+out_dir=$run_dir/out
+rm -r $out_dir
+mkdir $out_dir
 #mkdir -p $data_dir
 #mkdir -p $out_dir
 
@@ -78,7 +80,7 @@ module load seqtk
 
 #sh mcclintock.sh -m "RelocaTE TEMP ngs_te_mapper" -r reference.fasta -c te_consensus.fasta -g te_locations.gff -t te_families.tsv \
 #-1 sample_1.fastq -2 sample_2.fastq -p 2 -i -b
-
+rm -r
 sh /home/hcm14449/Github/mcclintock/mcclintock.sh -m "RelocaTE TEMP ngs_te_mapper RetroSeq TE-locate" \
 -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta  \
 -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv \
