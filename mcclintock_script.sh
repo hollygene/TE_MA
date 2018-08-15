@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -q batch
+#PBS -q highmem_q
 #PBS -N MCL_H0
 #PBS -l nodes=1:ppn=10 -l mem=80gb
 #PBS -l walltime=24:00:00
