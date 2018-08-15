@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -q highmem_q
-#PBS -N MCL_H0
+#PBS -N MCL_D20
 #PBS -l nodes=1:ppn=4 -l mem=80gb
 #PBS -l walltime=24:00:00
 #PBS -M hcm14449@uga.edu
