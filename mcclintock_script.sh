@@ -50,10 +50,9 @@ mkdir -p $out_dir
 #tar xvzf $data_dir/chromFa.tar.gz
 #rm $data_dir/chromFa.tar.gz
 # Combine the chromosomes together
-#cat chr*fa $data_dir/2micron.fa > $data_dir/sacCer2.fasta
+cat /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/*.1 >  /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/Spar.ref.fa
 
-
-#ref_dir=$data_dir/sacCer2.fasta
+ref_dir=/lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/Spar.ref.fa
 
 # Download gff locations of reference TE copies
 #wget -P $data_dir -nc -q http://files.figshare.com/287395/File_S2.txt
@@ -75,4 +74,9 @@ mkdir -p $out_dir
 #bash $mcc_dir/mcclintock.sh -d -C -o $out_dir -m "retroseq temp ngs_te_mapper te-locate relocate" \
 #-r $ref_dir -c $te_seqs_dir -1 $fq1 -p $PBS_NP -b
 
-bash /home/hcm14449/Github/mcclintock/mcclintock.sh  -d -r $data_dir/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -g /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/data/reference_TE_locations.gff -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv -1 $run_dir/HM_H0_S16_R1_001.fastq -o $out_dir -p 4
+#bash /home/hcm14449/Github/mcclintock/mcclintock.sh -r $data_dir/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -g /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/data/reference_TE_locations.gff -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv -1 $run_dir/HM_H0_S16_R1_001.fastq -o $out_dir -p 4
+
+bash /home/hcm14449/Github/mcclintock/mcclintock.sh -p 4 -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/Spar.ref.fa \
+-c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -C -d \
+-t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv \
+-1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_H0_S16_R1_001.fastq -o /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/out
