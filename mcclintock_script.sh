@@ -21,16 +21,16 @@ module load ucsc/359
 module load Exonerate/2.4.0-foss-2016b
 module load FastQC/0.11.5-Java-1.8.0_144
 
-module load seqtk
+# module load seqtk
 
-#mcc_dir="/home/hcm14449/Github/mcclintock"
+mcc_dir="/lustre1/hcm14449/mcc/mcc8_18_18"
 run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy"
-#mkdir -p $run_dir
+mkdir -p $run_dir
 
 #data_dir=$run_dir/data
 out_dir=$run_dir/out
-rm -r $out_dir
-mkdir $out_dir
+mkdir -p $out_dir
+rm -rf $out_dir/*
 #mkdir -p $data_dir
 #mkdir -p $out_dir
 
@@ -78,8 +78,8 @@ mkdir $out_dir
 
 #sh mcclintock.sh -m "RelocaTE ngs_te_mapper" -r reference.fasta -c te_consensus.fasta -g te_locations.gff -t te_families.tsv \
 #-1 sample_1.fastq -2 sample_2.fastq -p 2 -i -b
-sh /home/hcm14449/Github/mcclintock/mcclintock.sh -m "relocate temp ngs_te_mapper retroSeq te-locate" \
+bash $mcc_dir/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" \
 -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/cerevisiae/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta  \
 -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv \
 -1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_D20_S15_R1_001.fastq -o $out_dir \
--p 4 -C -d
+-p 4 -C -d -b
