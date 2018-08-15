@@ -77,6 +77,7 @@ ref_dir=/lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa
 #bash /home/hcm14449/Github/mcclintock/mcclintock.sh -r $data_dir/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -g /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/data/reference_TE_locations.gff -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv -1 $run_dir/HM_H0_S16_R1_001.fastq -o $out_dir -p 4
 
 bash /home/hcm14449/Github/mcclintock/mcclintock.sh -p 4 -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
+-m "RelocaTE TEMP ngs_te_mapper RetroSeq TE-locate" \
 -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta -C -d \
 -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv \
 -1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_H0_S16_R1_001.fastq -o /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/out
