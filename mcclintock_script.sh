@@ -23,7 +23,7 @@ module load FastQC/0.11.5-Java-1.8.0_144
 
 # module load seqtk
 
-mcc_dir="/lustre1/hcm14449/mcc/mcc8_18_18"
+mcc_dir="/lustre1/hcm14449/mcc/mcc8_16_18"
 run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy"
 mkdir -p $run_dir
 
