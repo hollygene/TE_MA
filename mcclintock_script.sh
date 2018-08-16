@@ -82,4 +82,14 @@ bash $mcc_dir/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" 
 -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/cerevisiae/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta  \
 -t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv \
 -1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_D20_S15_R1_001.fastq -o $out_dir \
--p 4 -C -d -b
+-pa 4 -C -d -b
+
+
+
+#bash /lustre1/hcm14449/mcc/mcc8_18_18/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" \
+#-r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/cerevisiae/sacCer2.fasta -c /home/hcm14449/Github/mcclintock/test/sac_cer_TE_seqs.fasta  \
+#-t /home/hcm14449/Github/mcclintock/test/sac_cer_te_families.tsv \
+#-1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_D20_S15_R1_001.fastq -o /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/out \
+#-C -d -b
+
+#-pa 4
