@@ -23,7 +23,7 @@ module load FastQC/0.11.5-Java-1.8.0_144
 
 # module load seqtk
 
-mcc_dir="/lustre1/hcm14449/mcc/mcc8_16_18"
+mcc_dir="/lustre1/hcm14449/mcc/mcc_8_16_18"
 run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy"
 mkdir -p $run_dir
 
@@ -84,6 +84,11 @@ bash $mcc_dir/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" 
 -1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_D20_S15_R1_001.fastq -o $out_dir \
 -C -d -b
 
+#bash /lustre1/hcm14449/mcc/mcc_8_16_18/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" \
+#-r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/cerevisiae/sacCer2.fasta -c /lustre1/hcm14449/mcc/mcc8_16_18/test/sac_cer_TE_seqs.fasta  \
+#-t /lustre1/hcm14449/mcc/mcc8_16_18/test/sac_cer_te_families.tsv \
+#-1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_D20_S15_R1_001.fastq -o /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/out \
+#-C -d -b
 
 
 #bash /lustre1/hcm14449/mcc/mcc8_18_18/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" \
