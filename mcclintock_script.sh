@@ -11,7 +11,8 @@
 
 export PATH=$PATH:/home/sh60271/app/bedtools2/bin
 export PATH=/home/sh60271/app/bwa-0.7.4:$PATH
-export PATH=$PATH:/home/sh60271/app/RepeatMasker
+#export PATH=$PATH:/home/sh60271/app/RepeatMasker
+ml RepeatMasker/4.0.7-foss-2016b
 module load R/3.4.4-foss-2016b-X11-20160819-GACRC
 module load BioPerl/1.7.1-foss-2016b-Perl-5.24.1
 module load SAMtools/0.1.19-foss-2016b
@@ -82,7 +83,7 @@ bash $mcc_dir/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" 
 -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/cerevisiae/sacCer2.fasta -c $mcc_dir/test/sac_cer_TE_seqs.fasta  \
 #-t $mcc_dir/test/sac_cer_te_families.tsv \
 -1 /lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/HM_D20_S15_R1_001.fastq -o $out_dir \
--p $PBS_NP -C -d -b
+-p 4 -C -d -b
 
 #bash /lustre1/hcm14449/mcc/mcc_8_16_18/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" \
 #-r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/cerevisiae/sacCer2.fasta -c /lustre1/hcm14449/mcc/mcc8_16_18/test/sac_cer_TE_seqs.fasta  \
