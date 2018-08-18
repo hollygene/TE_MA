@@ -99,4 +99,4 @@ bash $mcc_dir/mcclintock.sh -m "relocate temp ngs_te_mapper retroseq te-locate" 
 
 #-pa 4
 
-RepeatMasker
+#RepeatMasker
