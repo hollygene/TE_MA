@@ -5,8 +5,8 @@
 #PBS -l walltime=24:00:00
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
-#PBS -o /lustre1/hcm14449/TE_MA_Paradoxus/MCL_D20_22.out
-#PBS -e /lustre1/hcm14449/TE_MA_Paradoxus/MCL_D20_22.out
+#PBS -o /lustre1/hcm14449/TE_MA_Paradoxus/MCL_D20_1.out
+#PBS -e /lustre1/hcm14449/TE_MA_Paradoxus/MCL_D20_1.out
 #PBS -j oe
 #ml RepeatMasker/4.0.7-foss-2016b
 
