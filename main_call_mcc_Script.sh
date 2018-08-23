@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -q batch
 #PBS -N mcc_yeast
-#PBS -l nodes=1:ppn=4 -l mem=40gb
+#PBS -l nodes=1:ppn=4 -l mem=20gb
 #PBS -l walltime=500:00:00
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
