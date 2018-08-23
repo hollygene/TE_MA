@@ -79,7 +79,7 @@ rm -rf $out_dir/*
 
 #sh mcclintock.sh -m "RelocaTE ngs_te_mapper" -r reference.fasta -c te_consensus.fasta -g te_locations.gff -t te_families.tsv \
 #-1 sample_1.fastq -2 sample_2.fastq -p 2 -i -b
-bash $mcc_dir/mcclintock.sh -d -C -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa -c $mcc_dir/test/sac_cer_TE_seqs.fasta -1 $data_dir/HM_D20_S15_R1_001.fastq -p $PBS_NP -b -o $out_dir
+time bash $mcc_dir/mcclintock.sh -d -C -r /lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa -c $mcc_dir/test/sac_cer_TE_seqs.fasta -1 $data_dir/HM_D20_S15_R1_001.fastq -p $PBS_NP -b -o $out_dir
 
 #-p 4
 #-t $mcc_dir/test/sac_cer_te_families.tsv
