@@ -136,9 +136,9 @@ sample_name=$(basename "$file" _001_trimmed.fq)
 fq1=$file
 log_output=$out_dir/$sample_name.log
 if [ $sample_no -eq 1 ]; then
-JOBID=`qsub -N ${sample_name} -v mcc_dir="${mcc_dir}",out_dir="${out_dir}",ref_dir="${yeast_ref}",te_library="${yeast_te_seqs}",fq1="${fq1}" -o "${log_output}" -e "${log_output}" mcc_unit_call_sapelo2_yeast.sh`
+JOBID=`qsub -N ${sample_name} -v mcc_dir="${mcc_dir}",out_dir="${out_dir}",ref_dir="${yeast_ref}",te_library="${yeast_te_seqs}",fq1="${fq1}" -o "${log_output}" -e "${log_output}" unit_call_SE.sh`
 else
-qsub -W depend=afterok:$JOBID -N ${sample_name} -v mcc_dir="${mcc_dir}",out_dir="${out_dir}",ref_dir="${yeast_ref}",te_library="${yeast_te_seqs}",fq1="${fq1}" -o "${log_output}" -e "${log_output}" mcc_unit_call_sapelo2_yeast.sh
+qsub -W depend=afterok:$JOBID -N ${sample_name} -v mcc_dir="${mcc_dir}",out_dir="${out_dir}",ref_dir="${yeast_ref}",te_library="${yeast_te_seqs}",fq1="${fq1}" -o "${log_output}" -e "${log_output}" unit_call_SE.sh
 fi
 sample_no=$((sample_no+1))
 done
