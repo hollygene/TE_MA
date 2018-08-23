@@ -1,5 +1,4 @@
 
-
 #!/bin/bash
 #PBS -q highmem_q
 #PBS -N MK_yeast
@@ -10,7 +9,6 @@
 #PBS -o /lustre1/hcm14449/mcc/mcc_0823_yeast_bioconda_RM7_all.out
 #PBS -e /lustre1/hcm14449/mcc/mcc_0823_yeast_bioconda_RM7_all.out
 #PBS -j oe
-
 
 
 # load anaconda module
@@ -40,10 +38,8 @@ conda install -y bcftools=1.2
 conda install -y exonerate=2.4.0
 
 
-
 # export RM
 # export PATH=$PATH:/home/sh60271/app/RepeatMasker
-
 
 
 # install McC
@@ -59,7 +55,8 @@ run_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/8_23_18"
 mkdir -p $run_dir
 rm -rf $run_dir/*
 
-
+#ref genome dir
+ref_dir="/lustre1/hcm14449/TE_MA_Paradoxus/ref_genome/cerevisiae"
 
 # use existing data
 data_dir="/lustre1/hcm14449/TE_MA_Paradoxus/Anc_SpikeIns/DNA_copy/data"
@@ -67,8 +64,11 @@ out_dir=$run_dir/out
 mkdir -p $data_dir
 mkdir -p $out_dir
 
+# bash $mcc_dir/mcclintock.sh -d -C -r $data_dir/sacCer2.fasta -c \
+# $data_dir/sac_cer_TE_seqs.fasta -1 $data_dir/SRR800842_1.fastq -2 \
+# $data_dir/SRR800842_2.fastq -p $PBS_NP -b -o $out_dir
 
-
-bash $mcc_dir/mcclintock.sh -d -C -r $data_dir/sacCer2.fasta -c \
-$data_dir/sac_cer_TE_seqs.fasta -1 $data_dir/SRR800842_1.fastq -2 \
-$data_dir/SRR800842_2.fastq -p $PBS_NP -b -o $out_dir
+#single end
+bash $mcc_dir/mcclintock.sh -d -C -r $ref_dir/sacCer2.fasta -c \
+$mcc_dir/test/sac_cer_TE_seqs.fasta -1 $data_dir/HM_H0_S16_R1_001.fq \
+-p $PBS_NP -b -o $out_dir
