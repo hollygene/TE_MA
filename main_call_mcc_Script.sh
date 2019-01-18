@@ -113,21 +113,21 @@ sample_no=1
 
 # Run the pipeline
 
-# pay attention to the file name
-# # pair end mode
-# for file in `ls -d -1 $data_dir/*_val_1.fq`
-# do
-# sample_name=$(basename "$file" _val_1.fq)
-# fq1=$file
-# fq2=$(echo ${file}|sed -E "s/_1/_2/g")
-# log_output=$out_dir/$sample_name.log
-# if [ $sample_no -eq 1 ]; then
-# JOBID=`qsub -N ${sample_name} -v mcc_dir="${mcc_dir}",out_dir="${out_dir}",ref_dir="${yeast_ref}",te_library="${yeast_te_seqs}",fq1="${fq1}",fq2="${fq2}" -o "${log_output}" -e "${log_output}" mcc_unit_call_sapelo2_yeast.sh`
-# else
-# qsub -W depend=afterok:$JOBID -N ${sample_name} -v mcc_dir="${mcc_dir}",out_dir="${out_dir}",ref_dir="${yeast_ref}",te_library="${yeast_te_seqs}",fq1="${fq1}",fq2="${fq2}" -o "${log_output}" -e "${log_output}" mcc_unit_call_sapelo2_yeast.sh
-# fi
-# sample_no=$((sample_no+1))
-# done
+pay attention to the file name
+# pair end mode
+for file in `ls -d -1 $data_dir/*_val_1.fq`
+do
+sample_name=$(basename "$file" _val_1.fq)
+fq1=$file
+fq2=$(echo ${file}|sed -E "s/_1/_2/g")
+log_output=$out_dir/$sample_name.log
+if [ $sample_no -eq 1 ]; then
+JOBID=`qsub -N ${sample_name} -v mcc_dir="${mcc_dir}",out_dir="${out_dir}",ref_dir="${yeast_ref}",te_library="${yeast_te_seqs}",fq1="${fq1}",fq2="${fq2}" -o "${log_output}" -e "${log_output}" mcc_unit_call_sapelo2_yeast.sh`
+else
+qsub -W depend=afterok:$JOBID -N ${sample_name} -v mcc_dir="${mcc_dir}",out_dir="${out_dir}",ref_dir="${yeast_ref}",te_library="${yeast_te_seqs}",fq1="${fq1}",fq2="${fq2}" -o "${log_output}" -e "${log_output}" mcc_unit_call_sapelo2_yeast.sh
+fi
+sample_no=$((sample_no+1))
+done
 
 # single end mode
 for file in `ls -d -1 $data_dir/*_001_trimmed.fq`

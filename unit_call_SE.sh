@@ -7,9 +7,6 @@
 #PBS -m abe
 #PBS -j oe
 
-
-
-
 export PATH=$PATH:/home/sh60271/app/bedtools2/bin
 
 export PATH=/home/sh60271/app/bwa-0.7.4:$PATH
@@ -31,8 +28,6 @@ module load ucsc/359
 module load Exonerate/2.4.0-foss-2016b
 
 module load FastQC/0.11.5-Java-1.8.0_144
-
-
 
 
 cd $PBS_O_WORKDIR
