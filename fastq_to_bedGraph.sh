@@ -2,7 +2,7 @@
 #PBS -N j_s_samtools
 #PBS -q batch
 #PBS -l nodes=1:ppn=1:AMD
-#PBS -l mem=100gb
+#PBS -l mem=50gb
 #PBS -l walltime=480:00:00
 
 cd $PBS_O_WORKDIR
@@ -12,6 +12,7 @@ data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
 #first need to generate alignment (paired-end) using bwa
 
 module load BWA/0.7.15-foss-2016b
+module load SAMtools/1.9-foss-2016b
 
 # index reference genome using index
 # time bwa index /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa
@@ -23,19 +24,36 @@ module load BWA/0.7.15-foss-2016b
 #list files in the directory without extension
 cd $data_dir
 # this does not work
-#  ls -1 | sed 's/\_[a-z*].[a-z]*//g' >
-data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
+# #  ls -1 | sed 's/\_[a-z*].[a-z]*//g' >
+# # code below works!
+# data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
+#
+# for file in `ls -d -1 $data_dir/*_R1.fastq`
+#  do
+#  sample_name=$(basename "$file" _R1.fastq)
+#  fq1=$file
+#  fq2=$(echo ${file}|sed -E "s/_R1/_R2/g")
+#
+#  bwa mem /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa \
+# "${fq1}" "${fq2}" > "${fq1}".sam
+#
+#  done
 
-for file in `ls -d -1 $data_dir/*_R1.fastq`
- do
- sample_name=$(basename "$file" _R1.fastq)
- fq1=$file
- fq2=$(echo ${file}|sed -E "s/_R1/_R2/g")
+ # now need to turn those .sam files into .bam files
+  # using samTools View with -b for "bam"
 
- bwa mem /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa \
-"${fq1}" "${fq2}" > "${fq1}".sam
+for file in $data_dir/*.sam
 
- done
+do
+
+FBASE=$(basename $file.sam)
+BASE=${FBASE%.sam}
+
+samtools view -b -t /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa \
+$data_dir/${BASE}.sam > $data_dir/${BASE}.bam
+
+done
+
 
 
 #
