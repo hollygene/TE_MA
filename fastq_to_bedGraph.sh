@@ -27,7 +27,7 @@ cd $data_dir
 # #  ls -1 | sed 's/\_[a-z*].[a-z]*//g' >
 # # code below works!
 # data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
-#
+
 # for file in `ls -d -1 $data_dir/*_R1.fastq`
 #  do
 #  sample_name=$(basename "$file" _R1.fastq)
@@ -62,7 +62,7 @@ do
 FBASE=$(basename $file .bam)
 BASE=${FBASE%.bam}
 
-samtools sort -O $data_dir/${BASE}.sorted.bam $data_dir/${BASE}.sam
+samtools sort -o $data_dir/${BASE}.sorted.bam $data_dir/${BASE}.sam
 
 done
 
