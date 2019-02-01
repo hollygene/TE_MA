@@ -41,19 +41,30 @@ cd $data_dir
 
  # now need to turn those .sam files into .bam files
   # using samTools View with -b for "bam"
+    # script is functional
+# for file in $data_dir/*.sam
+#
+# do
+#
+# FBASE=$(basename $file .sam)
+# BASE=${FBASE%.sam}
+#
+# samtools view -b -t /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa \
+# $data_dir/${BASE}.sam > $data_dir/${BASE}.bam
+#
+# done
 
-for file in $data_dir/*.sam
+# need to sort the bam files by position
+for file in $data_dir/*.bam
 
 do
 
-FBASE=$(basename $file .sam)
-BASE=${FBASE%.sam}
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
 
-samtools view -b -t /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa \
-$data_dir/${BASE}.sam > $data_dir/${BASE}.bam
+samtools sort -O $data_dir/${BASE}.sorted.bam $data_dir/${BASE}.sam
 
 done
-
 
 
 #
