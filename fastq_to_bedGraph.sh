@@ -46,7 +46,7 @@ for file in $data_dir/*.sam
 
 do
 
-FBASE=$(basename $file.sam)
+FBASE=$(basename $file .sam)
 BASE=${FBASE%.sam}
 
 samtools view -b -t /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa \
