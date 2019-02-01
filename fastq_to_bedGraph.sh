@@ -13,6 +13,7 @@ data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
 
 module load BWA/0.7.15-foss-2016b
 module load SAMtools/1.9-foss-2016b
+module load BEDTools/2.26.0-foss-2016b
 
 # index reference genome using index
 # time bwa index /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa
@@ -55,16 +56,30 @@ cd $data_dir
 # done
 
 # need to sort the bam files by position
-for file in $data_dir/*.bam
+# for file in $data_dir/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# samtools sort -o $data_dir/${BASE}.sorted.bam $data_dir/${BASE}.sam
+#
+# done
+
+## make bedGraph files
+
+for file in $data_dir/*.sorted.bam
 
 do
 
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
 
-samtools sort -o $data_dir/${BASE}.sorted.bam $data_dir/${BASE}.sam
+bedtools genomecov -bg -ibam $data_dir/${BASE}.sorted.bam -g /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa
 
 done
+
 
 
 #
