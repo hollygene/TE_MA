@@ -16,7 +16,7 @@ module load muver/0.1.0-foss-2016b-Python-2.7.14
 
 #index reference genome
 # echo ${ref_genome}
-# muver index-reference /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa
+muver index-reference ${ref_genome}
 
 # create repeat file for reference genome
-muver create-repeat-file /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa > /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome_Repeats.txt
+muver create-repeat-file ${ref_genome}
