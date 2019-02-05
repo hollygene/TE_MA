@@ -25,4 +25,4 @@ muver index-reference ${ref_genome}
 muver create-repeat-file ${ref_genome}
 
 # run the pipeline
-muver run_pipeline ${reference_assembly} ${fastq_list} ${control_sample_name} ${experiment_directory}
+muver run-pipeline ${reference_assembly} ${fastq_list} ${control_sample_name} ${experiment_directory}
