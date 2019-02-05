@@ -7,7 +7,7 @@
 module load muver/0.1.0-foss-2016b-Python-2.7.14
 
 cd $PBS_O_WORKDIR
-mkdir "/scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
+# mkdir "/scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
 reference_assembly="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
@@ -19,10 +19,10 @@ experiment_directory="scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
 
 #index reference genome
 # echo ${ref_genome}
-muver index-reference ${ref_genome}
+# muver index-reference ${ref_genome}
 
 # create repeat file for reference genome
-muver create-repeat-file ${ref_genome}
+# muver create-repeat-file ${ref_genome}
 
 # run the pipeline
 muver run-pipeline ${reference_assembly} ${fastq_list} ${control_sample_name} ${experiment_directory}
