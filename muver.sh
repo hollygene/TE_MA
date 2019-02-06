@@ -10,7 +10,6 @@ cd $PBS_O_WORKDIR
 # mkdir "/scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
-reference_assembly="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
 fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 control_sample_name="Ancestor"
 experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
@@ -25,7 +24,7 @@ experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
 # muver create-repeat-file ${ref_genome}
 
 # run the pipeline
-muver run-pipeline ${reference_assembly} ${fastq_list} ${control_sample_name} ${experiment_directory}
+muver run-pipeline ${ref_genome} ${fastq_list} ${control_sample_name} ${experiment_directory}
 
 # muver run-pipeline /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa.fai \
 # /home/hcm14449/Github/TE_MA/FASTQ_LIST.txt Ancestor /scratch/hcm14449/TE_MA_Paradoxus/Practice/output
