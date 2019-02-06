@@ -19,10 +19,10 @@ experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
 
 #index reference genome
 # echo ${ref_genome}
-# muver index-reference ${ref_genome}
+muver index-reference ${ref_genome}
 #
 # create repeat file for reference genome
-# muver create-repeat-file ${ref_genome}
+muver create-repeat-file ${ref_genome}
 
 # run the pipeline
 muver run-pipeline ${ref_genome} ${fastq_list} ${control_sample_name} ${experiment_directory}
