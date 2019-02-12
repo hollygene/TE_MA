@@ -8,12 +8,12 @@
 
 cd $PBS_O_WORKDIR
 module load muver/0.1.0-foss-2016b-Python-2.7.14
-# mkdir "/scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
+mkdir "/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.2"
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
 fastq_list="/home/hcm14449/Github/TE_MA/fastq_list_2.txt"
 control_sample_name="Ancestor"
-experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output"
+experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.2"
 
 # java -jar $EBROOTGATK/GenomeAnalysisTK.jar
 
