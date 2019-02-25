@@ -1,8 +1,8 @@
 #PBS -S /bin/bash
 #PBS -N muver
 #PBS -q batch
-#PBS -l nodes=1:ppn=2:AMD
-#PBS -l mem=200gb
+#PBS -l nodes=1:ppn=2:HIGHMEM
+#PBS -l mem=500gb
 #PBS -l walltime=480:00:00
 
 
@@ -11,9 +11,9 @@ module load muver/0.1.0-foss-2016b-Python-2.7.14
 mkdir "/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3"
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
-fastq_list="/home/hcm14449/Github/TE_MA/fastq_list_2.txt"
+fastq_list="/home/hcm14449/Github/TE_MA/fastq_list_3.txt"
 control_sample_name="Ancestor"
-experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3"
+experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.2.25.19"
 
 # java -jar $EBROOTGATK/GenomeAnalysisTK.jar
 
