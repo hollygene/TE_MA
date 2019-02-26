@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -N muver
 #PBS -q batch
-#PBS -l nodes=1:ppn=2:HIGHMEM
-#PBS -l mem=500gb
-#PBS -l walltime=480:00:00
+#PBS -l nodes=1:ppn=1:HIGHMEM
+#PBS -l mem=200gb
+#PBS -l walltime=16:00:00
 
 
 cd $PBS_O_WORKDIR
