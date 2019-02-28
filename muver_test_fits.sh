@@ -9,7 +9,9 @@
 cd $PBS_O_WORKDIR
 
 module load muver/0.1.0-foss-2016b-Python-2.7.14
+mkdir "/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3/repeats/"
+#muver create-repeat-file /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample2_R1.fastq
 
-muver create-repeat-file /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample2_R1.fastq
-
-muver fit-repeat-indel-rates /scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3/bams/Sample2.bam
+muver fit-repeat-indel-rates /scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3/bams/Sample2.bam \
+/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.repeats \
+/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3/repeats/test_repeatsSample2.txt
