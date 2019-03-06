@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 Sample	Name Mate 1 FASTQ	Mate 2 FASTQ	Ploidy
+=======
+Sample Name	Mate 1 FASTQ	Mate 2 FASTQ	Ploidy
+>>>>>>> 4ba1dc27d73c098776960b6b54e5ca7f173dd7c7
 Ancestor	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed/Ancestor_R1_trimmed.fq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed/Ancestor_R2_trimmed.fq	2
 Sample29	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed/Sample29_R1_trimmed.fq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed/Sample29_R2_trimmed.fq	2
