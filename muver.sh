@@ -3,7 +3,7 @@
 #PBS -q highmem_q
 #PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l mem=200gb
-#PBS -l walltime=48:00:00
+#PBS -l walltime=72:00:00
 
 
 cd $PBS_O_WORKDIR
@@ -13,7 +13,7 @@ data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
 fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 control_sample_name="Ancestor"
-experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3.8.19"
+experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3.13.19"
 mkdir $experiment_directory
 trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
 # mkdir $trimmed_data
@@ -38,10 +38,10 @@ module load ${muver_module}
 
 #index reference genome
 # echo ${ref_genome}
-# muver index-reference ${ref_genome}
+muver index-reference ${ref_genome}
 #
 # create repeat file for reference genome
-# muver create-repeat-file ${ref_genome}
+muver create-repeat-file ${ref_genome}
 
 # run the pipeline
 muver run-pipeline ${ref_genome} ${fastq_list} ${control_sample_name} ${experiment_directory}
