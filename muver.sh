@@ -10,10 +10,11 @@ cd $PBS_O_WORKDIR
 muver_module="muver/0.1.0-foss-2016b-Python-2.7.14"
 trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/S288C_reference_sequence_R64-2-1_20150113.fsa"
+ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/"
 fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 control_sample_name="Ancestor"
-experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3.13.19"
+experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3.14.19"
 mkdir $experiment_directory
 trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
 # mkdir $trimmed_data
@@ -32,6 +33,8 @@ trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
 # done
 #
 # module unload ${trimgalore_module}
+# cd $ref_genome_dir
+# wget https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/S288C_reference_genome_Current_Release.tgz
 
 module load ${muver_module}
 # java -jar $EBROOTGATK/GenomeAnalysisTK.jar
