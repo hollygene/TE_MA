@@ -10,7 +10,7 @@ cd $PBS_O_WORKDIR
 muver_module="muver/0.1.0-foss-2016b-Python-2.7.14"
 trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/S288C_reference_sequence_R64-2-1_20150113.fsa"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/S288C_reference_sequence_R64-2-1_20150113.fa"
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/"
 fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 control_sample_name="Ancestor"
@@ -41,7 +41,8 @@ module load ${muver_module}
 
 #index reference genome
 # echo ${ref_genome}
-muver index-reference ${ref_genome}
+# muver index-reference ${ref_genome}
+# muver index-reference S288C_reference_sequence_R64-2-1_20150113.fa
 #
 # create repeat file for reference genome
 muver create-repeat-file ${ref_genome}
