@@ -3,11 +3,11 @@
 #PBS -q highmem_q
 #PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l mem=200gb
-#PBS -l walltime=72:00:00
+#PBS -l walltime=48:00:00
 
 
 cd $PBS_O_WORKDIR
-muver_module="muver/0.1.0-foss-2016b-Python-2.7.14"
+muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/S288C_reference_sequence_R64-2-1_20150113.fa"
