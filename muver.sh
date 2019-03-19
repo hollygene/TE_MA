@@ -14,7 +14,7 @@ ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/S288C_re
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/"
 fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 control_sample_name="Ancestor"
-experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3.14.19"
+experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3.19.19"
 mkdir $experiment_directory
 trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
 # mkdir $trimmed_data
