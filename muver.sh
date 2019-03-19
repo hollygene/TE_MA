@@ -1,8 +1,8 @@
 #PBS -S /bin/bash
 #PBS -N muver
-#PBS -q highmem_q
-#PBS -l nodes=1:ppn=1:HIGHMEM
-#PBS -l mem=200gb
+#PBS -q batch
+#PBS -l nodes=1:ppn=1:AMD
+#PBS -l mem=20gb
 #PBS -l walltime=48:00:00
 
 
