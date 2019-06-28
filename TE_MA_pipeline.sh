@@ -74,6 +74,20 @@ module load BWA/0.7.17-foss-2016b
  done
 
 
+### for ancestors
+for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/*.fastq
+
+do
+
+FBASE=$(basename $file .fastq)
+BASE=${FBASE%.fastq}
+
+time bwa aln /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
+/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.fastq \
+> /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.fastq.align.sai
+
+done
+
  ## have to do this separately for the arabidopsis samples bc different genome
 # arabidopsis genome used :
 wget ftp://ftp.arabidopsis.org/home/tair/Genes/TAIR10_genome_release/TAIR10_chromosome_files/TAIR10_chr_all.fas
@@ -121,7 +135,21 @@ bwa samse /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.f
 
 done
 
+### for ancestors
 
+for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/*.fastq.align.sai
+
+do
+
+FBASE=$(basename $file .fastq.align.sai)
+BASE=${FBASE%.fastq.align.sai}
+
+bwa samse /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
+   /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.fastq.align.sai \
+   /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.fastq \
+   > /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.sam
+
+done
 ##### for arabidopsis samples
 for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Arabidopsis/*.fastq.align.sai
 
@@ -236,7 +264,19 @@ samtools view -bt /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.
 
 done
 
+### for ancestors
+for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/*.sam
 
+do
+
+FBASE=$(basename $file .sam)
+BASE=${FBASE%.sam}
+
+samtools view -bt /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa.fai \
+/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.sam \
+  > /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.bam
+
+done
 ### for arabidopsis samples
 samtools faidx /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Arabidopsis/TAIR10_chr_all.fas
 
@@ -266,6 +306,19 @@ samtools sort -o /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_
 
 done
 
+
+#### for ancestors
+for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/*.bam
+
+do
+
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
+
+samtools sort -o /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.sorted.bam \
+   /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/${BASE}.bam
+
+done
 #### Arabidopsis
 
 for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Arabidopsis/*.bam
