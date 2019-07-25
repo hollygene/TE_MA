@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q highmem_1
-#PBS -N test_Spike_InsJune2019
+#PBS -N testScriptJuly19
 #PBS -l nodes=1:ppn=10:Intel
-#PBS -lwalltime=480:00:00
-#PBS -l  mem=200gb
+#PBS -l walltime=480:00:00
+#PBS -l mem=200gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 

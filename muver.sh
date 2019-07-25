@@ -1,8 +1,9 @@
 #PBS -S /bin/bash
 #PBS -N muver
 #PBS -q batch
-#PBS -l nodes=1:ppn=1:AMD
-#PBS -l mem=20gb
+#PBS -l nodes=2:ppn=2:AMD
+#PBS -l mem=100gb
+#PBS -M hcm14449@uga.edu
 #PBS -l walltime=48:00:00
 
 
