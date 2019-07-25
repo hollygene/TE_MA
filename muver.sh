@@ -22,7 +22,7 @@ fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
 control_sample_name="Ancestor"
 #where should the output be sent
-experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output.3.19.19"
+experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/Test_RunJuly19"
 mkdir $experiment_directory
 #location of TRIMMED data to be used in the analysis
 trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
