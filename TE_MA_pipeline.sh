@@ -1,5 +1,5 @@
 #PBS -S /bin/bash
-#PBS -q highmem_1
+#PBS -q highmem_q
 #PBS -N testScriptJuly19
 #PBS -l nodes=1:ppn=10:Intel
 #PBS -l walltime=480:00:00

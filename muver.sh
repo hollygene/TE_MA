@@ -1,5 +1,5 @@
 #PBS -S /bin/bash
-#PBS -N muver
+#PBS -N muverTestJuly19
 #PBS -q batch
 #PBS -l nodes=2:ppn=2:AMD
 #PBS -l mem=100gb
