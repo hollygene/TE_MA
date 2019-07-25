@@ -341,7 +341,7 @@ done
 # done
 
 ### sort the bam files
-for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/*.bam
+for file in ${data_dir}/*.bam
 
 do
 

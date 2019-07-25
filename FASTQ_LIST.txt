@@ -9,3 +9,7 @@ D20_2	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289
 D20_8	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D20_8_S17_R1_001.fastq	2
 H0_33	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/H0_33_New_S22_R1_001.fastq	2
 H0_37	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/H0_37_New_S23_R1_001.fastq	2
+D20_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HM_D20_S15_R1_001.fastq	2
+H0_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HM_H0_S16_R1_001.fastq	2
+D0_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HMM_D0_S13_R1_001.fastq	2
+D1_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HMM_D1_S14_R1_001.fastq	2

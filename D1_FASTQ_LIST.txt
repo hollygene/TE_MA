@@ -1,0 +1,3 @@
+Sample Name	Mate 1 FASTQ	Ploidy
+D1_11	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D1_11_New_S20_R1_001.fastq	2
+D1_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HMM_D1_S14_R1_001.fastq	2
