@@ -1,16 +1,16 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
+#PBS -q batch
 #PBS -N testScriptJuly19
-#PBS -l nodes=1:ppn=10:Intel
+#PBS -l nodes=2:ppn=4:AMD
 #PBS -l walltime=480:00:00
-#PBS -l mem=200gb
+#PBS -l mem=100gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
 #S paradoxus TE MA Quality Control pipepline
 
 #location of current update of muver
-muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
+# muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 #location of trimgalore moedule
 trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
 #location of fastqc module
