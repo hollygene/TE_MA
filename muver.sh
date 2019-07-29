@@ -12,6 +12,7 @@ cd $PBS_O_WORKDIR
 muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 #location of trimgalore moedule
 trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
+GATK_module="GATK/3.4-0-Java-1.8.0_144"
 #location of data to be analyzed
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein"
 anc_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/"
@@ -66,7 +67,8 @@ wget https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/
 
 
 module load ${muver_module}
-java -jar $EBROOTGATK/GenomeAnalysisTK.jar
+module load ${GATK_module}
+# java -jar $EBROOTGATK/GenomeAnalysisTK.jar
 
 #index reference genome
 # echo ${ref_genome}
