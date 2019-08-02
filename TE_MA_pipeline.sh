@@ -29,11 +29,11 @@ script_location="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts"
 bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
 #location of data to be analyzed
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein"
-anc_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/"
+anc_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA"
 #location of reference genome to be used
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/S288C_reference_sequence_R64-2-1_20150113.fa"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
-ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/"
+ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/paradoxus"
 #text file listing the fastq files with their full extensions
 fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
@@ -94,7 +94,7 @@ module load ${bwa_module}
  #index the ref genome
  bwa index ${ref_genome}
 
- for file in ${data_dir}*.fastq
+ for file in ${data_dir}/*.fastq
 
  do
 
@@ -109,7 +109,7 @@ ${data_dir}/${BASE}.fastq \
 
 
 ### for ancestors
-for file in ${anc_dir}*.fastq
+for file in ${anc_dir}/*.fastq
 
 do
 
@@ -297,7 +297,7 @@ module load ${samtools_module}
 samtools faidx ${ref_genome}
 
 #convert sam files to bam files
-for file in ${data_dir}*.sam
+for file in ${data_dir}/*.sam
 
 do
 
@@ -421,7 +421,7 @@ module load ${samtools_module}
 export PATH=${PATH}:${script_location}
 
 ## Loop
-for file in ${data_dir}*.sorted.bam
+for file in ${data_dir}/*.sorted.bam
 
 do
 
