@@ -18,7 +18,7 @@ fastqc_module="FastQC/0.11.8-Java-1.8.0_144"
 #location of BWA module
 bwa_module="BWA/0.7.17-foss-2016b"
 #location of samtools module
-samtools_module="SAMtools/1.9-foss-2016"
+samtools_module="SAMtools/1.6-foss-2016b"
 #location of bedtools module
 bedtools_module="BEDTools/2.28.0-foss-2018a"
 #location of python module
@@ -304,7 +304,7 @@ do
 FBASE=$(basename $file .sam)
 BASE=${FBASE%.sam}
 
-samtools view -bt ${ref_genome_dir}/*.fai \
+samtools view -bt ${ref_genome_dir}/*.fa.fai \
 ${data_dir}/${BASE}.sam \
   > ${data_dir}/${BASE}.bam
 
@@ -318,7 +318,7 @@ do
 FBASE=$(basename $file .sam)
 BASE=${FBASE%.sam}
 
-samtools view -bt ${ref_genome_dir}/*.fai \
+samtools view -bt ${ref_genome_dir}/*.fa.fai \
 ${anc_dir}/${BASE}.sam \
   > ${anc_dir}/${BASE}.bam
 
