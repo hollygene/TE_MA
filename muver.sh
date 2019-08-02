@@ -11,7 +11,7 @@ cd $PBS_O_WORKDIR
 #location of current update of muver
 muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 #location of trimgalore moedule
-trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
+# trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
 #location of data to be analyzed
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein"
 anc_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/"
@@ -86,6 +86,11 @@ muver run-pipeline ${ref_genome} ${d1_fastq_list} ${d1_control_sample_name} ${d1
 
 muver run-pipeline ${ref_genome} ${d20_fastq_list} ${d20_control_sample_name} ${d20_experiment_directory}
 
+
+# module load muver/0.1.0-foss-2016b-Python-2.7.14-20190318
+# # java -jar $EBROOTGATK/GenomeAnalysisTK.jar
+# # java -jar $EBROOTPICARD/picard.jar
+# muver run-pipeline /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa /home/hcm14449/Github/TE_MA/H0_FASTQ_LIST.txt H0_ANC /scratch/hcm14449/TE_MA_Paradoxus/Practice/Test_RunJuly19/H0
 
 # muver create-repeat-file /scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample2_R1.fastq
 #
