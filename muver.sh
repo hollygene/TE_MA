@@ -15,6 +15,8 @@ muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 #location of data to be analyzed
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein"
 anc_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/"
+#link to reference genome to download
+ref_gen_download="https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/S288C_reference_genome_Current_Release.tgz"
 #location of reference genome to be used
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
@@ -62,7 +64,7 @@ mkdir $d20_experiment_directory
 
 cd $ref_genome_dir
 # download the desired reference genome for analysis
-wget https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/S288C_reference_genome_Current_Release.tgz
+wget $ref_gen_download
 
 
 module load ${muver_module}
