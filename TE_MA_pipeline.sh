@@ -33,7 +33,7 @@ anc_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA"
 #location of reference genome to be used
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
-ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/paradoxus"
+ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus"
 #text file listing the fastq files with their full extensions
 fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
@@ -50,7 +50,7 @@ cd ${data_dir}
 
 mkdir ${output_directory}
 
-module load ${fastq_module}
+module load ${fastqc_module}
 
 for file in ${data_dir}/*.fastq
 
@@ -304,7 +304,7 @@ do
 FBASE=$(basename $file .sam)
 BASE=${FBASE%.sam}
 
-samtools view -bt ${ref_genome_dir}/*.fa.fai \
+samtools view -bt ${ref_genome_dir}/*.fai \
 ${data_dir}/${BASE}.sam \
   > ${data_dir}/${BASE}.bam
 
@@ -318,7 +318,7 @@ do
 FBASE=$(basename $file .sam)
 BASE=${FBASE%.sam}
 
-samtools view -bt ${ref_genome_dir}/*.fa.fai \
+samtools view -bt ${ref_genome_dir}/*.fai \
 ${anc_dir}/${BASE}.sam \
   > ${anc_dir}/${BASE}.bam
 
