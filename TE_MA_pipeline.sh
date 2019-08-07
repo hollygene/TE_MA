@@ -46,81 +46,83 @@ trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
 
 
 ########################################################################################################################
-cd ${data_dir}
-
-mkdir ${output_directory}
-
-module load ${fastqc_module}
-
-for file in ${data_dir}/*.fastq
-
-do
-
-FBASE=$(basename $file .fastq)
-BASE=${FBASE%.fastq}
-
-time fastqc -o ${output_directory} ${data_dir}/${BASE}.fastq
-
-done
+# works
+# cd ${data_dir}
+#
+# mkdir ${output_directory}
+#
+# module load ${fastqc_module}
+#
+# for file in ${data_dir}/*.fastq
+#
+# do
+#
+# FBASE=$(basename $file .fastq)
+# BASE=${FBASE%.fastq}
+#
+# time fastqc -o ${output_directory} ${data_dir}/${BASE}.fastq
+#
+# done
 
 
 #######################################################################################
-
-cd ${data_dir}
-
-mkdir ${trimmed_data}
-
-module load ${trimgalore_module}
-
-# trim all fastq files
-for file in $data_dir/*.fastq
-
-do
-
-FBASE=$(basename $file .fastq)
-BASE=${FBASE%.fastq}
-
-trim_galore --phred33 -q 20 -o $trimmed_data ${BASE}.fastq
-
-done
-
-module unload ${trimgalore_module}
+# works
+# cd ${data_dir}
+#
+# mkdir ${trimmed_data}
+#
+# module load ${trimgalore_module}
+#
+# # trim all fastq files
+# for file in $data_dir/*.fastq
+#
+# do
+#
+# FBASE=$(basename $file .fastq)
+# BASE=${FBASE%.fastq}
+#
+# trim_galore --phred33 -q 20 -o $trimmed_data ${BASE}.fastq
+#
+# done
+#
+# module unload ${trimgalore_module}
 
  #######################################################################################
+# works
+# thinks the arabidopsis files are still there
 
+# module load ${bwa_module}
+#
+#  #index the ref genome
+#  bwa index ${ref_genome}
+#
+#  for file in ${data_dir}/*.fastq
+#
+#  do
+#
+#  FBASE=$(basename $file .fastq)
+#  BASE=${FBASE%.fastq}
+#
+#  time bwa aln ${ref_genome} \
+# ${data_dir}/${BASE}.fastq \
+#  > ${data_dir}/${BASE}.fastq.align.sai
+#
+#  done
+#
 
-module load ${bwa_module}
-
- #index the ref genome
- bwa index ${ref_genome}
-
- for file in ${data_dir}/*.fastq
-
- do
-
- FBASE=$(basename $file .fastq)
- BASE=${FBASE%.fastq}
-
- time bwa aln ${ref_genome} \
-${data_dir}/${BASE}.fastq \
- > ${data_dir}/${BASE}.fastq.align.sai
-
- done
-
-
-### for ancestors
-for file in ${anc_dir}/*.fastq
-
-do
-
-FBASE=$(basename $file .fastq)
-BASE=${FBASE%.fastq}
-
-time bwa aln ${ref_genome} \
-${anc_dir}/${BASE}.fastq \
-> ${anc_dir}/${BASE}.fastq.align.sai
-
-done
+# ### for ancestors
+# for file in ${anc_dir}/*.fastq
+#
+# do
+#
+# FBASE=$(basename $file .fastq)
+# BASE=${FBASE%.fastq}
+#
+# time bwa aln ${ref_genome} \
+# ${anc_dir}/${BASE}.fastq \
+# > ${anc_dir}/${BASE}.fastq.align.sai
+#
+# done
 
 #######################################################################################
 
@@ -157,35 +159,37 @@ done
  ###########################################################################################
 
  #create the sam files
- for file in ${data_dir}/*.fastq.align.sai
-
- do
-
- FBASE=$(basename $file .fastq.align.sai)
- BASE=${FBASE%.fastq.align.sai}
-
-bwa samse ${ref_genome} \
-    ${data_dir}/${BASE}.fastq.align.sai \
-    ${data_dir}/${BASE}.fastq \
-    > ${data_dir}/${BASE}.sam
-
-done
+ # works
+ # thinks the arabidopsis files are there (but theyre def not)
+#  for file in ${data_dir}/*.fastq.align.sai
+#
+#  do
+#
+#  FBASE=$(basename $file .fastq.align.sai)
+#  BASE=${FBASE%.fastq.align.sai}
+#
+# bwa samse ${ref_genome} \
+#     ${data_dir}/${BASE}.fastq.align.sai \
+#     ${data_dir}/${BASE}.fastq \
+#     > ${data_dir}/${BASE}.sam
+#
+# done
 
 ### for ancestors
-
-for file in ${anc_dir}/*.fastq.align.sai
-
-do
-
-FBASE=$(basename $file .fastq.align.sai)
-BASE=${FBASE%.fastq.align.sai}
-
-bwa samse ${ref_genome}\
-   ${anc_dir}/${BASE}.fastq.align.sai \
-   ${anc_dir}/${BASE}.fastq \
-   > ${anc_dir}/${BASE}.sam
-
-done
+# works
+# for file in ${anc_dir}/*.fastq.align.sai
+#
+# do
+#
+# FBASE=$(basename $file .fastq.align.sai)
+# BASE=${FBASE%.fastq.align.sai}
+#
+# bwa samse ${ref_genome}\
+#    ${anc_dir}/${BASE}.fastq.align.sai \
+#    ${anc_dir}/${BASE}.fastq \
+#    > ${anc_dir}/${BASE}.sam
+#
+# done
 
 ##### for arabidopsis samples
 # for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Arabidopsis/*.fastq.align.sai
@@ -202,19 +206,19 @@ done
 #
 # done
 
-for file in ${data_dir}/*.fastq.align.sai
-
-do
-
-FBASE=$(basename $file .fastq.align.sai)
-BASE=${FBASE%.fastq.align.sai}
-
-bwa samse ${ref_genome} \
-    ${data_dir}/${BASE}.fastq.align.sai \
-    ${data_dir}/${BASE}.fastq \
-    > ${data_dir}/${BASE}.sam
-
-done
+# for file in ${data_dir}/*.fastq.align.sai
+#
+# do
+#
+# FBASE=$(basename $file .fastq.align.sai)
+# BASE=${FBASE%.fastq.align.sai}
+#
+# bwa samse ${ref_genome} \
+#     ${data_dir}/${BASE}.fastq.align.sai \
+#     ${data_dir}/${BASE}.fastq \
+#     > ${data_dir}/${BASE}.sam
+#
+# done
 
 # bwa samse /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
 #         /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Col_500_S18_R1_001.fastq.align.sai \
@@ -287,7 +291,7 @@ done
 #        > /lustre1/hcm14449/TE_MA_Paradoxus/Holly_gDNA/trim/HM_D20.sam
 
 #########################################################################################
-
+# seems like it's skipping these commands??
 #samtools
 module load ${samtools_module}
 
@@ -341,31 +345,31 @@ done
 # done
 
 ### sort the bam files
-for file in ${data_dir}/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-samtools sort -o ${data_dir}/${BASE}.sorted.bam \
-   ${data_dir}/${BASE}.bam
-
-done
-
+# for file in ${data_dir}/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# samtools sort -o ${data_dir}/${BASE}.sorted.bam \
+#    ${data_dir}/${BASE}.bam
+#
+# done
+#
 
 #### for ancestors
-for file in ${anc_dir}/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-samtools sort -o ${anc_dir}/${BASE}.sorted.bam \
-   ${anc_dir}/${BASE}.bam
-
-done
+# for file in ${anc_dir}/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# samtools sort -o ${anc_dir}/${BASE}.sorted.bam \
+#    ${anc_dir}/${BASE}.bam
+#
+# done
 #### Arabidopsis
 #
 # for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Arabidopsis/*.bam
@@ -415,32 +419,32 @@ done
 
 #################################################################################################################
 #bam to BigWig
-module load ${bedtools_module}
-module load ${python_module}
-module load ${samtools_module}
-export PATH=${PATH}:${script_location}
-
-## Loop
-for file in ${data_dir}/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${data_dir}/${BASE}.sorted.bam
-
-done
+# module load ${bedtools_module}
+# module load ${python_module}
+# module load ${samtools_module}
+# export PATH=${PATH}:${script_location}
+#
+# ## Loop
+# for file in ${data_dir}/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${data_dir}/${BASE}.sorted.bam
+#
+# done
 
 
 ### for ancestors
-for file in ${anc_dir}/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${anc_dir}/${BASE}.sorted.bam
-
-done
+# for file in ${anc_dir}/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${anc_dir}/${BASE}.sorted.bam
+#
+# done
