@@ -1,5 +1,5 @@
 Sample Name	Mate 1 FASTQ	Mate 2 FASTQ	Ploidy
-Ancestor	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Ancestor_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Ancestor_R2.fastq 2
-Sample29	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample29_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample29_R2.fastq 2
+Ancestor	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Ancestor_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Ancestor_R2.fastq	2
+Sample29	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample29_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample29_R2.fastq	2
 Sample2	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample2_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample2_R2.fastq	2
-Sample32	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample32_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample32_R2.fastq 2
+Sample32	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample32_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample32_R2.fastq	2
