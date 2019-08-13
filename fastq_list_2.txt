@@ -1,5 +1,15 @@
-Sample Name Mate 1 FASTQ	Mate 2 FASTQ	Ploidy
-Ancestor	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Ancestor_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Ancestor_R2.fastq	2
-Sample29	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample29_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample29_R2.fastq	2
-Sample2	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample2_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample2_R2.fastq	2
-Sample32	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample32_R1.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/Sample32_R2.fastq	2
+Sample Name	Mate 1 FASTQ	Ploidy
+D0_12	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D0_12_S14_R1_001.fastq	2
+D0_27	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D0_27_New_S21_R1_001.fastq	2
+D0_44	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D0_44_S15_R1_001.fastq	2
+D0_5	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D0_5_S13_R1_001.fastq	2
+D1_11	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D1_11_New_S20_R1_001.fastq	2
+D20_1	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D20_1_S16_R1_001.fastq	2
+D20_2	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D20_2_New_S19_R1_001.fastq	2
+D20_8	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/D20_8_S17_R1_001.fastq	2
+H0_33	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/H0_33_New_S22_R1_001.fastq	2
+H0_37	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/H0_37_New_S23_R1_001.fastq	2
+D20_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HM_D20_S15_R1_001.fastq	2
+H0_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HM_H0_S16_R1_001.fastq	2
+D0_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HMM_D0_S13_R1_001.fastq	2
+D1_ANC	/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA/HMM_D1_S14_R1_001.fastq	2
