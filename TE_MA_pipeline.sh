@@ -1,8 +1,8 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
+#PBS -q batch
 #PBS -N testScriptJuly19
-#PBS -l nodes=1:ppn=48:HIGHMEM
-#PBS -l walltime=48:00:00
+#PBS -l nodes=2:ppn=2:AMD
+#PBS -l walltime=480:00:00
 #PBS -l mem=100gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
