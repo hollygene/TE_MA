@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
-#PBS -q batch
+#PBS -q highmem_q
 #PBS -N testScriptJuly19
-#PBS -l nodes=2:ppn=4:AMD
+#PBS -l nodes=1:ppn=48:HIGHMEM
 #PBS -l walltime=480:00:00
 #PBS -l mem=100gb
 #PBS -M hcm14449@uga.edu
@@ -28,21 +28,20 @@ script_location="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts"
 #location of bam to bigwig script
 bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
 #location of data to be analyzed
-data_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein"
-anc_dir="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_gDNA"
+data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus"
 #text file listing the fastq files with their full extensions
-fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
+# fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
-control_sample_name="Ancestor"
+# control_sample_name="Ancestor"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Test_RunJuly19"
-mkdir $output_directory
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina/QC_Out"
+# mkdir $output_directory
 #location of TRIMMED data to be used in the analysis
-trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
+# trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
 
 
 ########################################################################################################################
@@ -50,6 +49,8 @@ trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
 cd ${data_dir}
 
 mkdir ${output_directory}
+
+gunzip /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/*.gz
 
 module load ${fastqc_module}
 
@@ -110,19 +111,19 @@ ${data_dir}/${BASE}.fastq \
  done
 
 
-### for ancestors
-for file in ${anc_dir}/*.fastq
-
-do
-
-FBASE=$(basename $file .fastq)
-BASE=${FBASE%.fastq}
-
-time bwa aln ${ref_genome} \
-${anc_dir}/${BASE}.fastq \
-> ${anc_dir}/${BASE}.fastq.align.sai
-
-done
+# ### for ancestors
+# for file in ${anc_dir}/*.fastq
+#
+# do
+#
+# FBASE=$(basename $file .fastq)
+# BASE=${FBASE%.fastq}
+#
+# time bwa aln ${ref_genome} \
+# ${anc_dir}/${BASE}.fastq \
+# > ${anc_dir}/${BASE}.fastq.align.sai
+#
+# done
 
 #######################################################################################
 
@@ -175,21 +176,21 @@ bwa samse ${ref_genome} \
 
 done
 
-### for ancestors
-# works
-for file in ${anc_dir}/*.fastq.align.sai
-
-do
-
-FBASE=$(basename $file .fastq.align.sai)
-BASE=${FBASE%.fastq.align.sai}
-
-bwa samse ${ref_genome}\
-   ${anc_dir}/${BASE}.fastq.align.sai \
-   ${anc_dir}/${BASE}.fastq \
-   > ${anc_dir}/${BASE}.sam
-
-done
+# ### for ancestors
+# # works
+# for file in ${anc_dir}/*.fastq.align.sai
+#
+# do
+#
+# FBASE=$(basename $file .fastq.align.sai)
+# BASE=${FBASE%.fastq.align.sai}
+#
+# bwa samse ${ref_genome}\
+#    ${anc_dir}/${BASE}.fastq.align.sai \
+#    ${anc_dir}/${BASE}.fastq \
+#    > ${anc_dir}/${BASE}.sam
+#
+# done
 
 ##### for arabidopsis samples
 # for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Arabidopsis/*.fastq.align.sai
@@ -314,19 +315,19 @@ ${data_dir}/${BASE}.sam \
 
 done
 
-### for ancestors
-for file in ${anc_dir}/*.sam
-
-do
-
-FBASE=$(basename $file .sam)
-BASE=${FBASE%.sam}
-
-samtools view -bt ${ref_genome_dir}/*.fai \
-${anc_dir}/${BASE}.sam \
-  > ${anc_dir}/${BASE}.bam
-
-done
+# ### for ancestors
+# for file in ${anc_dir}/*.sam
+#
+# do
+#
+# FBASE=$(basename $file .sam)
+# BASE=${FBASE%.sam}
+#
+# samtools view -bt ${ref_genome_dir}/*.fai \
+# ${anc_dir}/${BASE}.sam \
+#   > ${anc_dir}/${BASE}.bam
+#
+# done
 
 ### for arabidopsis samples
 # samtools faidx /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Arabidopsis/TAIR10_chr_all.fas
@@ -358,18 +359,18 @@ samtools sort -o ${data_dir}/${BASE}.sorted.bam \
 done
 
 
-#### for ancestors
-for file in ${anc_dir}/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-samtools sort -o ${anc_dir}/${BASE}.sorted.bam \
-   ${anc_dir}/${BASE}.bam
-
-done
+# #### for ancestors
+# for file in ${anc_dir}/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# samtools sort -o ${anc_dir}/${BASE}.sorted.bam \
+#    ${anc_dir}/${BASE}.bam
+#
+# done
 #### Arabidopsis
 #
 # for file in /scratch/hcm14449/TE_MA_Paradoxus/test_Spike_InsJune2019/Holly_spikein_289/Holly_spikein/Arabidopsis/*.bam
@@ -437,14 +438,14 @@ python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${data_dir}/${BASE}.sorted.
 done
 
 
-### for ancestors
-for file in ${anc_dir}/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${anc_dir}/${BASE}.sorted.bam
-
-done
+# ### for ancestors
+# for file in ${anc_dir}/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${anc_dir}/${BASE}.sorted.bam
+#
+# done
