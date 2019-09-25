@@ -38,10 +38,10 @@ ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus"
 #what sample should all other samples be compared to?
 # control_sample_name="Ancestor"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina/QC_Out"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/QC_Out"
 # mkdir $output_directory
 #location of TRIMMED data to be used in the analysis
-# trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
+trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed"
 
 
 ########################################################################################################################
