@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -N muverTestJuly19
-#PBS -q batch
-#PBS -l nodes=1:ppn=48:AMD
+#PBS -q highmem_q
+#PBS -l nodes=1:ppn=12
 #PBS -l walltime=480:00:00
-#PBS -l mem=100gb
+#PBS -l mem=400gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -109,7 +109,7 @@ module load ${muver_module}
 
 # muver run-pipeline -p 48 ${ref_genome} ${fastq_list_D0} ${control_sample_name_D0} ${experiment_directory_D0}
 
-muver run-pipeline -p 48 ${ref_genome} ${fastq_list_D1} ${control_sample_name_D1} ${experiment_directory_D1}
+muver run-pipeline -p 12 ${ref_genome} ${fastq_list_D1} ${control_sample_name_D1} ${experiment_directory_D1}
 
 # muver run-pipeline -p 48 ${ref_genome} ${fastq_list_D20} ${control_sample_name_D20} ${experiment_directory_D20}
 # run the pipeline
