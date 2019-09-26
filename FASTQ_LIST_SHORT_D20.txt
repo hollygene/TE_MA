@@ -1,0 +1,12 @@
+Sample Name	Mate 1 FASTQ	Mate 2 FASTQ	Ploidy
+D20-1	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-1_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-1_R2_001.fastq	2
+D20-10	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-10_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-10_R2_001.fastq	2
+D20-11	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-11_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-11_R2_001.fastq	2
+D20-12	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-12_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-12_R2_001.fastq	2
+D20-13	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-13_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-13_R2_001.fastq	2
+D20-14	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-14_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-14_R2_001.fastq	2
+D20-15	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-15_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-15_R2_001.fastq	2
+D20-16	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-16_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-16_R2_001.fastq	2
+D20-17	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-17_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-17_R2_001.fastq	2
+D20-18	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-18_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-18_R2_001.fastq	2
+D20-A	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-A_R1_001.fastq	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/HM-D20-A_R2_001.fastq	2

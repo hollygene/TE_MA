@@ -1,0 +1,12 @@
+Sample Name	Mate 1 FASTQ	Mate 2 FASTQ	Ploidy
+D1-10	HM-D1-10_R1_001.fastq	HM-D1-10_R2_001.fastq	2
+D1-11	HM-D1-11_R1_001.fastq	HM-D1-11_R2_001.fastq	2
+D1-12	HM-D1-12_R1_001.fastq	HM-D1-12_R2_001.fastq	2
+D1-13	HM-D1-13_R1_001.fastq	HM-D1-13_R2_001.fastq	2
+D1-14	HM-D1-14_R1_001.fastq	HM-D1-14_R2_001.fastq	2
+D1-15	HM-D1-15_R1_001.fastq	HM-D1-15_R2_001.fastq	2
+D1-16	HM-D1-16_R1_001.fastq	HM-D1-16_R2_001.fastq	2
+D1-17	HM-D1-17_R1_001.fastq	HM-D1-17_R2_001.fastq	2
+D1-18	HM-D1-18_R1_001.fastq	HM-D1-18_R2_001.fastq	2
+D1-19	HM-D1-19_R1_001.fastq	HM-D1-19_R2_001.fastq	2
+D1-A	HM-D1-A_R1_001.fastq	HM-D1-A_R2_001.fastq	2
