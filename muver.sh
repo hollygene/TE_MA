@@ -67,7 +67,7 @@ mkdir $experiment_directory_D1
 
 fastq_list_D20="/home/hcm14449/Github/TE_MA/FASTQ_LIST_D20.txt"
 control_sample_name_D20="D20-A"
-experiment_directory_D20="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/Dd0"
+experiment_directory_D20="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D20"
 mkdir $experiment_directory_D20
 
 # mkdir $trimmed_data
@@ -99,11 +99,11 @@ module load ${muver_module}
 
 #index reference genome
 # echo ${ref_genome}
-muver index-reference ${ref_genome}
-# muver index-reference S288C_reference_sequence_R64-2-1_20150113.fa
-#
-# create repeat file for reference genome
-muver create-repeat-file ${ref_genome}
+# muver index-reference ${ref_genome}
+# # muver index-reference S288C_reference_sequence_R64-2-1_20150113.fa
+# #
+# # create repeat file for reference genome
+# muver create-repeat-file ${ref_genome}
 
 muver run-pipeline -p 48 ${ref_genome} ${fastq_list_H0} ${control_sample_name_H0} ${experiment_directory_H0}
 

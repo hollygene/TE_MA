@@ -74,6 +74,10 @@ mkdir ${trimmed_data}
 
 module load ${trimgalore_module}
 
+#need to remove TruSeq adapters Index 6
+
+
+
 # trim all fastq files
 for file in $data_dir/*.fastq
 
