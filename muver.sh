@@ -1,8 +1,8 @@
 #PBS -S /bin/bash
 #PBS -N muverTestJuly19
-#PBS -q batch
-#PBS -l nodes=2:ppn=2:AMD
-#PBS -l mem=100gb
+#PBS -q highmem_q
+#PBS -l nodes=1:ppn=48:HIGHMEM
+#PBS -l mem=300gb
 #PBS -M hcm14449@uga.edu
 #PBS -l walltime=48:00:00
 
@@ -43,12 +43,31 @@ muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 #location of TRIMMED data to be used in the analysis
 # trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/trimmed"
 
-data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/samples/"
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/Practice/files/ref_genome/SCerevisiae.RefGenome.fa"
-fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
-control_sample_name="Ancestor"
-experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output8919"
+data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
+# fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
+# control_sample_name="Ancestor"
+# experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output8919"
 
+fastq_list_H0="/home/hcm14449/Github/TE_MA/FASTQ_LIST_H0.txt"
+control_sample_name_H0="H0-A"
+experiment_directory_H0="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0"
+mkdir $experiment_directory_H0
+
+fastq_list_D0="/home/hcm14449/Github/TE_MA/FASTQ_LIST_D0.txt"
+control_sample_name_D0="D0-A"
+experiment_directory_D0="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D0"
+mkdir $experiment_directory_D0
+
+fastq_list_D1="/home/hcm14449/Github/TE_MA/FASTQ_LIST_D1.txt"
+control_sample_name_D1="D1-A"
+experiment_directory_D1="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D1"
+mkdir $experiment_directory_D1
+
+fastq_list_D20="/home/hcm14449/Github/TE_MA/FASTQ_LIST_D20.txt"
+control_sample_name_D20="D20-A"
+experiment_directory_D20="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/Dd0"
+mkdir $experiment_directory_D20
 
 # mkdir $trimmed_data
 #
@@ -85,7 +104,13 @@ muver index-reference ${ref_genome}
 # create repeat file for reference genome
 muver create-repeat-file ${ref_genome}
 
-muver run-pipeline ${ref_genome} ${fastq_list} ${control_sample_name} ${experiment_directory}
+muver run-pipeline ${ref_genome} ${fastq_list_H0} ${control_sample_name_H0} ${experiment_directory_H0}
+
+muver run-pipeline ${ref_genome} ${fastq_list_D0} ${control_sample_name_D0} ${experiment_directory_D0}
+
+muver run-pipeline ${ref_genome} ${fastq_list_D1} ${control_sample_name_D1} ${experiment_directory_D1}
+
+muver run-pipeline ${ref_genome} ${fastq_list_D20} ${control_sample_name_D20} ${experiment_directory_D20}
 # run the pipeline
 # muver run-pipeline ${ref_genome} ${h0_fastq_list} ${h0_control_sample_name} ${h0_experiment_directory}
 #
