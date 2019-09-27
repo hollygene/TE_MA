@@ -20,4 +20,4 @@ muver index-reference /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS
 muver create-repeat-file scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa
 
 
-muver run-pipeline /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa /home/hcm14449/Github/TE_MA/FASTQ_LIST_SHORT_H0 ${control_sample_name_H0} ${experiment_directory_H0}
+muver run-pipeline /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa /home/hcm14449/Github/TE_MA/FASTQ_LIST_SHORT_D20 D20-A /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D20
