@@ -2,7 +2,7 @@
 #PBS -q batch
 #PBS -N testScriptJuly19
 #PBS -l nodes=2:ppn=2:AMD
-#PBS -l walltime=48:00:00
+#PBS -l walltime=96:00:00
 #PBS -l mem=100gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
@@ -101,16 +101,16 @@ module load ${bwa_module}
  #index the ref genome
  bwa index ${ref_genome}
 
- for file in ${trimmed_data}/*.fastq
+ for file in ${trimmed_data}/*.fq
 
  do
 
- FBASE=$(basename $file .fastq)
+ FBASE=$(basename $file .fq)
  BASE=${FBASE%.fastq}
 
  time bwa aln ${ref_genome} \
-${trimmed_data}/${BASE}.fastq \
- > ${trimmed_data}/${BASE}.fastq.align.sai
+${trimmed_data}/${BASE}.fq \
+ > ${trimmed_data}/${BASE}.fq.align.sai
 
  done
 
@@ -166,15 +166,15 @@ ${trimmed_data}/${BASE}.fastq \
  #create the sam files
  # works
  # thinks the arabidopsis files are there (but theyre def not)
- for file in ${trimmed_data}/*.fastq.align.sai
+ for file in ${trimmed_data}/*.fq.align.sai
 
  do
 
- FBASE=$(basename $file .fastq.align.sai)
- BASE=${FBASE%.fastq.align.sai}
+ FBASE=$(basename $file .fq.align.sai)
+ BASE=${FBASE%.fq.align.sai}
 
 bwa samse ${ref_genome} \
-    ${trimmed_data}/${BASE}.fastq.align.sai \
+    ${trimmed_data}/${BASE}.fq.align.sai \
     ${trimmed_data}/${BASE}.fastq \
     > ${trimmed_data}/${BASE}.sam
 
