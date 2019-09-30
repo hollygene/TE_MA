@@ -12,9 +12,9 @@
 #location of current update of muver
 # muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 #location of trimgalore moedule
-trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
+# trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
 #location of fastqc module
-fastqc_module="FastQC/0.11.8-Java-1.8.0_144"
+# fastqc_module="FastQC/0.11.8-Java-1.8.0_144"
 #location of BWA module
 bwa_module="BWA/0.7.17-foss-2016b"
 #location of samtools module
@@ -46,51 +46,51 @@ trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed"
 
 ########################################################################################################################
 # works
-cd ${data_dir}
-
-mkdir ${output_directory}
-
-gunzip /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/*.gz
-
-module load ${fastqc_module}
-
-for file in ${data_dir}/*.fastq
-
-do
-
-FBASE=$(basename $file .fastq)
-BASE=${FBASE%.fastq}
-
-time fastqc -o ${output_directory} ${data_dir}/${BASE}.fastq
-
-done
+# cd ${data_dir}
+#
+# mkdir ${output_directory}
+#
+# gunzip /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/*.gz
+#
+# module load ${fastqc_module}
+#
+# for file in ${data_dir}/*.fastq
+#
+# do
+#
+# FBASE=$(basename $file .fastq)
+# BASE=${FBASE%.fastq}
+#
+# time fastqc -o ${output_directory} ${data_dir}/${BASE}.fastq
+#
+# done
 
 
 #######################################################################################
 # works
-cd ${data_dir}
-
-mkdir ${trimmed_data}
-
-module load ${trimgalore_module}
-
-#need to remove TruSeq adapters Index 6
-
-
-
-# trim all fastq files
-for file in $data_dir/*.fastq
-
-do
-
-FBASE=$(basename $file .fastq)
-BASE=${FBASE%.fastq}
-
-trim_galore --phred33 -q 20 -o $trimmed_data ${BASE}.fastq
-
-done
-
-module unload ${trimgalore_module}
+# cd ${data_dir}
+#
+# mkdir ${trimmed_data}
+#
+# module load ${trimgalore_module}
+#
+# #need to remove TruSeq adapters Index 6
+#
+#
+#
+# # trim all fastq files
+# for file in $data_dir/*.fastq
+#
+# do
+#
+# FBASE=$(basename $file .fastq)
+# BASE=${FBASE%.fastq}
+#
+# trim_galore --phred33 -q 20 -o $trimmed_data ${BASE}.fastq
+#
+# done
+#
+# module unload ${trimgalore_module}
 
  #######################################################################################
 # works
@@ -101,7 +101,7 @@ module load ${bwa_module}
  #index the ref genome
  bwa index ${ref_genome}
 
- for file in ${data_dir}/*.fastq
+ for file in ${trimmed_data}/*.fastq
 
  do
 
@@ -109,8 +109,8 @@ module load ${bwa_module}
  BASE=${FBASE%.fastq}
 
  time bwa aln ${ref_genome} \
-${data_dir}/${BASE}.fastq \
- > ${data_dir}/${BASE}.fastq.align.sai
+${trimmed_data}/${BASE}.fastq \
+ > ${trimmed_data}/${BASE}.fastq.align.sai
 
  done
 
@@ -166,7 +166,7 @@ ${data_dir}/${BASE}.fastq \
  #create the sam files
  # works
  # thinks the arabidopsis files are there (but theyre def not)
- for file in ${data_dir}/*.fastq.align.sai
+ for file in ${trimmed_data}/*.fastq.align.sai
 
  do
 
@@ -174,9 +174,9 @@ ${data_dir}/${BASE}.fastq \
  BASE=${FBASE%.fastq.align.sai}
 
 bwa samse ${ref_genome} \
-    ${data_dir}/${BASE}.fastq.align.sai \
-    ${data_dir}/${BASE}.fastq \
-    > ${data_dir}/${BASE}.sam
+    ${trimmed_data}/${BASE}.fastq.align.sai \
+    ${trimmed_data}/${BASE}.fastq \
+    > ${trimmed_data}/${BASE}.sam
 
 done
 
@@ -306,7 +306,7 @@ module load ${samtools_module}
 samtools faidx ${ref_genome}
 
 #convert sam files to bam files
-for file in ${data_dir}/*.sam
+for file in ${trimmed_data}/*.sam
 
 do
 
@@ -314,8 +314,8 @@ FBASE=$(basename $file .sam)
 BASE=${FBASE%.sam}
 
 samtools view -bt ${ref_genome_dir}/*.fai \
-${data_dir}/${BASE}.sam \
-  > ${data_dir}/${BASE}.bam
+${trimmed_data}/${BASE}.sam \
+  > ${trimmed_data}/${BASE}.bam
 
 done
 
@@ -350,15 +350,15 @@ done
 # done
 
 ### sort the bam files
-for file in ${data_dir}/*.bam
+for file in ${trimmed_data}/*.bam
 
 do
 
 FBASE=$(basename $file .bam)
 BASE=${FBASE%.bam}
 
-samtools sort -o ${data_dir}/${BASE}.sorted.bam \
-   ${data_dir}/${BASE}.bam
+samtools sort -o ${trimmed_data}/${BASE}.sorted.bam \
+   ${trimmed_data}/${BASE}.bam
 
 done
 
@@ -430,14 +430,14 @@ module load ${samtools_module}
 export PATH=${PATH}:${script_location}
 
 ## Loop
-for file in ${data_dir}/*.sorted.bam
+for file in ${trimmed_data}/*.sorted.bam
 
 do
 
 FBASE=$(basename $file .sorted.bam)
 BASE=${FBASE%.sorted.bam}
 
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${data_dir}/${BASE}.sorted.bam
+python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${trimmed_data}/${BASE}.sorted.bam
 
 done
 
