@@ -1,0 +1,64 @@
+---
+title: "TE_MA_Paradoxus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r packages}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("Sushi")
+library(sushi)
+
+plotManhattan(bedfile=Sushi_GWAS.bed,pvalues=Sushi_GWAS.bed[,5],
+                 col=SushiColors(6),genome=Sushi_hg18_genome,cex=0.75)
+labelgenome(genome=Sushi_hg18_genome,n=4,scale="Mb",
+                 edgeblankfraction=0.20,cex.axis=.5)
+axis(side=2,las=2,tcl=.2)
+mtext("log10(P)",side=2,line=1.75,cex=1,font=2)
+mtext("chromosome",side=1,line=1.75,cex=1,font=2)
+
+plotBedgraph(Sushi_DNaseI.bedgraph,chrom,chromstart,chromend,colorbycol= SushiColors(5))
+
+```
+
+
+```{r mutation rate, echo=FALSE}
+
+# H0vD0.total <- data.frame(matrix(ncol = 2, nrow = 2))
+# x <- c("H0","D0")
+# rownames(H0vD0.total) <- x
+# y <- c("SNPs","Indels")
+# colnames(H0vD0.total) <- y
+# 
+# 
+# 
+# H0vD0.total[1,1] <- 2.23674E-10
+# H0vD0.total[1,2] <- 4.91247E-11
+# H0vD0.total[2,1] <- 3.44006E-10
+# H0vD0.total[2,2] <- 2.67986E-11 
+# 
+# test <- fisher.test(H0vD0.total, alternative="two.sided", conf.int=TRUE)
+
+
+
+```
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

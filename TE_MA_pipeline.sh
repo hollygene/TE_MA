@@ -442,6 +442,12 @@ python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${trimmed_data}/${BASE}.sor
 done
 
 
+#!/bin/bash
+
+#$ -q rcc-30d
+
+# S.c. Gene Conversion
+
 # ### for ancestors
 # for file in ${anc_dir}/*.sorted.bam
 #
