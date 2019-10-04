@@ -30,10 +30,10 @@ H0-36	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-36.bam	0.
 H0-37	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-37.bam	0.295088142	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-37.repeat_indel_fits.txt	1
 H0-38	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-38.bam	0.166927749	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-38.repeat_indel_fits.txt	1
 H0-39	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-39.bam	0.211915544	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-39.repeat_indel_fits.txt	1
-H0-4	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-4.bam	0.633666463	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H041.repeat_indel_fits.txt	1
-H0-40	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-40.bam	0.210895773	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0401.repeat_indel_fits.txt	1
+H0-4	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-4.bam	0.633666463	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-4.repeat_indel_fits.txt	1
+H0-40	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-40.bam	0.210895773	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-40.repeat_indel_fits.txt	1
 H0-41	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-41.bam	0.195529079	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-41.repeat_indel_fits.txt	1
-H0-42	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-42.bam	0.202283955	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0.42.repeat_indel_fits.txt	1
+H0-42	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-42.bam	0.202283955	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-42.repeat_indel_fits.txt	1
 H0-43	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-43.bam	0.224235908	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-43.repeat_indel_fits.txt	1
 H0-44	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-44.bam	0.217058988	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-44.repeat_indel_fits.txt	1
 H0-45	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/H0-45.bam	0.190446952	/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/fits/H0-45.repeat_indel_fits.txt	1
