@@ -1,5 +1,5 @@
 #PBS -S /bin/bash
-#PBS -N muverTestJuly19
+#PBS -N H0_Call_Mutations
 #PBS -q highmem_q
 #PBS -l nodes=1:ppn=12
 #PBS -l walltime=480:00:00
@@ -105,7 +105,9 @@ module load ${muver_module}
 # # create repeat file for reference genome
 # muver create-repeat-file ${ref_genome}
 
-muver run-pipeline -p 12 ${ref_genome} ${fastq_list_H0} ${control_sample_name_H0} ${experiment_directory_H0}
+# muver run-pipeline -p 12 ${ref_genome} ${fastq_list_H0} ${control_sample_name_H0} ${experiment_directory_H0}
+
+muver call_mutations ${ref_genome} ${control_sample_name_H0} /home/hcm14449/Github/TE_MA/SAMPLE_LIST_H0.txt /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/gatk_output/haplotype_caller_output.vcf /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/output/redo
 
 # muver run-pipeline -p 48 ${ref_genome} ${fastq_list_D0} ${control_sample_name_D0} ${experiment_directory_D0}
 #
