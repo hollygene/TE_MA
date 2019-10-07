@@ -14,7 +14,7 @@ GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
 
 module_load ${GATK_module}
 
-java -jar $EBROOTGATK/GenomeAnalysisTK.jar \
+time gatk \
      -R ${ref_genome} \
      -T HaplotypeCaller \
      -I ${H0_bams}/H0-A.bam \
