@@ -50,10 +50,10 @@ ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome
 # control_sample_name="Ancestor"
 # experiment_directory="/scratch/hcm14449/TE_MA_Paradoxus/Practice/output8919"
 
-fastq_list_H0="/home/hcm14449/Github/TE_MA/FASTQ_LIST_H0.txt"
+# fastq_list_H0="/home/hcm14449/Github/TE_MA/FASTQ_LIST_H0.txt"
 control_sample_name_H0="H0-A"
-experiment_directory_H0="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0"
-mkdir $experiment_directory_H0
+# experiment_directory_H0="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0"
+# mkdir $experiment_directory_H0
 
 # fastq_list_D0="/home/hcm14449/Github/TE_MA/FASTQ_LIST_D0.txt"
 # control_sample_name_D0="D0-A"
@@ -93,7 +93,7 @@ mkdir $experiment_directory_H0
 # wget $ref_gen_download
 
 
-module load ${muver_module}
+# module load ${muver_module}
 # module load ${GATK_module}
 # java -jar $EBROOTGATK/GenomeAnalysisTK.jar
 
@@ -107,7 +107,9 @@ module load ${muver_module}
 
 # muver run-pipeline -p 12 ${ref_genome} ${fastq_list_H0} ${control_sample_name_H0} ${experiment_directory_H0}
 
-muver call_mutations ${ref_genome} ${control_sample_name_H0} /home/hcm14449/Github/TE_MA/SAMPLE_LIST_H0.txt /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/gatk_output/haplotype_caller_output.vcf /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/output/redo
+# muver call-mutations ${ref_genome} ${control_sample_name_H0} /home/hcm14449/Github/TE_MA/SAMPLE_LIST_H0.txt /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/gatk_output/haplotype_caller_output.vcf /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/output/redo
+
+muver call-mutations /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa H0-A /home/hcm14449/Github/TE_MA/SAMPLE_LIST_H0.txt /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/gatk_output/haplotype_caller_output.vcf /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/output/redo
 
 # muver run-pipeline -p 48 ${ref_genome} ${fastq_list_D0} ${control_sample_name_D0} ${experiment_directory_D0}
 #
