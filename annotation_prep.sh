@@ -213,6 +213,104 @@ awk '
                                     print
                                 }' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/YPS138_seq_to_remove_header_Chrs_short.txt /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/D1_mutations_Chrs.txt > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/D1_mutations_Chrs_Clean.txt
 
+# Get out only those lines where the ancestor matches the reference
+
+
+awk -F'\t' '{
+if ($53 ~/0\/0/) print }' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D0/haplotype_caller_output.vcf > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D0/good_to_call.txt
+
+# have to change chromosome IDs in this file
+awk -F'\t' '{
+  if ($1=="chrI") print "ref|NC_001133|","\t",$0;
+  if ($1=="chrII") print "ref|NC_001134|","\t",$0;
+  if ($1=="chrIII") print "ref|NC_001135|","\t",$0;
+  if ($1=="chrIV") print "ref|NC_001136|","\t",$0;
+  if ($1=="chrV") print "ref|NC_001137|","\t",$0;
+  if ($1=="chrVI") print "ref|NC_001138|","\t",$0;
+  if ($1=="chrVII") print "ref|NC_001139|","\t",$0;
+  if ($1=="chrVIII") print "ref|NC_001140|","\t",$0;
+  if ($1=="chrIX") print "ref|NC_001141|","\t",$0;
+  if ($1=="chrX") print "ref|NC_001142|","\t",$0;
+  if ($1=="chrXI") print "ref|NC_001143|","\t",$0;
+  if ($1=="chrXII") print "ref|NC_001144|","\t",$0;
+  if ($1=="chrXIII") print "ref|NC_001145|","\t",$0;
+  if ($1=="chrXIV") print "ref|NC_001146|","\t",$0;
+  if ($1=="chrXV") print "ref|NC_001147|","\t",$0;
+  if ($1=="chrXVI") print "ref|NC_001148|","\t",$0;
+}' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D0/good_to_call.txt > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D0/good_to_call_Chrs.txt
+
+
+
+# filter mutations file based on above output
+
+### just need to match the two files based on if the two columns match
+# so like do $1 and $3 match? if so, print
+awk 'FNR==NR{a[$1,$3];next} ($1,$3) in a' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D0/good_to_call_Chrs.txt /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D0/D0_mutations_Chrs_Clean.txt > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D0/D0_mutations_Chrs_CleanER.txt
+
+# Get out only those lines where the ancestor matches the reference
+awk -F'\t' '{
+if ($52 ~/0\/0/) print }' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/haplotype_caller_output.vcf > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/good_to_call.txt
+
+# have to change chromosome IDs in this file
+awk -F'\t' '{
+  if ($1=="chrI") print "ref|NC_001133|","\t",$0;
+  if ($1=="chrII") print "ref|NC_001134|","\t",$0;
+  if ($1=="chrIII") print "ref|NC_001135|","\t",$0;
+  if ($1=="chrIV") print "ref|NC_001136|","\t",$0;
+  if ($1=="chrV") print "ref|NC_001137|","\t",$0;
+  if ($1=="chrVI") print "ref|NC_001138|","\t",$0;
+  if ($1=="chrVII") print "ref|NC_001139|","\t",$0;
+  if ($1=="chrVIII") print "ref|NC_001140|","\t",$0;
+  if ($1=="chrIX") print "ref|NC_001141|","\t",$0;
+  if ($1=="chrX") print "ref|NC_001142|","\t",$0;
+  if ($1=="chrXI") print "ref|NC_001143|","\t",$0;
+  if ($1=="chrXII") print "ref|NC_001144|","\t",$0;
+  if ($1=="chrXIII") print "ref|NC_001145|","\t",$0;
+  if ($1=="chrXIV") print "ref|NC_001146|","\t",$0;
+  if ($1=="chrXV") print "ref|NC_001147|","\t",$0;
+  if ($1=="chrXVI") print "ref|NC_001148|","\t",$0;
+}' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/good_to_call.txt > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/good_to_call_Chrs.txt
+
+
+
+# filter mutations file based on above output
+
+### just need to match the two files based on if the two columns match
+# so like do $1 and $3 match? if so, print
+awk 'FNR==NR{a[$1,$3];next} ($1,$3) in a' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/good_to_call_Chrs.txt /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/D1_mutations_Chrs_Clean.txt > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D1/D1_mutations_Chrs_CleanER.txt
+
+
+# Get out only those lines where the ancestor matches the reference
+awk -F'\t' '{
+if ($57 ~/0\/0/) print }' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D20/haplotype_caller_output.vcf > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D20/good_to_call.txt
+
+# have to change chromosome IDs in this file
+awk -F'\t' '{
+  if ($1=="chrI") print "ref|NC_001133|","\t",$0;
+  if ($1=="chrII") print "ref|NC_001134|","\t",$0;
+  if ($1=="chrIII") print "ref|NC_001135|","\t",$0;
+  if ($1=="chrIV") print "ref|NC_001136|","\t",$0;
+  if ($1=="chrV") print "ref|NC_001137|","\t",$0;
+  if ($1=="chrVI") print "ref|NC_001138|","\t",$0;
+  if ($1=="chrVII") print "ref|NC_001139|","\t",$0;
+  if ($1=="chrVIII") print "ref|NC_001140|","\t",$0;
+  if ($1=="chrIX") print "ref|NC_001141|","\t",$0;
+  if ($1=="chrX") print "ref|NC_001142|","\t",$0;
+  if ($1=="chrXI") print "ref|NC_001143|","\t",$0;
+  if ($1=="chrXII") print "ref|NC_001144|","\t",$0;
+  if ($1=="chrXIII") print "ref|NC_001145|","\t",$0;
+  if ($1=="chrXIV") print "ref|NC_001146|","\t",$0;
+  if ($1=="chrXV") print "ref|NC_001147|","\t",$0;
+  if ($1=="chrXVI") print "ref|NC_001148|","\t",$0;
+}' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D20/good_to_call.txt > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D20/good_to_call_Chrs.txt
+
+
+
+# filter mutations file based on above output
+
+### just need to match the two files based on if the two columns match
+# so like do $1 and $3 match? if so, print
+awk 'FNR==NR{a[$1,$3];next} ($1,$3) in a' /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D20/good_to_call_Chrs.txt /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D20/D20_mutations_Chrs_Clean.txt > /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Muver/D20/D20_mutations_Chrs_CleanER.txt
 
         # awk -F'\t' '{
         #   if ($1=="chrI") print "ref|NC_001133|","\t",$0;

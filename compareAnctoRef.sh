@@ -1,0 +1,23 @@
+#!/bin/bash
+#PBS -N CompareAncestorsToReference
+#PBS -q batch
+#PBS -l nodes=1:ppn=1:HIGHMEM
+#PBS -l walltime=480:00:00
+#PBS -l mem=200gb
+#PBS -M hmcqueary@uga.edu
+#PBS -m ae
+
+
+H0_bams="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
+GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
+
+module_load ${GATK_module}
+
+java -jar GenomeAnalysisTK.jar \
+     -R ${ref_genome} \
+     -T HaplotypeCaller \
+     -I ${H0_bams}/H0-A.bam \
+     --emitRefConfidence GVCF \
+     -ploidy 1 \
+     -o H0-A_variants.vcf
