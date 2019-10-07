@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N CompareAncestorsToReference
-#PBS -q batch
+#PBS -q highmem_q
 #PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l walltime=480:00:00
 #PBS -l mem=200gb
