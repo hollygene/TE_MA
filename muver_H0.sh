@@ -93,7 +93,7 @@ control_sample_name_H0="H0-A"
 # wget $ref_gen_download
 
 
-# module load ${muver_module}
+module load ${muver_module}
 # module load ${GATK_module}
 # java -jar $EBROOTGATK/GenomeAnalysisTK.jar
 
