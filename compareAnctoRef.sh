@@ -14,9 +14,8 @@ GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
 
 module load ${GATK_module}
 
-time gatk \
+time gatk HaplotypeCaller \
      -R ${ref_genome} \
-     -T HaplotypeCaller \
      -I ${H0_bams}/H0-A.bam \
      --emitRefConfidence GVCF \
      -ploidy 1 \
