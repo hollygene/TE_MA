@@ -17,6 +17,5 @@ module load ${GATK_module}
 time gatk HaplotypeCaller \
      -R ${ref_genome} \
      -I ${H0_bams}/H0-A.bam \
-     --emitRefConfidence GVCF \
      -ploidy 1 \
      -o H0-A_variants.vcf
