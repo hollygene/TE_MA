@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q batch
+#PBS -q highmem_q
 #PBS -N testScriptJuly19
-#PBS -l nodes=2:ppn=2:AMD
-#PBS -l walltime=96:00:00
-#PBS -l mem=100gb
+#PBS -l nodes=1:ppn=12
+#PBS -l walltime=480:00:00
+#PBS -l mem=400gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -23,6 +23,8 @@ samtools_module="SAMtools/1.6-foss-2016b"
 bedtools_module="BEDTools/2.28.0-foss-2018a"
 #location of python module
 python_module="Python/3.5.2-foss-2016b"
+#location of picard module
+picard_module="picard/2.16.0-Java-1.8.0_144"
 #location of bamtoBigWig script and accessories
 script_location="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts"
 #location of bam to bigwig script
@@ -101,16 +103,19 @@ module load ${bwa_module}
  #index the ref genome
  bwa index ${ref_genome}
 
- for file in ${trimmed_data}/*.fq
+for file in ${trimmed_data}/*_R1_001_trimmed.fq
 
  do
 
- FBASE=$(basename $file .fq)
- BASE=${FBASE%.fastq}
+ FBASE=$(basename $file _R1_001_trimmed.fq)
+ BASE=${FBASE%_R1_001_trimmed.fq}
 
- time bwa aln ${ref_genome} \
-${trimmed_data}/${BASE}.fq \
- > ${trimmed_data}/${BASE}.fq.align.sai
+ time bwa mem -t 12 \ # using 12 threads
+        -M \ # for picard compatibility
+          ${ref_genome} \
+            ${trimmed_data}/${BASE}_R1_001_trimmed.fq \
+            ${trimmed_data}/${BASE}_R2_001_trimmed.fq \
+              > ${trimmed_data}/${BASE}_aln.sam
 
  done
 
@@ -166,19 +171,21 @@ ${trimmed_data}/${BASE}.fq \
  #create the sam files
  # works
  # thinks the arabidopsis files are there (but theyre def not)
- for file in ${trimmed_data}/*.fq.align.sai
-
- do
-
- FBASE=$(basename $file .fq.align.sai)
- BASE=${FBASE%.fq.align.sai}
-
-bwa samse ${ref_genome} \
-    ${trimmed_data}/${BASE}.fq.align.sai \
-    ${trimmed_data}/${BASE}.fastq \
-    > ${trimmed_data}/${BASE}.sam
-
-done
+#  for file in ${trimmed_data}/*.fq.align.sai
+#
+#  do
+#
+#  FBASE=$(basename $file .fq.align.sai)
+#  BASE=${FBASE%.fq.align.sai}
+#
+# bwa sampe ${ref_genome} \
+#     ${trimmed_data}/${BASE}_R1_001_trimmed.fq.align.sai \
+#     ${trimmed_data}/${BASE}_R2_001_trimmed.fq.align.sai \
+#     ${trimmed_data}/${BASE}_R1_001_trimmed.fq \
+#     ${trimmed_data}/${BASE}_R2_001_trimmed.fq \
+#     > ${trimmed_data}/${BASE}.sam
+#
+# done
 
 # ### for ancestors
 # # works
@@ -306,15 +313,15 @@ module load ${samtools_module}
 samtools faidx ${ref_genome}
 
 #convert sam files to bam files
-for file in ${trimmed_data}/*.sam
+for file in ${trimmed_data}/*_aln.sam
 
 do
 
-FBASE=$(basename $file .sam)
-BASE=${FBASE%.sam}
+FBASE=$(basename $file _aln.sam)
+BASE=${FBASE%_aln.sam}
 
 samtools view -bt ${ref_genome_dir}/*.fai \
-${trimmed_data}/${BASE}.sam \
+${trimmed_data}/${BASE}_aln.sam \
   > ${trimmed_data}/${BASE}.bam
 
 done
@@ -423,7 +430,7 @@ done
 # done
 
 #################################################################################################################
-#bam to BigWig
+#bam to BigWig > for quality control purposes
 module load ${bedtools_module}
 module load ${python_module}
 module load ${samtools_module}
@@ -459,3 +466,30 @@ done
 # python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${anc_dir}/${BASE}.sorted.bam
 #
 # done
+
+
+###################################################################################################
+## Picard to mark duplicates
+
+module load ${picard_module}
+
+for file in ${trimmed_data}/*.bam
+
+do
+
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+I=${trimmed_data}/${BASE}.bam \
+O=${output_directory}/${BASE}_markedDuplicates.bam \
+M=${trimmed_data}/${BASE}_markedDupsMetrics.txt
+
+done
+
+###################################################################################################
+
+##Genotype 4 random samples from each experiment
+# Using GATK HaplotypeCaller in GVCF mode
+# apply appropriate ploidy for each sample

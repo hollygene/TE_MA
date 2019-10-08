@@ -51,6 +51,15 @@ ${D0_bams}/${BASE}.sorted.bam \
 
 done
 
+
+samtools sort /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D0/bams/D0-1.bam \
+-o /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D0/D0-1.sorted.bam
+
+samtools depth \
+/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D0/D0-1.sorted.bam \
+|  awk '{sum+=$3} END { print "Average = ",sum/NR}' > /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D0/bams/D0-1.txt
+
+/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/D0/bams
 #D1
 for file in ${D1_bams}/*.bam
 

@@ -108,6 +108,8 @@ module load ${muver_module}
 # muver run-pipeline -p 48 ${ref_genome} ${fastq_list_H0} ${control_sample_name_H0} ${experiment_directory_H0}
 
 muver run-pipeline -p 12 ${ref_genome} ${fastq_list_D0} ${control_sample_name_D0} ${experiment_directory_D0}
+
+muver call-mutations ${ref_genome} ${control_sample_name} ${sample_list} ${experiment_directory_D0}
 #
 # muver run-pipeline -p 48 ${ref_genome} ${fastq_list_D1} ${control_sample_name_D1} ${experiment_directory_D1}
 #
