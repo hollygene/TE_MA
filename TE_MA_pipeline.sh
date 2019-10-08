@@ -110,7 +110,7 @@ for file in ${trimmed_data}/*_R1_001_trimmed.fq
  FBASE=$(basename $file _R1_001_trimmed.fq)
  BASE=${FBASE%_R1_001_trimmed.fq}
 
- time bwa mem -t 12 -M \ # for picard compatibility
+ time bwa mem -M -t 12  \ # for picard compatibility
           ${ref_genome} \
             ${trimmed_data}/${BASE}_R1_001_trimmed.fq \
             ${trimmed_data}/${BASE}_R2_001_trimmed.fq \
