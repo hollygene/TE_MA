@@ -18,4 +18,4 @@ time gatk HaplotypeCaller \
      -R ${ref_genome} \
      -I ${H0_bams}/H0-A.bam \
      -ploidy 1 \
-     -O H0-A_variants.vcf
+     -O ${H0_bams}/H0-A_variants.vcf
