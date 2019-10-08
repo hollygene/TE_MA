@@ -12,7 +12,7 @@ H0_bams="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Muver/H0/bams/"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
 
-module_load ${GATK_module}
+module load ${GATK_module}
 
 time gatk \
      -R ${ref_genome} \
