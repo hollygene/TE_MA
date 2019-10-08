@@ -52,7 +52,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # works
 # cd ${data_dir}
 #
-# mkdir ${output_directory}
+mkdir ${output_directory}
 #
 # gunzip /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/*.gz
 #
