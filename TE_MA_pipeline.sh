@@ -49,7 +49,8 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 
 
 ########################################################################################################################
-# works
+# works: unzips files and runs FASTQC on all of them
+########################################################################################################################
 # cd ${data_dir}
 #
 mkdir ${output_directory}
@@ -71,7 +72,8 @@ mkdir ${output_directory}
 
 
 #######################################################################################
-# works
+# works: trims files
+#######################################################################################
 # cd ${data_dir}
 #
 # mkdir ${trimmed_data}
@@ -97,83 +99,87 @@ mkdir ${output_directory}
 # module unload ${trimgalore_module}
 
  #######################################################################################
-# works
-# thinks the arabidopsis files are still there
+# works: aligns samples to reference genome. Output is a .sam file
+#######################################################################################
 
-module load ${bwa_module}
-
- #index the ref genome
-# bwa index ${ref_genome}
-
-for file in ${raw_data}/*_R1_001.fastq
-
- do
-
- FBASE=$(basename $file _R1_001.fastq)
- BASE=${FBASE%_R1_001.fastq}
-
-bwa mem -M -t 12 ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq ${raw_data}/${BASE}_R2_001.fastq > ${output_directory}/${BASE}_aln.sam
-
- done
+# module load ${bwa_module}
+#
+#  #index the ref genome
+# # bwa index ${ref_genome}
+#
+# for file in ${raw_data}/*_R1_001.fastq
+#
+#  do
+#
+#  FBASE=$(basename $file _R1_001.fastq)
+#  BASE=${FBASE%_R1_001.fastq}
+#
+# bwa mem -M -t 12 ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq ${raw_data}/${BASE}_R2_001.fastq > ${output_directory}/${BASE}_aln.sam
+#
+#  done
 
 #########################################################################################
+#samtools: converts sam files to bam files and sorts them
+#########################################################################################
 
-#samtools
-module load ${samtools_module}
-
-#index reference genome
-
-samtools faidx ${ref_genome}
-
-#convert sam files to bam files
-for file in ${output_directory}/*_aln.sam
-
-do
-
-FBASE=$(basename $file _aln.sam)
-BASE=${FBASE%_aln.sam}
-
-samtools view -bt ${ref_genome_dir}/*.fai \
-${output_directory}/${BASE}_aln.sam \
-  > ${output_directory}/${BASE}.bam
-
-done
-
+# module load ${samtools_module}
+#
+# #index reference genome
+#
+# samtools faidx ${ref_genome}
+#
+# #convert sam files to bam files
+# for file in ${output_directory}/*_aln.sam
+#
+# do
+#
+# FBASE=$(basename $file _aln.sam)
+# BASE=${FBASE%_aln.sam}
+#
+# samtools view -bt ${ref_genome_dir}/*.fai \
+# ${output_directory}/${BASE}_aln.sam \
+#   > ${output_directory}/${BASE}.bam
+#
+# done
+############################
 ### sort the bam files
-for file in ${output_directory}/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-samtools sort -o ${output_directory}/${BASE}.sorted.bam \
-   ${output_directory}/${BASE}.bam
-
-done
+############################
+# for file in ${output_directory}/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# samtools sort -o ${output_directory}/${BASE}.sorted.bam \
+#    ${output_directory}/${BASE}.bam
+#
+# done
 
 
 #################################################################################################################
 #bam to BigWig > for quality control purposes
-module load ${bedtools_module}
-module load ${python_module}
-module load ${samtools_module}
-export PATH=${PATH}:${script_location}
-
-## Loop
-for file in ${output_directory}/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/${BASE}.sorted.bam
-
-done
+#################################################################################################################
+# module load ${bedtools_module}
+# module load ${python_module}
+# module load ${samtools_module}
+# export PATH=${PATH}:${script_location}
+#
+# ## Loop
+# for file in ${output_directory}/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/${BASE}.sorted.bam
+#
+# done
 
 ###################################################################################################
 ## Picard to mark duplicates
+###################################################################################################
 
 module load ${picard_module}
 
@@ -186,22 +192,97 @@ BASE=${FBASE%.bam}
 
 time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
 I=${output_directory}/${BASE}.bam \
-O=${output_directory}/${BASE}_markedDuplicates.bam \
-M=${output_directory}/${BASE}_markedDupsMetrics.txt
+O=${output_directory}/${BASE}_removedDuplicates.bam \
+M=${output_directory}/${BASE}_removedDupsMetrics.txt
 
 done
 
 ###################################################################################################
-
-##Genotype 4 random samples from each experiment
 # Using GATK HaplotypeCaller in GVCF mode
 # apply appropriate ploidy for each sample
+# will need to do this separtely for haploid and diploid samples
+###################################################################################################
 
-# module load ${GATK_module}
-#
-# time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -I ${H0_bams}/H0-A.bam \
-#      -ploidy 1 \
-#      -O ${H0_bams}/H0-A_variants.vcf
+module load ${GATK_module}
+
+### H0 samples
+for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file *_removedDuplicates.bam)
+BASE=${FBASE%*_removedDuplicates.bam}
+
+
+time gatk HaplotypeCaller \
+gatk -h \
+     -R ${ref_genome} \
+     --emitRefConfidence GVCF \
+     -I /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/${BASE}_removedDuplicates.bam \
+     -ploidy 1 \
+     -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/${BASE}_variants.g.vcf
+
+done
+
+#### D0 samples
+for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file *_removedDuplicates.bam)
+BASE=${FBASE%*_removedDuplicates.bam}
+
+
+time gatk HaplotypeCaller \
+gatk -h \
+     -R ${ref_genome} \
+     --emitRefConfidence GVCF \
+     -I /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/${BASE}_removedDuplicates.bam \
+     -ploidy 2 \
+     -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/${BASE}_variants.g.vcf
+
+done
+
+#### D1 samples
+for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file *_removedDuplicates.bam)
+BASE=${FBASE%*_removedDuplicates.bam}
+
+
+time gatk HaplotypeCaller \
+gatk -h \
+     -R ${ref_genome} \
+     --emitRefConfidence GVCF \
+     -I /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/${BASE}_removedDuplicates.bam \
+     -ploidy 2 \
+     -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/${BASE}_variants.g.vcf
+
+done
+
+#### D20 samples
+for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file *_removedDuplicates.bam)
+BASE=${FBASE%*_removedDuplicates.bam}
+
+
+time gatk HaplotypeCaller \
+gatk -h \
+     -R ${ref_genome} \
+     --emitRefConfidence GVCF \
+     -I /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/${BASE}_removedDuplicates.bam \
+     -ploidy 2 \
+     -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/${BASE}_variants.g.vcf
+
+done
+
+###################################################################################################
+### Aggregate the GVCF files using GenomicsDBImport
+###################################################################################################
