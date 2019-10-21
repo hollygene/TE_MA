@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
 #PBS -N testScriptJuly19
-#PBS -l nodes=1:ppn=12
+#PBS -l nodes=1:ppn=32:HIGHMEM
 #PBS -l walltime=480:00:00
-#PBS -l mem=400gb
+#PBS -l mem=512gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -102,21 +102,21 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
 
-# module load ${bwa_module}
+module load ${bwa_module}
 #
 #  #index the ref genome
-# # bwa index ${ref_genome}
+bwa index ${ref_genome}
 #
-# for file in ${raw_data}/*_R1_001.fastq
-#
-#  do
-#
-#  FBASE=$(basename $file _R1_001.fastq)
-#  BASE=${FBASE%_R1_001.fastq}
-#
-# bwa mem -M -t 12 ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq ${raw_data}/${BASE}_R2_001.fastq > ${output_directory}/${BASE}_aln.sam
-#
-#  done
+for file in ${raw_data}/*_R1_001.fastq
+
+ do
+
+ FBASE=$(basename $file _R1_001.fastq)
+ BASE=${FBASE%_R1_001.fastq}
+
+bwa mem -M -t 12 ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq ${raw_data}/${BASE}_R2_001.fastq > ${output_directory}/${BASE}_aln.sam
+
+ done
 
 #########################################################################################
 #samtools: converts sam files to bam files and sorts them
@@ -126,7 +126,7 @@ module load ${samtools_module}
 
 #index reference genome
 
-# samtools faidx ${ref_genome}
+samtools faidx ${ref_genome}
 
 #convert sam files to bam files
 for file in ${output_directory}/D1/*_aln.sam
@@ -136,7 +136,7 @@ do
 FBASE=$(basename $file _aln.sam)
 BASE=${FBASE%_aln.sam}
 
-samtools view -bt ${ref_genome_dir}/*.fai \
+samtools view -bt -@ 12 ${ref_genome_dir}/*.fai \
 ${output_directory}/D1/${BASE}_aln.sam \
   > ${output_directory}/D1/${BASE}.bam
 
@@ -150,7 +150,7 @@ do
 FBASE=$(basename $file _aln.sam)
 BASE=${FBASE%_aln.sam}
 
-samtools view -bt ${ref_genome_dir}/*.fai \
+samtools view -bt -@ 12 ${ref_genome_dir}/*.fai \
 ${output_directory}/D0/${BASE}_aln.sam \
   > ${output_directory}/D0/${BASE}.bam
 
@@ -164,7 +164,7 @@ do
 FBASE=$(basename $file _aln.sam)
 BASE=${FBASE%_aln.sam}
 
-samtools view -bt ${ref_genome_dir}/*.fai \
+samtools view -bt -@ 12 ${ref_genome_dir}/*.fai \
 ${output_directory}/D20/${BASE}_aln.sam \
   > ${output_directory}/D20/${BASE}.bam
 
@@ -178,7 +178,7 @@ do
 FBASE=$(basename $file _aln.sam)
 BASE=${FBASE%_aln.sam}
 
-samtools view -bt ${ref_genome_dir}/*.fai \
+samtools view -bt -@ 12 ${ref_genome_dir}/*.fai \
 ${output_directory}/H0/${BASE}_aln.sam \
   > ${output_directory}/H0/${BASE}.bam
 
@@ -195,7 +195,7 @@ do
 FBASE=$(basename $file .bam)
 BASE=${FBASE%.bam}
 
-samtools sort -o ${output_directory}/H0/${BASE}.sorted.bam \
+samtools sort -o -@ 12 ${output_directory}/H0/${BASE}.sorted.bam \
    ${output_directory}/H0/${BASE}.bam
 
 done
@@ -207,7 +207,7 @@ do
 FBASE=$(basename $file .bam)
 BASE=${FBASE%.bam}
 
-samtools sort -o ${output_directory}/D0/${BASE}.sorted.bam \
+samtools sort -o -@ 12 ${output_directory}/D0/${BASE}.sorted.bam \
    ${output_directory}/D0/${BASE}.bam
 
 done
@@ -219,7 +219,7 @@ do
 FBASE=$(basename $file .bam)
 BASE=${FBASE%.bam}
 
-samtools sort -o ${output_directory}/D1/${BASE}.sorted.bam \
+samtools sort -o -@ 12 ${output_directory}/D1/${BASE}.sorted.bam \
    ${output_directory}/D1/${BASE}.bam
 
 done
@@ -231,63 +231,12 @@ do
 FBASE=$(basename $file .bam)
 BASE=${FBASE%.bam}
 
-samtools sort -o ${output_directory}/D20/${BASE}.sorted.bam \
+samtools sort -o -@ 12 ${output_directory}/D20/${BASE}.sorted.bam \
    ${output_directory}/D20/${BASE}.bam
 
 done
 
-#################################################################################################################
-#bam to BigWig > for quality control purposes
-#################################################################################################################
-module load ${bedtools_module}
-module load ${python_module}
-module load ${samtools_module}
-export PATH=${PATH}:${script_location}
 
-## Loop
-for file in ${output_directory}/H0/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/H0/${BASE}.sorted.bam
-
-done
-
-for file in ${output_directory}/D0/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D0/${BASE}.sorted.bam
-
-done
-
-for file in ${output_directory}/D1/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D1/${BASE}.sorted.bam
-
-done
-
-for file in ${output_directory}/D20/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D20/${BASE}.sorted.bam
-
-done
 
 
 
@@ -449,11 +398,77 @@ done
 ### Aggregate the GVCF files using GenomicsDBImport
 ###################################################################################################
 
-# gatk --java-options "-Xmx4g -Xms4g" \
-#        GenomicsDBImport \
-#        --genomicsdb-workspace-path /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB \
-#        --batch-size 50 \
-#        -L [] \
-#        --sample-name-map /home/hcm14449/Github/TE_MA/H0_sample_map.txt \
-#        --tmp-dir=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp \
-#        --reader-threads 12
+gatk --java-options "-Xmx4g -Xms4g" \
+       GenomicsDBImport \
+       --genomicsdb-workspace-path /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB \
+       --batch-size 50 \
+       --sample-name-map /home/hcm14449/Github/TE_MA/H0_sample_map.txt \
+       --tmp-dir= /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp \
+       --reader-threads 12
+
+###################################################################################################
+### Alternatively, call SNPs with SAMtools
+###################################################################################################
+
+# samtools faidx ${reference_genome}
+#
+# samtools mpileup -g -f ${fasta} ${sorted_bam} > ${raw_bcf}
+#
+# bcftools view -bvcg ${raw_bcf} > ${var_bcf}
+#
+# #filter snps
+# bcftools view ${var_bcf} | vcfutils.pl varFilter - > ${var_final.vcf}
+
+
+#################################################################################################################
+#bam to BigWig > for quality control purposes
+#################################################################################################################
+module load ${bedtools_module}
+module load ${python_module}
+module load ${samtools_module}
+export PATH=${PATH}:${script_location}
+
+## Loop
+for file in ${output_directory}/H0/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/H0/${BASE}.sorted.bam
+
+done
+
+for file in ${output_directory}/D0/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D0/${BASE}.sorted.bam
+
+done
+
+for file in ${output_directory}/D1/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D1/${BASE}.sorted.bam
+
+done
+
+for file in ${output_directory}/D20/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D20/${BASE}.sorted.bam
+
+done

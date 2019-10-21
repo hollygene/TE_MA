@@ -97,3 +97,18 @@ bwa mem -M /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.
                     samtools depth \
                     /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/HM-D1-A.sorted.bam \
                     |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/HM-D1-A_depth.txt
+
+
+
+                    for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/*_aln.sam
+
+                    do
+
+                    FBASE=$(basename $file _aln.sam)
+                    BASE=${FBASE%_aln.sam}
+
+                    samtools view -bt /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa/*.fai \
+                    /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/${BASE}_aln.sam \
+                      > /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/${BASE}.bam
+
+                    done
