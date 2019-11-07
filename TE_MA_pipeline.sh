@@ -244,71 +244,74 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # ## Picard to mark duplicates
 # ###################################################################################################
 #
-# module load ${picard_module}
-#
-# for file in ${output_directory}/H0/*.bam
-#
-# do
-#
-# FBASE=$(basename $file .bam)
-# BASE=${FBASE%.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/H0/${BASE}.bam \
-# O=${output_directory}/H0/${BASE}_removedDuplicates.bam \
-# M=${output_directory}/H0/${BASE}_removedDupsMetrics.txt
-#
-# done
-#
-# for file in ${output_directory}/D0/*.bam
-#
-# do
-#
-# FBASE=$(basename $file .bam)
-# BASE=${FBASE%.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/D0/${BASE}.bam \
-# O=${output_directory}/D0/${BASE}_removedDuplicates.bam \
-# M=${output_directory}/D0/${BASE}_removedDupsMetrics.txt
-#
-# done
-#
-# for file in ${output_directory}/D1/*.bam
-#
-# do
-#
-# FBASE=$(basename $file .bam)
-# BASE=${FBASE%.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/D1/${BASE}.bam \
-# O=${output_directory}/D1/${BASE}_removedDuplicates.bam \
-# M=${output_directory}/D1/${BASE}_removedDupsMetrics.txt
-#
-# done
-#
-# for file in ${output_directory}/D20/*.bam
-#
-# do
-#
-# FBASE=$(basename $file .bam)
-# BASE=${FBASE%.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/D20/${BASE}.bam \
-# O=${output_directory}/D20/${BASE}_removedDuplicates.bam \
-# M=${output_directory}/D20/${BASE}_removedDupsMetrics.txt
-#
-# done
+module load ${picard_module}
+
+for file in ${output_directory}/H0/*.bam
+
+do
+
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/H0/${BASE}.bam \
+O=${output_directory}/H0/${BASE}_removedDuplicates.bam \
+M=${output_directory}/H0/${BASE}_removedDupsMetrics.txt
+
+done
+
+
+for file in ${output_directory}/D0/*.bam
+
+do
+
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/D0/${BASE}.bam \
+O=${output_directory}/D0/${BASE}_removedDuplicates.bam \
+M=${output_directory}/D0/${BASE}_removedDupsMetrics.txt
+
+done
+
+
+for file in ${output_directory}/D1/*.bam
+
+do
+
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/D1/${BASE}.bam \
+O=${output_directory}/D1/${BASE}_removedDuplicates.bam \
+M=${output_directory}/D1/${BASE}_removedDupsMetrics.txt
+
+done
+
+
+for file in ${output_directory}/D20/*.bam
+
+do
+
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/D20/${BASE}.bam \
+O=${output_directory}/D20/${BASE}_removedDuplicates.bam \
+M=${output_directory}/D20/${BASE}_removedDupsMetrics.txt
+
+done
 
 ###################################################################################################
 # Using GATK HaplotypeCaller in GVCF mode
@@ -398,13 +401,13 @@ done
 ### Aggregate the GVCF files using GenomicsDBImport
 ###################################################################################################
 
-gatk --java-options "-Xmx4g -Xms4g" \
-       GenomicsDBImport \
-       --genomicsdb-workspace-path /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB \
-       --batch-size 50 \
-       --sample-name-map /home/hcm14449/Github/TE_MA/H0_sample_map.txt \
-       --tmp-dir= /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp \
-       --reader-threads 12
+# gatk --java-options "-Xmx4g -Xms4g" \
+#        GenomicsDBImport \
+#        --genomicsdb-workspace-path /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB \
+#        --batch-size 50 \
+#        --sample-name-map /home/hcm14449/Github/TE_MA/H0_sample_map.txt \
+#        --tmp-dir= /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp \
+#        --reader-threads 12
 
 ###################################################################################################
 ### Alternatively, call SNPs with SAMtools
@@ -423,52 +426,52 @@ gatk --java-options "-Xmx4g -Xms4g" \
 #################################################################################################################
 #bam to BigWig > for quality control purposes
 #################################################################################################################
-module load ${bedtools_module}
-module load ${python_module}
-module load ${samtools_module}
-export PATH=${PATH}:${script_location}
-
-## Loop
-for file in ${output_directory}/H0/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/H0/${BASE}.sorted.bam
-
-done
-
-for file in ${output_directory}/D0/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D0/${BASE}.sorted.bam
-
-done
-
-for file in ${output_directory}/D1/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D1/${BASE}.sorted.bam
-
-done
-
-for file in ${output_directory}/D20/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D20/${BASE}.sorted.bam
-
-done
+# module load ${bedtools_module}
+# module load ${python_module}
+# module load ${samtools_module}
+# export PATH=${PATH}:${script_location}
+#
+# ## Loop
+# for file in ${output_directory}/H0/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/H0/${BASE}.sorted.bam
+#
+# done
+#
+# for file in ${output_directory}/D0/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D0/${BASE}.sorted.bam
+#
+# done
+#
+# for file in ${output_directory}/D1/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D1/${BASE}.sorted.bam
+#
+# done
+#
+# for file in ${output_directory}/D20/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D20/${BASE}.sorted.bam
+#
+# done

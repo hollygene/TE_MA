@@ -112,3 +112,38 @@ bwa mem -M /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.
                       > /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/${BASE}.bam
 
                     done
+for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/*.sam
+
+do
+
+  FBASE=$(basename $file .sam)
+BASE=${FBASE%.sam}
+
+samtools flagstat /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/${BASE}.sam \
+> /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/${BASE}_stats.txt
+
+done
+
+
+module load SAMtools/1.6-foss-2016b
+
+samtools flagstat /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-A.bam \
+> /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-A.bam_stats.txt
+
+samtools flagstat /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-4.bam \
+> /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-4.bam_stats.txt
+
+samtools flagstat /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-A.bam \
+> /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-A.bam_stats.txt
+
+samtools flagstat /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-22.bam \
+> /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-22.bam_stats.txt
+
+samtools flagstat /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-7.bam \
+> /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-7.bam_stats.txt
+
+samtools flagstat /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/HM-D20-44.bam \
+> /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/HM-D20-44.bam_stats.txt
+
+samtools flagstat /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/HM-D20-11.bam \
+> /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/HM-D20-11.bam_stats.txt
