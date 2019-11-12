@@ -188,17 +188,17 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # ### sort the bam files
 # ############################
 #
-# for file in ${output_directory}/H0/*.bam
-#
-# do
-#
-# FBASE=$(basename $file .bam)
-# BASE=${FBASE%.bam}
-#
-# samtools sort -o -@ 12 ${output_directory}/H0/${BASE}.sorted.bam \
-#    ${output_directory}/H0/${BASE}.bam
-#
-# done
+for file in ${output_directory}/H0/*.bam
+
+do
+
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
+
+samtools sort -o -@ 12 ${output_directory}/H0/${BASE}.sorted.bam \
+   ${output_directory}/H0/${BASE}.bam
+
+done
 #
 # for file in ${output_directory}/D0/*.bam
 #
@@ -262,56 +262,56 @@ M=${output_directory}/H0/${BASE}_removedDupsMetrics.txt
 
 done
 
-
-for file in ${output_directory}/D0/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-REMOVE_DUPLICATES=TRUE \
-I=${output_directory}/D0/${BASE}.bam \
-O=${output_directory}/D0/${BASE}_removedDuplicates.bam \
-M=${output_directory}/D0/${BASE}_removedDupsMetrics.txt
-
-done
-
-
-for file in ${output_directory}/D1/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-REMOVE_DUPLICATES=TRUE \
-I=${output_directory}/D1/${BASE}.bam \
-O=${output_directory}/D1/${BASE}_removedDuplicates.bam \
-M=${output_directory}/D1/${BASE}_removedDupsMetrics.txt
-
-done
+#
+# for file in ${output_directory}/D0/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/D0/${BASE}.bam \
+# O=${output_directory}/D0/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/D0/${BASE}_removedDupsMetrics.txt
+#
+# done
 
 
-for file in ${output_directory}/D20/*.bam
+# for file in ${output_directory}/D1/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/D1/${BASE}.bam \
+# O=${output_directory}/D1/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/D1/${BASE}_removedDupsMetrics.txt
+#
+# done
 
-do
 
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-REMOVE_DUPLICATES=TRUE \
-I=${output_directory}/D20/${BASE}.bam \
-O=${output_directory}/D20/${BASE}_removedDuplicates.bam \
-M=${output_directory}/D20/${BASE}_removedDupsMetrics.txt
-
-done
+# for file in ${output_directory}/D20/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/D20/${BASE}.bam \
+# O=${output_directory}/D20/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/D20/${BASE}_removedDupsMetrics.txt
+#
+# done
 
 ###################################################################################################
 # Using GATK HaplotypeCaller in GVCF mode
@@ -331,8 +331,7 @@ BASE=${FBASE%*_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
-gatk -h \
-     -R ${ref_genome} \
+gatk -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/H0/${BASE}_removedDuplicates.bam \
      -ploidy 1 \
@@ -350,8 +349,7 @@ BASE=${FBASE%*_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
-gatk -h \
-     -R ${ref_genome} \
+gatk -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
@@ -369,8 +367,7 @@ BASE=${FBASE%*_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
-gatk -h \
-     -R ${ref_genome} \
+gatk -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
@@ -388,8 +385,7 @@ BASE=${FBASE%*_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
-gatk -h \
-     -R ${ref_genome} \
+gatk -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
