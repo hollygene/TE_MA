@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N D0_scripts
+#PBS -N D1_scripts
 #PBS -l nodes=1:ppn=12:HIGHMEM
 #PBS -l walltime=300:00:00
 #PBS -l mem=200gb
