@@ -52,6 +52,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # #########################################################################################
 #
 # #convert sam files to bam files
+module load ${samtools_module}
 
 for file in ${output_directory}/D1/*_aln.sam
 
@@ -86,6 +87,9 @@ done
 # ## Picard to mark duplicates
 # ###################################################################################################
 #
+
+module load ${picard_module}
+
 for file in ${output_directory}/D1/*.bam
 
 do
