@@ -122,7 +122,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # #samtools: converts sam files to bam files and sorts them
 # #########################################################################################
 #
-# module load ${samtools_module}
+module load ${samtools_module}
 #
 # #index reference genome
 #
@@ -331,7 +331,7 @@ BASE=${FBASE%*_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
-gatk -R ${ref_genome} \
+     -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/H0/${BASE}_removedDuplicates.bam \
      -ploidy 1 \
@@ -349,7 +349,7 @@ BASE=${FBASE%*_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
-gatk -R ${ref_genome} \
+     -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
@@ -367,7 +367,7 @@ BASE=${FBASE%*_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
-gatk -R ${ref_genome} \
+     -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
@@ -385,7 +385,7 @@ BASE=${FBASE%*_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
-gatk -R ${ref_genome} \
+     -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
