@@ -66,7 +66,7 @@ do
 FBASE=$(basename $file _aln.sam)
 BASE=${FBASE%_aln.sam}
 
-samtools view -bt -@ 12 ${ref_genome_dir}/*.fai \
+samtools view -bt ${ref_genome_dir}/*.fai \
 ${output_directory}/H0/${BASE}_aln.sam \
   > ${output_directory}/H0/${BASE}.bam
 
