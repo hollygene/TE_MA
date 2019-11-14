@@ -58,19 +58,19 @@ module load ${samtools_module}
 #
 # samtools faidx ${ref_genome}
 #
-# #convert sam files to bam files
-for file in ${output_directory}/H0/*_aln.sam
-
-do
-
-FBASE=$(basename $file _aln.sam)
-BASE=${FBASE%_aln.sam}
-
-samtools view -bt ${ref_genome_dir}/*.fai \
-${output_directory}/H0/${BASE}_aln.sam \
-  > ${output_directory}/H0/${BASE}.bam
-
-done
+# # #convert sam files to bam files
+# for file in ${output_directory}/H0/*_aln.sam
+#
+# do
+#
+# FBASE=$(basename $file _aln.sam)
+# BASE=${FBASE%_aln.sam}
+#
+# samtools view -bt ${ref_genome_dir}/*.fai \
+# ${output_directory}/H0/${BASE}_aln.sam \
+#   > ${output_directory}/H0/${BASE}.bam
+#
+# done
 
 # ############################
 # ### sort the bam files
@@ -95,17 +95,17 @@ done
 #
 module load ${picard_module}
 
-for file in ${output_directory}/H0/*.bam
+for file in ${output_directory}/H0/*.sorted.bam
 
 do
 
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
 
 time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
 REMOVE_DUPLICATES=TRUE \
-I=${output_directory}/H0/${BASE}.bam \
+I=${output_directory}/H0/${BASE}.sorted.bam \
 O=${output_directory}/H0/${BASE}_removedDuplicates.bam \
 M=${output_directory}/H0/${BASE}_removedDupsMetrics.txt
 
@@ -125,8 +125,8 @@ for file in ${output_directory}/H0/*_removedDuplicates.bam
 
 do
 
-FBASE=$(basename $file *_removedDuplicates.bam)
-BASE=${FBASE%*_removedDuplicates.bam}
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
 
 
 time gatk HaplotypeCaller \
@@ -147,5 +147,5 @@ gatk  --java-options "-Xmx4g -Xms4g" \
        --genomicsdb-workspace-path /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB \
        --batch-size 50 \
        --sample-name-map /home/hcm14449/Github/TE_MA/H0_sample_map.txt \
-       --tmp-dir= /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp \
+       --TMP_DIR:/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp \
        --reader-threads 12
