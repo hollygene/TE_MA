@@ -78,7 +78,7 @@ do
 FBASE=$(basename $file .bam)
 BASE=${FBASE%.bam}
 
-samtools sort -o -@ 12 ${output_directory}/D0/${BASE}.sorted.bam \
+samtools sort -@ 12 -o ${output_directory}/D0/${BASE}.sorted.bam \
    ${output_directory}/D0/${BASE}.bam
 
 done
