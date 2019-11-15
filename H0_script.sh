@@ -72,10 +72,12 @@ module load ${samtools_module}
 #
 # done
 
+
+
 # ############################
 # ### sort the bam files
 # ############################
-#
+
 for file in ${output_directory}/H0/*.bam
 
 do
@@ -87,12 +89,24 @@ samtools sort -@ 12 -o ${output_directory}/H0/${BASE}.sorted.bam \
    ${output_directory}/H0/${BASE}.bam
 
 done
+# ############################
+# ### index the bam files
+# ############################
 
+for file in ${output_directory}/H0/*.sorted.bam
 
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+samtools index -@ 12 ${output_directory}/H0/${BASE}.bam
+
+done
 # ###################################################################################################
 # ## Picard to mark duplicates
 # ###################################################################################################
-#
+# #
 module load ${picard_module}
 
 for file in ${output_directory}/H0/*.sorted.bam
@@ -134,9 +148,10 @@ time gatk HaplotypeCaller \
      -ERC GVCF \
      -I ${output_directory}/H0/${BASE}_removedDuplicates.bam \
      -ploidy 1 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
+     -O ${output_directory}/H0/${BASE}_variants.g.vcf
 
 done
+
 
 ###################################################################################################
 ### Aggregate the GVCF files using GenomicsDBImport

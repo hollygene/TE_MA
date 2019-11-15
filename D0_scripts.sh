@@ -51,7 +51,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # #samtools: converts sam files to bam files and sorts them
 # #########################################################################################
 #
-module load ${samtools_module}
+# module load ${samtools_module}
 #
 # # #convert sam files to bam files
 # for file in ${output_directory}/D0/*_aln.sam
@@ -71,39 +71,39 @@ module load ${samtools_module}
 # ### sort the bam files
 # ############################
 #
-for file in ${output_directory}/D0/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-samtools sort -@ 12 -o ${output_directory}/D0/${BASE}.sorted.bam \
-   ${output_directory}/D0/${BASE}.bam
-
-done
+# for file in ${output_directory}/D0/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# samtools sort -@ 12 -o ${output_directory}/D0/${BASE}.sorted.bam \
+#    ${output_directory}/D0/${BASE}.bam
+#
+# done
 
 # ###################################################################################################
 # ## Picard to mark duplicates
 # ###################################################################################################
 #
-module load ${picard_module}
-
-for file in ${output_directory}/D0/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-REMOVE_DUPLICATES=TRUE \
-I=${output_directory}/D0/${BASE}.sorted.bam \
-O=${output_directory}/D0/${BASE}_removedDuplicates.bam \
-M=${output_directory}/D0/${BASE}_removedDupsMetrics.txt
-
-done
+# module load ${picard_module}
+#
+# for file in ${output_directory}/D0/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/D0/${BASE}.sorted.bam \
+# O=${output_directory}/D0/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/D0/${BASE}_removedDupsMetrics.txt
+#
+# done
 
 ###################################################################################################
 # Using GATK HaplotypeCaller in GVCF mode
@@ -125,9 +125,9 @@ BASE=${FBASE%_removedDuplicates.bam}
 time gatk HaplotypeCaller \
      -R ${ref_genome} \
      -ERC GVCF \
-     -I ${output_directory}/${BASE}_removedDuplicates.bam \
+     -I ${output_directory}/D0/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
+     -O ${output_directory}/D0/${BASE}_variants.g.vcf
 
 done
 
