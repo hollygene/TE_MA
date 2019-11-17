@@ -48,6 +48,7 @@ output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out"
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 
 
+
 # #########################################################################################
 # #samtools: converts sam files to bam files and sorts them
 # #########################################################################################
@@ -89,6 +90,7 @@ samtools sort -@ 12 -o ${output_directory}/H0/${BASE}.sorted.bam \
    ${output_directory}/H0/${BASE}.bam
 
 done
+
 # ############################
 # ### index the bam files
 # ############################
@@ -145,7 +147,6 @@ BASE=${FBASE%_removedDuplicates.bam}
 
 time gatk HaplotypeCaller \
      -R ${ref_genome} \
-     -ERC GVCF \
      -I ${output_directory}/H0/${BASE}_removedDuplicates.bam \
      -ploidy 1 \
      -O ${output_directory}/H0/${BASE}_variants.g.vcf
