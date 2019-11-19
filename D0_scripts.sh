@@ -71,15 +71,15 @@ module load ${samtools_module}
 # ### sort the bam files
 # ############################
 #
-for file in ${output_directory}/D0/*.bam
+for file in ${output_directory}/*.bam
 
 do
 
 FBASE=$(basename $file .bam)
 BASE=${FBASE%.bam}
 
-samtools sort -@ 12 -o ${output_directory}/D0/${BASE}.sorted.bam \
-   ${output_directory}/D0/${BASE}.bam
+samtools sort -@ 12 -o ${output_directory}/${BASE}.sorted.bam \
+   ${output_directory}/${BASE}.bam
 
 done
 
