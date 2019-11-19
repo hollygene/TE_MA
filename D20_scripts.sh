@@ -2,8 +2,8 @@
 #PBS -q highmem_q
 #PBS -N D20_scripts
 #PBS -l nodes=1:ppn=12:HIGHMEM
-#PBS -l walltime=300:00:00
-#PBS -l mem=200gb
+#PBS -l walltime=48:00:00
+#PBS -l mem=500gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -81,6 +81,20 @@ samtools sort -@ 12 -o ${output_directory}/D20/${BASE}.sorted.bam \
 
 done
 
+# ############################
+# ### index the bam files
+# ############################
+
+for file in ${output_directory}/D20/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+samtools index -@ 12 -o ${output_directory}/D20/${BASE}.sorted.bam
+
+done
 
 # ###################################################################################################
 # ## Picard to mark duplicates
@@ -123,7 +137,6 @@ BASE=${FBASE%_removedDuplicates.bam}
 
 time gatk HaplotypeCaller \
      -R ${ref_genome} \
-     -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
      -O ${output_directory}/${BASE}_variants.g.vcf
@@ -133,6 +146,7 @@ done
 ###################################################################################################
 ### Aggregate the GVCF files using GenomicsDBImport
 ###################################################################################################
+mkdir /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/GenDB/tmp
 
 gatk --java-options "-Xmx4g -Xms4g" \
        GenomicsDBImport \

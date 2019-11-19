@@ -2,8 +2,8 @@
 #PBS -q highmem_q
 #PBS -N D0_scripts
 #PBS -l nodes=1:ppn=12:HIGHMEM
-#PBS -l walltime=300:00:00
-#PBS -l mem=200gb
+#PBS -l walltime=48:00:00
+#PBS -l mem=500gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -94,7 +94,7 @@ do
 FBASE=$(basename $file .sorted.bam)
 BASE=${FBASE%.sorted.bam}
 
-samtools index -@ 12 ${output_directory}/${BASE}.sorted.bam
+samtools index -@ 12 -o ${output_directory}/${BASE}.sorted.bam
 
 done
 # ###################################################################################################
