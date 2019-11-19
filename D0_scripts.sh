@@ -94,7 +94,7 @@ do
 FBASE=$(basename $file .sorted.bam)
 BASE=${FBASE%.sorted.bam}
 
-samtools index -@ 12 ${output_directory}/${BASE}.bam
+samtools index -@ 12 ${output_directory}/${BASE}.sorted.bam
 
 done
 # ###################################################################################################
@@ -138,7 +138,6 @@ BASE=${FBASE%_removedDuplicates.bam}
 
 time gatk HaplotypeCaller \
      -R ${ref_genome} \
-     # -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
      -O ${output_directory}/${BASE}_variants.g.vcf
@@ -148,7 +147,7 @@ done
 ###################################################################################################
 ### Aggregate the GVCF files using GenomicsDBImport
 ###################################################################################################
-mkdir /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB
+mkdir /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB/tmp
 
 gatk --java-options "-Xmx4g -Xms4g" \
        GenomicsDBImport \
