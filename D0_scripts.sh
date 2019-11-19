@@ -94,7 +94,7 @@ do
 FBASE=$(basename $file .sorted.bam)
 BASE=${FBASE%.sorted.bam}
 
-samtools index -@ 12 -o ${output_directory}/${BASE}.sorted.bam
+samtools index -@ 12 ${output_directory}/${BASE}.sorted.bam
 
 done
 # ###################################################################################################
