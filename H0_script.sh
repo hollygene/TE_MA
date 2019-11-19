@@ -2,8 +2,8 @@
 #PBS -q highmem_q
 #PBS -N H0_scripts
 #PBS -l nodes=1:ppn=12:HIGHMEM
-#PBS -l walltime=300:00:00
-#PBS -l mem=200gb
+#PBS -l walltime=30:00:00
+#PBS -l mem=500gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -79,17 +79,17 @@ module load ${samtools_module}
 # ### sort the bam files
 # ############################
 
-for file in ${output_directory}/H0/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-samtools sort -@ 12 -o ${output_directory}/H0/${BASE}.sorted.bam \
-   ${output_directory}/H0/${BASE}.bam
-
-done
+# for file in ${output_directory}/H0/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# samtools sort -@ 12 -o ${output_directory}/H0/${BASE}.sorted.bam \
+#    ${output_directory}/H0/${BASE}.bam
+#
+# done
 
 # ############################
 # ### index the bam files
@@ -102,7 +102,7 @@ do
 FBASE=$(basename $file .sorted.bam)
 BASE=${FBASE%.sorted.bam}
 
-samtools index -@ 12 ${output_directory}/H0/${BASE}.bam
+samtools index -@ 12 -o ${output_directory}/H0/${BASE}.sorted.bam
 
 done
 # ###################################################################################################
@@ -157,6 +157,7 @@ done
 ###################################################################################################
 ### Aggregate the GVCF files using GenomicsDBImport
 ###################################################################################################
+mkdir /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp
 
 gatk  --java-options "-Xmx4g -Xms4g" \
        GenomicsDBImport \
