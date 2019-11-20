@@ -114,7 +114,7 @@ BASE=${FBASE%.sorted.bam}
 
 time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
-      I=${BASE}.sorted.bam \
+      I=${output_directory}/${BASE}.sorted.bam \
       MODE=SUMMARY
 
 done
