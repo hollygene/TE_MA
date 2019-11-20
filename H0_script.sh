@@ -195,8 +195,8 @@ done
 ###################################################################################################
 ### Aggregate the GVCF files using GenomicsDBImport
 ###################################################################################################
+mkdir ${genomicsdb_workspace_path}
 mkdir ${tmp_DIR}
-mkdir ${tmp_DIR}/tmp
 
 gatk  --java-options "-Xmx4g -Xms4g" \
        GenomicsDBImport \
