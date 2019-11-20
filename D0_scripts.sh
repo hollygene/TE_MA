@@ -68,7 +68,7 @@ do
 FBASE=$(basename $file _R1_001_trimmed.fq)
 BASE=${FBASE%_R1_001_trimmed.fq}
 
-bwa mem -M -t 12 ${ref_genome} ${trimmed_data}/${BASE}_R1_001_trimmed.fq ${raw_data}/${BASE}_R2_001_trimmed.fq > ${output_directory}/${BASE}_aln.sam
+bwa mem -M -t 12 ${ref_genome} ${trimmed_data}/${BASE}_R1_001_trimmed.fq ${trimmed_data}/${BASE}_R2_001_trimmed.fq > ${output_directory}/${BASE}_aln.sam
 
 done
 # #########################################################################################
