@@ -42,7 +42,7 @@ ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus"
 #what sample should all other samples be compared to?
 # control_sample_name="Ancestor"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0"
 # mkdir $output_directory
 #location of TRIMMED data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
@@ -95,23 +95,23 @@ module load ${samtools_module}
 # ### index the bam files
 # ############################
 
-for file in ${output_directory}/H0/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-samtools index -@ 12 ${output_directory}/H0/${BASE}.sorted.bam
-
-done
+# for file in ${output_directory}/H0/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# samtools index -@ 12 ${output_directory}/H0/${BASE}.sorted.bam
+#
+# done
 # ###################################################################################################
 # ## Picard to mark duplicates
 # ###################################################################################################
 # #
 module load ${picard_module}
 
-for file in ${output_directory}/H0/*.sorted.bam
+for file in ${output_directory}/*.sorted.bam
 
 do
 
@@ -119,13 +119,27 @@ FBASE=$(basename $file .sorted.bam)
 BASE=${FBASE%.sorted.bam}
 
 time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-REMOVE_DUPLICATES=TRUE \
-I=${output_directory}/H0/${BASE}.sorted.bam \
-O=${output_directory}/H0/${BASE}_removedDuplicates.bam \
-M=${output_directory}/H0/${BASE}_removedDupsMetrics.txt
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
+      I=${output_directory}/${BASE}.sorted.bam \
+      MODE=SUMMARY
 
 done
+
+# for file in ${output_directory}/H0/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/H0/${BASE}.sorted.bam \
+# O=${output_directory}/H0/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/H0/${BASE}_removedDupsMetrics.txt
+#
+# done
 
 
 ###################################################################################################
@@ -134,35 +148,35 @@ done
 # will need to do this separtely for haploid and diploid samples
 ###################################################################################################
 
-module load ${GATK_module}
-
-### H0 samples
-for file in ${output_directory}/H0/*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -I ${output_directory}/H0/${BASE}_removedDuplicates.bam \
-     -ploidy 1 \
-     -O ${output_directory}/H0/${BASE}_variants.g.vcf
-
-done
+# module load ${GATK_module}
+#
+# ### H0 samples
+# for file in ${output_directory}/H0/*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+#
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -I ${output_directory}/H0/${BASE}_removedDuplicates.bam \
+#      -ploidy 1 \
+#      -O ${output_directory}/H0/${BASE}_variants.g.vcf
+#
+# done
 
 
 ###################################################################################################
 ### Aggregate the GVCF files using GenomicsDBImport
 ###################################################################################################
-mkdir /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp
-
-gatk  --java-options "-Xmx4g -Xms4g" \
-       GenomicsDBImport \
-       --genomicsdb-workspace-path /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB \
-       --batch-size 50 \
-       --sample-name-map /home/hcm14449/Github/TE_MA/H0_sample_map.txt \
-       --TMP_DIR:/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp \
-       --reader-threads 12
+# mkdir /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp
+#
+# gatk  --java-options "-Xmx4g -Xms4g" \
+#        GenomicsDBImport \
+#        --genomicsdb-workspace-path /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB \
+#        --batch-size 50 \
+#        --sample-name-map /home/hcm14449/Github/TE_MA/H0_sample_map.txt \
+#        --TMP_DIR:/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp \
+#        --reader-threads 12
