@@ -52,6 +52,8 @@ genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D
 sample_name_map="/home/hcm14449/Github/TE_MA/D20_sample_map.txt"
 tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/GenDB/tmp"
 
+cd ${output_directory}
+rm *
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
