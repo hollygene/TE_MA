@@ -112,7 +112,8 @@ do
 FBASE=$(basename $file .sorted.bam)
 BASE=${FBASE%.sorted.bam}
 
-java -jar picard.jar ValidateSamFile \
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
       I=${BASE}.sorted.bam \
       MODE=SUMMARY
 
