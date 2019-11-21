@@ -186,12 +186,12 @@ BASE=${FBASE%_removedDuplicates.bam}
 
 time gatk HaplotypeCaller \
      -R ${ref_genome} \
-     # -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 1 \
      -O ${output_directory}/${BASE}_variants.g.vcf
 
 done
+# -ERC GVCF \
 
 
 ###################################################################################################
