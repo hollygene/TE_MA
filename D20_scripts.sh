@@ -177,23 +177,23 @@ BASE=${FBASE%_removedDuplicates.bam}
 
 time gatk HaplotypeCaller \
      -R ${ref_genome} \
-     -ERC GVCF \
      -I ${output_directory}/${BASE}_removedDuplicates.bam \
      -ploidy 2 \
      -O ${output_directory}/${BASE}_variants.g.vcf
 
 done
+# -ERC GVCF \
 
 ###################################################################################################
 ### Aggregate the GVCF files using GenomicsDBImport
 ###################################################################################################
-mkdir ${genomicsdb_workspace_path}
-mkdir ${tmp_DIR}
-
-gatk --java-options "-Xmx4g -Xms4g" \
-       GenomicsDBImport \
-       --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-       --batch-size 50 \
-       --sample-name-map ${sample_name_map} \
-       --TMP_DIR: ${tmp_DIR} \
-       --reader-threads 12
+# mkdir ${genomicsdb_workspace_path}
+# mkdir ${tmp_DIR}
+#
+# gatk --java-options "-Xmx4g -Xms4g" \
+#        GenomicsDBImport \
+#        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
+#        --batch-size 50 \
+#        --sample-name-map ${sample_name_map} \
+#        --TMP_DIR: ${tmp_DIR} \
+#        --reader-threads 12
