@@ -63,12 +63,12 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-for file in ${raw_data}/*.fastq
+for file in ${raw_data}/*_R1_001.fastq
 
 do
 
-FBASE=$(basename $file .fastq)
-BASE=${FBASE%.fastq}
+FBASE=$(basename $file _R1_001.fastq)
+BASE=${FBASE%_R1_001.fastq}
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
