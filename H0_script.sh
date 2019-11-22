@@ -77,7 +77,7 @@ java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  
     READ_GROUP_NAME=${BASE} \
     SAMPLE_NAME=${BASE} \
     LIBRARY_NAME=H0 \
-    PLATFORM=illumina \ 
+    PLATFORM=illumina \
     SEQUENCING_CENTER=GGBC
 
 done
