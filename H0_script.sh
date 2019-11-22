@@ -46,141 +46,170 @@ output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0"
 # mkdir $output_directory
 #location of TRIMMED data to be used in the analysis
 trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed/H0"
-raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
+raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/H0"
 genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB"
 sample_name_map="/home/hcm14449/Github/TE_MA/H0_sample_map.txt"
 tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp"
 
 cd ${output_directory}
 rm *
+
+module load ${picard_module}
+module load ${bwa_module}
+module load ${samtools_module}
+module load ${GATK_module}
+
+#######################################################################################
+# create a uBAM file
+#######################################################################################
+
+for file in ${raw_data}/*.fastq
+
+do
+
+FBASE=$(basename $file .fastq)
+BASE=${FBASE%.fastq}
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+    FASTQ=${raw_data}/${BASE}_R1_001.fastq \ #first read file of pair
+    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \ #second read file of pair
+    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+    READ_GROUP_NAME=${BASE} \ #required; changed from default of A
+    SAMPLE_NAME=${BASE} \ #required
+    LIBRARY_NAME=H0 \ #required
+    PLATFORM=illumina \ #recommended
+    SEQUENCING_CENTER=GGBC
+
+done
+
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
 
-module load ${bwa_module}
+
 #
 #  #index the ref genome
-bwa index ${ref_genome}
+# bwa index ${ref_genome}
+# #
+# for file in ${trimmed_data}/*_R1_001_trimmed.fq
 #
-for file in ${trimmed_data}/*_R1_001_trimmed.fq
-
-do
-
-FBASE=$(basename $file _R1_001_trimmed.fq)
-BASE=${FBASE%_R1_001_trimmed.fq}
-
-bwa mem -M -p -t 12 ${ref_genome} ${trimmed_data}/${BASE}_R1_001_trimmed.fq ${trimmed_data}/${BASE}_R2_001_trimmed.fq > ${output_directory}/${BASE}_aln.sam
-
-done
+# do
+#
+# FBASE=$(basename $file _R1_001_trimmed.fq)
+# BASE=${FBASE%_R1_001_trimmed.fq}
+#
+# bwa mem -M -p -t 12 ${ref_genome} ${trimmed_data}/${BASE}_R1_001_trimmed.fq ${trimmed_data}/${BASE}_R2_001_trimmed.fq > ${output_directory}/${BASE}_aln.sam
+#
+# done
 
 # #########################################################################################
 # #samtools: converts sam files to bam files and sorts them
 # #########################################################################################
 #
-module load ${samtools_module}
+
 
 # #index reference genome
 #
-samtools faidx ${ref_genome}
+# samtools faidx ${ref_genome}
+# #
+# # # #convert sam files to bam files
+# for file in ${output_directory}/*_aln.sam
 #
-# # #convert sam files to bam files
-for file in ${output_directory}/*_aln.sam
-
-do
-
-FBASE=$(basename $file _aln.sam)
-BASE=${FBASE%_aln.sam}
-
-samtools view -bt ${ref_genome_dir}/*.fai \
-${output_directory}/${BASE}_aln.sam \
-  > ${output_directory}/${BASE}.bam
-
-done
+# do
+#
+# FBASE=$(basename $file _aln.sam)
+# BASE=${FBASE%_aln.sam}
+#
+# samtools view -bt ${ref_genome_dir}/*.fai \
+# ${output_directory}/${BASE}_aln.sam \
+#   > ${output_directory}/${BASE}.bam
+#
+# done
 
 
 # ############################
 # ### sort the bam files
 # ############################
 
-for file in ${output_directory}/*.bam
-
-do
-
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
-
-samtools sort -@ 12 -o ${output_directory}/${BASE}.sorted.bam \
-   ${output_directory}/${BASE}.bam
-
-done
+# for file in ${output_directory}/*.bam
+#
+# do
+#
+# FBASE=$(basename $file .bam)
+# BASE=${FBASE%.bam}
+#
+# samtools sort -@ 12 -o ${output_directory}/${BASE}.sorted.bam \
+#    ${output_directory}/${BASE}.bam
+#
+# done
 
 # ############################
 # ### index the bam files
 # ############################
 
-for file in ${output_directory}/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-samtools index -@ 12 ${output_directory}/${BASE}.sorted.bam
-
-done
+# for file in ${output_directory}/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# samtools index -@ 12 ${output_directory}/${BASE}.sorted.bam
+#
+# done
 
 ###################################################################################################
 # ## Picard to Validate Sam Files and mark duplicates
 # ###################################################################################################
 # #
-module load ${picard_module}
 #
-for file in ${output_directory}/*.sorted.bam
-
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
-      I=${output_directory}/${BASE}.sorted.bam \
-      IGNORE_WARNINGS=true \
-      MODE=VERBOSE
-
-done
+# #
+# for file in ${output_directory}/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
+#       I=${output_directory}/${BASE}.sorted.bam \
+#       IGNORE_WARNINGS=true \
+#       MODE=VERBOSE
+#
+# done
 ##################################################################################################
-for file in ${output_directory}/*.sorted.bam
+# for file in ${output_directory}/*.sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file .sorted.bam)
+# BASE=${FBASE%.sorted.bam}
+#
+# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/${BASE}.sorted.bam \
+# O=${output_directory}/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/${BASE}_removedDupsMetrics.txt
+#
+# done
 
-do
-
-FBASE=$(basename $file .sorted.bam)
-BASE=${FBASE%.sorted.bam}
-
-time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-REMOVE_DUPLICATES=TRUE \
-I=${output_directory}/${BASE}.sorted.bam \
-O=${output_directory}/${BASE}_removedDuplicates.bam \
-M=${output_directory}/${BASE}_removedDupsMetrics.txt
-
-done
-
-#### check the bam files again
-for file in ${output_directory}/*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-
-time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
-      I=${output_directory}/${BASE}_removedDuplicates.bam \
-      IGNORE_WARNINGS=true \
-      MODE=VERBOSE
-
-done
+# #### check the bam files again
+# for file in ${output_directory}/*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+#
+# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
+#       I=${output_directory}/${BASE}_removedDuplicates.bam \
+#       IGNORE_WARNINGS=true \
+#       MODE=VERBOSE
+#
+# done
 ##################################################################################################
 ###################################################################################################
 # Using GATK HaplotypeCaller in GVCF mode
@@ -188,24 +217,24 @@ done
 # will need to do this separtely for haploid and diploid samples
 ###################################################################################################
 
-module load ${GATK_module}
+
 
 ### H0 samples
-for file in ${output_directory}/*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -I ${output_directory}/${BASE}_removedDuplicates.bam \
-     -ploidy 1 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
-
-done
+# for file in ${output_directory}/*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+#
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -I ${output_directory}/${BASE}_removedDuplicates.bam \
+#      -ploidy 1 \
+#      -O ${output_directory}/${BASE}_variants.g.vcf
+#
+# done
 # -ERC GVCF \
 
 
