@@ -150,21 +150,24 @@ tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp"
 #
 # done
 ##################################################################################################
-# for file in ${output_directory}/*.sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file .sorted.bam)
-# BASE=${FBASE%.sorted.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/${BASE}.sorted.bam \
-# O=${output_directory}/${BASE}_removedDuplicates.bam \
-# M=${output_directory}/${BASE}_removedDupsMetrics.txt
-#
-# done
+for file in ${output_directory}/*.sam
+
+do
+
+FBASE=$(basename $file .sam)
+BASE=${FBASE%.sam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/${BASE}.sam \
+O=${output_directory}/${BASE}_removedDuplicates.bam \
+M=${output_directory}/${BASE}_removedDupsMetrics.txt
+
+done
+
+
+
 
 
 ###################################################################################################
