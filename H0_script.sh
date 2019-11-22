@@ -71,13 +71,13 @@ FBASE=$(basename $file .fastq)
 BASE=${FBASE%.fastq}
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-    FASTQ=${raw_data}/${BASE}_R1_001.fastq \ #first read file of pair
-    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \ #second read file of pair
+    FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-    READ_GROUP_NAME=${BASE} \ #required; changed from default of A
-    SAMPLE_NAME=${BASE} \ #required
-    LIBRARY_NAME=H0 \ #required
-    PLATFORM=illumina \ #recommended
+    READ_GROUP_NAME=${BASE} \
+    SAMPLE_NAME=${BASE} \
+    LIBRARY_NAME=H0 \
+    PLATFORM=illumina \ 
     SEQUENCING_CENTER=GGBC
 
 done
