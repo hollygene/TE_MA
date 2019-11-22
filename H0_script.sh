@@ -161,13 +161,24 @@ time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
 REMOVE_DUPLICATES=TRUE \
 I=${output_directory}/${BASE}.sam \
-O=${output_directory}/${BASE}_removedDuplicates.bam \
+O=${output_directory}/${BASE}_removedDuplicates.sam \
 M=${output_directory}/${BASE}_removedDupsMetrics.txt
 
 done
 
 
+for file in ${output_directory}/*_removedDuplicates.sam
 
+do
+
+FBASE=$(basename $file _removedDuplicates.sam)
+BASE=${FBASE%_removedDuplicates.sam}
+
+samtools view -bt ${ref_genome_dir}/*.fai \
+${output_directory}/${BASE}_removedDuplicates.sam \
+  > ${output_directory}/${BASE}_removedDuplicates.bam
+
+done
 
 
 ###################################################################################################
