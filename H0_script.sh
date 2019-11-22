@@ -59,26 +59,72 @@ module load ${bwa_module}
 module load ${samtools_module}
 module load ${GATK_module}
 
+### Much of the following obtained from https://software.broadinstitute.org/gatk/documentation/article?id=6483#step3
 #######################################################################################
 # create a uBAM file
 #######################################################################################
 
-for file in ${raw_data}/*_R1_001.fastq
+# for file in ${raw_data}/*_R1_001.fastq
+#
+# do
+#
+# FBASE=$(basename $file _R1_001.fastq)
+# BASE=${FBASE%_R1_001.fastq}
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+#     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+#     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+#     READ_GROUP_NAME=${BASE} \
+#     SAMPLE_NAME=${BASE} \
+#     LIBRARY_NAME=H0 \
+#     PLATFORM=illumina \
+#     SEQUENCING_CENTER=GGBC
+#
+# done
+
+#######################################################################################
+# mark Illumina adapters
+#######################################################################################
+
+mkdir ${raw_data}/TMP
+
+for file in ${raw_data}/*_fastqtosam.bam
 
 do
 
-FBASE=$(basename $file _R1_001.fastq)
-BASE=${FBASE%_R1_001.fastq}
+FBASE=$(basename $file _fastqtosam.bam)
+BASE=${FBASE%_fastqtosam.bam}
+
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-    FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-    READ_GROUP_NAME=${BASE} \
-    SAMPLE_NAME=${BASE} \
-    LIBRARY_NAME=H0 \
-    PLATFORM=illumina \
-    SEQUENCING_CENTER=GGBC
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+I=${raw_data}/${BASE}_fastqtosam.bam \
+O=${raw_data}/${BASE}_markilluminaadapters.bam \
+M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \ #naming required
+TMP_DIR=${raw_data}/TMP #optional to process large files
+
+done
+
+#######################################################################################
+# convert BAM to FASTQ and discount adapter sequences using SamToFastq
+#######################################################################################
+
+for file in ${raw_data}/*_markilluminaadapters.bam
+
+do
+
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar SamToFastq \
+I=${raw_data}/${BASE}_markilluminaadapters.bam \
+FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
+CLIPPING_ATTRIBUTE=XT \
+CLIPPING_ACTION=2 \
+INTERLEAVE=true \
+NON_PF=true \
+TMP_DIR=${raw_data}/TMP
 
 done
 
@@ -86,21 +132,21 @@ done
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
 
+ #index the ref genome
+bwa index ${ref_genome}
+#
+for file in ${raw_data}/*_samtofastq_interleaved.fq
 
-#
-#  #index the ref genome
-# bwa index ${ref_genome}
-# #
-# for file in ${trimmed_data}/*_R1_001_trimmed.fq
-#
-# do
-#
-# FBASE=$(basename $file _R1_001_trimmed.fq)
-# BASE=${FBASE%_R1_001_trimmed.fq}
-#
-# bwa mem -M -p -t 12 ${ref_genome} ${trimmed_data}/${BASE}_R1_001_trimmed.fq ${trimmed_data}/${BASE}_R2_001_trimmed.fq > ${output_directory}/${BASE}_aln.sam
-#
-# done
+do
+
+FBASE=$(basename $file _samtofastq_interleaved.fq)
+BASE=${FBASE%_samtofastq_interleaved.fq}
+
+bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
+
+
+
+done
 
 # #########################################################################################
 # #samtools: converts sam files to bam files and sorts them
