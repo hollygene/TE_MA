@@ -167,6 +167,9 @@ M=${output_directory}/${BASE}_removedDupsMetrics.txt
 done
 
 
+###############################################################################################
+module load ${samtools_module}
+
 for file in ${output_directory}/*_removedDuplicates.sam
 
 do
