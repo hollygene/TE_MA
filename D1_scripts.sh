@@ -83,6 +83,72 @@ java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  
 
 done
 
+
+#######################################################################################
+# mark Illumina adapters
+#######################################################################################
+
+mkdir ${raw_data}/TMP
+
+for file in ${raw_data}/*_fastqtosam.bam
+
+do
+
+FBASE=$(basename $file _fastqtosam.bam)
+BASE=${FBASE%_fastqtosam.bam}
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+I=${raw_data}/${BASE}_fastqtosam.bam \
+O=${raw_data}/${BASE}_markilluminaadapters.bam \
+M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \ #naming required
+TMP_DIR=${raw_data}/TMP #optional to process large files
+
+done
+
+#######################################################################################
+# convert BAM to FASTQ and discount adapter sequences using SamToFastq
+#######################################################################################
+
+for file in ${raw_data}/*_markilluminaadapters.bam
+
+do
+
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar SamToFastq \
+I=${raw_data}/${BASE}_markilluminaadapters.bam \
+FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
+CLIPPING_ATTRIBUTE=XT \
+CLIPPING_ACTION=2 \
+INTERLEAVE=true \
+NON_PF=true \
+TMP_DIR=${raw_data}/TMP
+
+done
+
+#######################################################################################
+# works: aligns samples to reference genome. Output is a .sam file
+#######################################################################################
+
+ #index the ref genome
+bwa index ${ref_genome}
+#
+for file in ${raw_data}/*_samtofastq_interleaved.fq
+
+do
+
+FBASE=$(basename $file _samtofastq_interleaved.fq)
+BASE=${FBASE%_samtofastq_interleaved.fq}
+
+bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
+
+
+
+done
+
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
