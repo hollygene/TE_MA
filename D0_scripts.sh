@@ -125,7 +125,7 @@ tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB/tmp"
 # ## Picard to mark duplicates
 # ###################################################################################################
 #
-# module load ${picard_module}
+module load ${picard_module}
 #
 #
 # for file in ${output_directory}/*.sorted.bam
