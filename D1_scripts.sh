@@ -24,7 +24,7 @@ bedtools_module="BEDTools/2.28.0-foss-2018a"
 #location of python module
 python_module="Python/3.5.2-foss-2016b"
 #location of picard module
-picard_module="picard/2.4.1-Java-1.8.0_144"
+picard_module="picard/2.16.0-Java-1.8.0_1444"
 #location of GATK module
 GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
 #location of bamtoBigWig script and accessories
@@ -97,12 +97,32 @@ do
 FBASE=$(basename $file _fastqtosam.bam)
 BASE=${FBASE%_fastqtosam.bam}
 
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144 MarkIlluminaAdapters \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144 MarkIlluminaAdapters \
 I=${raw_data}/${BASE}_fastqtosam.bam \
 O=${raw_data}/${BASE}_markilluminaadapters.bam \
 M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
 TMP_DIR=${raw_data}/TMP
+
+done
+
+#######################################################################################
+# #
+#
+module load ${picard_module}
+
+
+for file in ${output_directory}/*_markilluminaadapters.bam
+
+do
+
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
+      I=${raw_data}/${BASE}_markilluminaadapters.bam \
+      MODE=VERBOSE
 
 done
 
@@ -117,8 +137,8 @@ do
 FBASE=$(basename $file _markilluminaadapters.bam)
 BASE=${FBASE%_markilluminaadapters.bam}
 
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/picard/2.4.1-Java-1.8.0_144 SamToFastq \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/picard/2.16.0-Java-1.8.0_144 SamToFastq \
 I=${raw_data}/${BASE}_markilluminaadapters.bam \
 FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
 CLIPPING_ATTRIBUTE=XT \
@@ -222,24 +242,7 @@ done
 # # ###################################################################################################
 # # ## Picard to mark duplicates
 # # ###################################################################################################
-# #
-#
-# module load ${picard_module}
-#
-#
-# for file in ${output_directory}/*.sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file .sorted.bam)
-# BASE=${FBASE%.sorted.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
-#       I=${output_directory}/${BASE}.sorted.bam \
-#       MODE=VERBOSE
-#
-# done
+
 #
 # # ###################################################################################################
 #

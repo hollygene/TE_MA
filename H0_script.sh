@@ -101,7 +101,9 @@ java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  
 I=${output_directory}/${BASE}_fastqtosam.bam \
 O=${output_directory}/${BASE}_markilluminaadapters.bam \
 M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-TMP_DIR=${output_directory}/TMP
+TMP_DIR=${output_directory}/TMP \
+USE_JDK_DEFLATER=true \
+USE_JDK_INFLATER=true
 
 done
 
