@@ -89,7 +89,7 @@ module load ${GATK_module}
 
 mkdir ${output_directory}/TMP
 
-for file in ${raw_data}/*_fastqtosam.bam
+for file in ${output_directory}/*_fastqtosam.bam
 
 do
 
@@ -101,7 +101,7 @@ java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  
 I=${output_directory}/${BASE}_fastqtosam.bam \
 O=${output_directory}/${BASE}_markilluminaadapters.bam \
 M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-TMP_DIR=${output_directory}/TMP 
+TMP_DIR=${output_directory}/TMP
 
 done
 
