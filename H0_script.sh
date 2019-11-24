@@ -100,8 +100,8 @@ java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
 I=${output_directory}/${BASE}_fastqtosam.bam \
 O=${output_directory}/${BASE}_markilluminaadapters.bam \
-M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \ #naming required
-TMP_DIR=${output_directory}/TMP #optional to process large files
+M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
+TMP_DIR=${output_directory}/TMP 
 
 done
 
