@@ -51,8 +51,8 @@ genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H
 sample_name_map="/home/hcm14449/Github/TE_MA/H0_sample_map.txt"
 tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp"
 
-cd ${output_directory}
-rm *
+# cd ${output_directory}
+# rm *
 
 module load ${picard_module}
 module load ${bwa_module}
@@ -64,24 +64,24 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-# for file in ${raw_data}/*_R1_001.fastq
-#
-# do
-#
-# FBASE=$(basename $file _R1_001.fastq)
-# BASE=${FBASE%_R1_001.fastq}
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-#     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-#     OUTPUT=${output_directory}/${BASE}_fastqtosam.bam \
-#     READ_GROUP_NAME=${BASE} \
-#     SAMPLE_NAME=${BASE} \
-#     LIBRARY_NAME=H0 \
-#     PLATFORM=illumina \
-#     SEQUENCING_CENTER=GGBC
-#
-# done
+for file in ${raw_data}/*_R1_001.fastq
+
+do
+
+FBASE=$(basename $file _R1_001.fastq)
+BASE=${FBASE%_R1_001.fastq}
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+    FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+    OUTPUT=${output_directory}/${BASE}_fastqtosam.bam \
+    READ_GROUP_NAME=${BASE} \
+    SAMPLE_NAME=${BASE} \
+    LIBRARY_NAME=H0 \
+    PLATFORM=illumina \
+    SEQUENCING_CENTER=GGBC
+
+done
 
 #######################################################################################
 # mark Illumina adapters
