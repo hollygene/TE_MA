@@ -24,7 +24,7 @@ bedtools_module="BEDTools/2.28.0-foss-2018a"
 #location of python module
 python_module="Python/3.5.2-foss-2016b"
 #location of picard module
-picard_module="picard/2.16.0-Java-1.8.0_144"
+picard_module="picard/2.4.1-Java-1.8.0_144"
 #location of GATK module
 GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
 #location of bamtoBigWig script and accessories
@@ -87,7 +87,7 @@ module load ${GATK_module}
 # mark Illumina adapters
 #######################################################################################
 
-mkdir ${raw_data}/TMP
+mkdir ${output_directory}/TMP
 
 for file in ${raw_data}/*_fastqtosam.bam
 
@@ -98,10 +98,10 @@ BASE=${FBASE%_fastqtosam.bam}
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-I=${raw_data}/${BASE}_fastqtosam.bam \
-O=${raw_data}/${BASE}_markilluminaadapters.bam \
-M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \ #naming required
-TMP_DIR=${raw_data}/TMP #optional to process large files
+I=${output_directory}/${BASE}_fastqtosam.bam \
+O=${output_directory}/${BASE}_markilluminaadapters.bam \
+M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \ #naming required
+TMP_DIR=${output_directory}/TMP #optional to process large files
 
 done
 
@@ -118,13 +118,13 @@ BASE=${FBASE%_markilluminaadapters.bam}
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar SamToFastq \
-I=${raw_data}/${BASE}_markilluminaadapters.bam \
-FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
+I=${output_directory}/${BASE}_markilluminaadapters.bam \
+FASTQ=${output_directory}/${BASE}_samtofastq_interleaved.fq \
 CLIPPING_ATTRIBUTE=XT \
 CLIPPING_ACTION=2 \
 INTERLEAVE=true \
 NON_PF=true \
-TMP_DIR=${raw_data}/TMP
+TMP_DIR=${output_directory}/TMP
 
 done
 
@@ -135,14 +135,14 @@ done
  #index the ref genome
 bwa index ${ref_genome}
 #
-for file in ${raw_data}/*_samtofastq_interleaved.fq
+for file in ${output_directory}/*_samtofastq_interleaved.fq
 
 do
 
 FBASE=$(basename $file _samtofastq_interleaved.fq)
 BASE=${FBASE%_samtofastq_interleaved.fq}
 
-bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
+bwa mem -M -p -t 12 ${ref_genome} ${output_directory}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
 
 
 
