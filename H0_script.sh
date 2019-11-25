@@ -51,8 +51,8 @@ genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H
 sample_name_map="/home/hcm14449/Github/TE_MA/H0_sample_map.txt"
 tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp"
 
-# cd ${output_directory}
-# rm *
+cd ${output_directory}
+rm *
 
 module load ${picard_module}
 module load ${bwa_module}
@@ -74,7 +74,7 @@ java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-    OUTPUT=${output_directory}/${BASE}_fastqtosam.bam \
+    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
     READ_GROUP_NAME=${BASE} \
     SAMPLE_NAME=${BASE} \
     LIBRARY_NAME=H0 \
@@ -87,9 +87,9 @@ done
 # mark Illumina adapters
 #######################################################################################
 
-mkdir ${output_directory}/TMP
+mkdir ${raw_data}/TMP
 
-for file in ${output_directory}/*_fastqtosam.bam
+for file in ${raw_data}/*_fastqtosam.bam
 
 do
 
@@ -98,12 +98,11 @@ BASE=${FBASE%_fastqtosam.bam}
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-I=${output_directory}/${BASE}_fastqtosam.bam \
-O=${output_directory}/${BASE}_markilluminaadapters.bam \
-M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-TMP_DIR=${output_directory}/TMP \
-USE_JDK_DEFLATER=true \
-USE_JDK_INFLATER=true
+I=${raw_data}/${BASE}_fastqtosam.bam \
+O=${raw_data}/${BASE}_markilluminaadapters.bam \
+M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+TMP_DIR=${raw_data}/TMP \
+USE_JDK_DEFLATER=true USE_JDK_INFLATER=true
 
 done
 
@@ -120,13 +119,13 @@ BASE=${FBASE%_markilluminaadapters.bam}
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar SamToFastq \
-I=${output_directory}/${BASE}_markilluminaadapters.bam \
-FASTQ=${output_directory}/${BASE}_samtofastq_interleaved.fq \
+I=${raw_data}/${BASE}_markilluminaadapters.bam \
+FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
 CLIPPING_ATTRIBUTE=XT \
 CLIPPING_ACTION=2 \
 INTERLEAVE=true \
 NON_PF=true \
-TMP_DIR=${output_directory}/TMP
+TMP_DIR=${raw_data}/TMP
 
 done
 
@@ -137,18 +136,20 @@ done
  #index the ref genome
 bwa index ${ref_genome}
 #
-for file in ${output_directory}/*_samtofastq_interleaved.fq
+for file in ${raw_data}/*_samtofastq_interleaved.fq
 
 do
 
 FBASE=$(basename $file _samtofastq_interleaved.fq)
 BASE=${FBASE%_samtofastq_interleaved.fq}
 
-bwa mem -M -p -t 12 ${ref_genome} ${output_directory}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
+bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
 
 
 
 done
+
+
 
 # #########################################################################################
 # #samtools: converts sam files to bam files and sorts them

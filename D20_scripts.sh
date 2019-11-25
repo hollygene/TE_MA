@@ -47,7 +47,7 @@ output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20"
 #location of TRIMMED data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D20"
 trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed/D20"
-raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
+# raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/GenDB"
 sample_name_map="/home/hcm14449/Github/TE_MA/D20_sample_map.txt"
 tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/GenDB/tmp"
@@ -77,7 +77,7 @@ java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  
     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
     READ_GROUP_NAME=${BASE} \
     SAMPLE_NAME=${BASE} \
-    LIBRARY_NAME=H0 \
+    LIBRARY_NAME=D20 \
     PLATFORM=illumina \
     SEQUENCING_CENTER=GGBC
 
@@ -87,9 +87,9 @@ done
 # mark Illumina adapters
 #######################################################################################
 
-mkdir ${output_directory}/TMP
+mkdir ${raw_data}/TMP
 
-for file in ${output_directory}/*_fastqtosam.bam
+for file in ${raw_data}/*_fastqtosam.bam
 
 do
 
@@ -98,10 +98,10 @@ BASE=${FBASE%_fastqtosam.bam}
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-I=${output_directory}/${BASE}_fastqtosam.bam \
-O=${output_directory}/${BASE}_markilluminaadapters.bam \
-M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-TMP_DIR=${output_directory}/TMP \
+I=${raw_data}/${BASE}_fastqtosam.bam \
+O=${raw_data}/${BASE}_markilluminaadapters.bam \
+M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+TMP_DIR=${raw_data}/TMP \
 USE_JDK_DEFLATER=true \
 USE_JDK_INFLATER=true
 
