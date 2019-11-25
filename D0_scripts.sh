@@ -108,44 +108,66 @@ done
 # convert BAM to FASTQ and discount adapter sequences using SamToFastq
 #######################################################################################
 
-for file in ${raw_data}/*_markilluminaadapters.bam
-
-do
-
-FBASE=$(basename $file _markilluminaadapters.bam)
-BASE=${FBASE%_markilluminaadapters.bam}
-
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-I=${raw_data}/${BASE}_markilluminaadapters.bam \
-FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
-CLIPPING_ATTRIBUTE=XT \
-CLIPPING_ACTION=2 \
-INTERLEAVE=true \
-NON_PF=true \
-TMP_DIR=${raw_data}/TMP
-
-done
+# for file in ${raw_data}/*_markilluminaadapters.bam
+#
+# do
+#
+# FBASE=$(basename $file _markilluminaadapters.bam)
+# BASE=${FBASE%_markilluminaadapters.bam}
+#
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+# I=${raw_data}/${BASE}_markilluminaadapters.bam \
+# FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
+# CLIPPING_ATTRIBUTE=XT \
+# CLIPPING_ACTION=2 \
+# INTERLEAVE=true \
+# NON_PF=true \
+# TMP_DIR=${raw_data}/TMP
+#
+# done
 
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
 
  #index the ref genome
-bwa index ${ref_genome}
+# bwa index ${ref_genome}
+# #
+# for file in ${raw_data}/*_samtofastq_interleaved.fq
 #
-for file in ${raw_data}/*_samtofastq_interleaved.fq
+# do
+#
+# FBASE=$(basename $file _samtofastq_interleaved.fq)
+# BASE=${FBASE%_samtofastq_interleaved.fq}
+#
+# bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
+#
+#
+#
+# done
 
-do
 
-FBASE=$(basename $file _samtofastq_interleaved.fq)
-BASE=${FBASE%_samtofastq_interleaved.fq}
+### Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 
-bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144 SamToFastq \
+I=${raw_data}/${BASE}_markilluminaadapters.bam \
+FASTQ=/dev/stdout \
+CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+TMP_DIR=/path/shlee | \
+bwa mem -M -t 7 -p ${ref_genome} /dev/stdin | \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144 MergeBamAlignment \
+ALIGNED_BAM=/dev/stdin \
+UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
+OUTPUT=${raw_data}/${BASE}_piped.bam \
+R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+TMP_DIR=/path/shlee
 
-
-
-done
 
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
