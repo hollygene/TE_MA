@@ -24,7 +24,7 @@ bedtools_module="BEDTools/2.28.0-foss-2018a"
 #location of python module
 python_module="Python/3.5.2-foss-2016b"
 #location of picard module
-picard_module="picard/2.16.0-Java-1.8.0_1444"
+picard_module="picard/2.4.1-Java-1.8.0_144"
 #location of GATK module
 GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
 #location of bamtoBigWig script and accessories
@@ -64,33 +64,33 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-# for file in ${raw_data}/*_R1_001.fastq
-#
-# do
-#
-# FBASE=$(basename $file _R1_001.fastq)
-# BASE=${FBASE%_R1_001.fastq}
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-#     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-#     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#     READ_GROUP_NAME=${BASE} \
-#     SAMPLE_NAME=${BASE} \
-#     LIBRARY_NAME=H0 \
-#     PLATFORM=illumina \
-#     SEQUENCING_CENTER=GGBC
-#
-# done
+for file in ${raw_data}/*_R1_001.fastq
+
+do
+
+FBASE=$(basename $file _R1_001.fastq)
+BASE=${FBASE%_R1_001.fastq}
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+    FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+    READ_GROUP_NAME=${BASE} \
+    SAMPLE_NAME=${BASE} \
+    LIBRARY_NAME=H0 \
+    PLATFORM=illumina \
+    SEQUENCING_CENTER=GGBC
+
+done
 
 
 #######################################################################################
 # mark Illumina adapters
 #######################################################################################
 
-mkdir ${raw_data}/TMP
+mkdir ${output_directory}/TMP
 
-for file in ${raw_data}/*_fastqtosam.bam
+for file in ${output_directory}/*_fastqtosam.bam
 
 do
 
@@ -98,11 +98,13 @@ FBASE=$(basename $file _fastqtosam.bam)
 BASE=${FBASE%_fastqtosam.bam}
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144 MarkIlluminaAdapters \
-I=${raw_data}/${BASE}_fastqtosam.bam \
-O=${raw_data}/${BASE}_markilluminaadapters.bam \
-M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-TMP_DIR=${raw_data}/TMP
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+I=${output_directory}/${BASE}_fastqtosam.bam \
+O=${output_directory}/${BASE}_markilluminaadapters.bam \
+M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
+TMP_DIR=${output_directory}/TMP \
+USE_JDK_DEFLATER=true \
+USE_JDK_INFLATER=true
 
 done
 
