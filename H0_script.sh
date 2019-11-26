@@ -284,38 +284,48 @@ done
 # apply appropriate ploidy for each sample
 # will need to do this separtely for haploid and diploid samples
 ###################################################################################################
+# ###################################################################################################
+# #
+module load ${GATK_module}
+
+#### D20 samples
+for file in ${raw_data}/${BASE}_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${raw_data}/${BASE}_piped.bam \
+     -ploidy 2 \
+     -O ${output_directory}/${BASE}_variants.g.vcf
+
+done
 
 
-
-### H0 samples
-# for file in ${output_directory}/*_removedDuplicates.bam
-#
-# do
-#
-# FBASE=$(basename $file _removedDuplicates.bam)
-# BASE=${FBASE%_removedDuplicates.bam}
-#
+# module load GATK/4.0.3.0-Java-1.8.0_144
 #
 # time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -I ${output_directory}/${BASE}_removedDuplicates.bam \
-#      -ploidy 1 \
-#      -O ${output_directory}/${BASE}_variants.g.vcf
+#      -R /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
+#      -ERC GVCF \
+#      -I /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D0/HM-D0-10_piped.bam \
+#      -ploidy 2 \
+#      -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-10_variants.g.vcf
 #
-# done
-# -ERC GVCF \
-
-
-###################################################################################################
-### Aggregate the GVCF files using GenomicsDBImport
-###################################################################################################
-# mkdir ${genomicsdb_workspace_path}
-# mkdir ${tmp_DIR}
 #
-# gatk  --java-options "-Xmx4g -Xms4g" \
-#        GenomicsDBImport \
-#        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-#        --batch-size 50 \
-#        --sample-name-map ${sample_name_map} \
-#        --TMP_DIR:${tmp_DIR}/tmp \
-#        --reader-threads 12
+# ###################################################################################################
+# ### Aggregate the GVCF files using GenomicsDBImport
+# ###################################################################################################
+mkdir ${genomicsdb_workspace_path}
+mkdir ${tmp_DIR}
+
+gatk --java-options "-Xmx4g -Xms4g" \
+       GenomicsDBImport \
+       --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
+       --batch-size 50 \
+       --sample-name-map ${sample_name_map} \
+       --TMP_DIR: ${tmp_DIR} \
+       --reader-threads 12
