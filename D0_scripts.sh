@@ -159,13 +159,13 @@ BASE=${FBASE%_markilluminaadapters.bam}
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
 I=${raw_data}/${BASE}_markilluminaadapters.bam \
-FASTQ=STDOUT \
+FASTQ=/dev/stdout \
 CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
 TMP_DIR=${raw_data}/TMP | \
-bwa mem -M -t 7 -p ${ref_genome} STDIN | \
+bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-ALIGNED_BAM=STDIN \
+ALIGNED_BAM=/dev/stdin\
 UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
 OUTPUT=${raw_data}/${BASE}_piped.bam \
 R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
