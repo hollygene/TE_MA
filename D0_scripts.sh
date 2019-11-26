@@ -165,7 +165,7 @@ TMP_DIR=${raw_data}/TMP | \
 bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-ALIGNED_BAM=/dev/stdin\
+ALIGNED_BAM=/dev/stdin \
 UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
 OUTPUT=${raw_data}/${BASE}_piped.bam \
 R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
