@@ -51,8 +51,8 @@ genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H
 sample_name_map="/home/hcm14449/Github/TE_MA/H0_sample_map.txt"
 tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp"
 
-cd ${output_directory}
-rm *
+# cd ${output_directory}
+# rm *
 
 module load ${picard_module}
 module load ${bwa_module}
@@ -64,47 +64,47 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-for file in ${raw_data}/*_R1_001.fastq
-
-do
-
-FBASE=$(basename $file _R1_001.fastq)
-BASE=${FBASE%_R1_001.fastq}
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-    FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-    READ_GROUP_NAME=${BASE} \
-    SAMPLE_NAME=${BASE} \
-    LIBRARY_NAME=H0 \
-    PLATFORM=illumina \
-    SEQUENCING_CENTER=GGBC
-
-done
+# for file in ${raw_data}/*_R1_001.fastq
+#
+# do
+#
+# FBASE=$(basename $file _R1_001.fastq)
+# BASE=${FBASE%_R1_001.fastq}
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+#     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+#     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+#     READ_GROUP_NAME=${BASE} \
+#     SAMPLE_NAME=${BASE} \
+#     LIBRARY_NAME=H0 \
+#     PLATFORM=illumina \
+#     SEQUENCING_CENTER=GGBC
+#
+# done
 
 #######################################################################################
 # mark Illumina adapters
 #######################################################################################
 
-mkdir ${raw_data}/TMP
-
-for file in ${raw_data}/*_fastqtosam.bam
-
-do
-
-FBASE=$(basename $file _fastqtosam.bam)
-BASE=${FBASE%_fastqtosam.bam}
-
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-I=${raw_data}/${BASE}_fastqtosam.bam \
-O=${raw_data}/${BASE}_markilluminaadapters.bam \
-M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-TMP_DIR=${raw_data}/TMP \
-USE_JDK_DEFLATER=true USE_JDK_INFLATER=true
-
-done
+# mkdir ${raw_data}/TMP
+#
+# for file in ${raw_data}/*_fastqtosam.bam
+#
+# do
+#
+# FBASE=$(basename $file _fastqtosam.bam)
+# BASE=${FBASE%_fastqtosam.bam}
+#
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+# I=${raw_data}/${BASE}_fastqtosam.bam \
+# O=${raw_data}/${BASE}_markilluminaadapters.bam \
+# M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+# TMP_DIR=${raw_data}/TMP \
+# USE_JDK_DEFLATER=true USE_JDK_INFLATER=true
+#
+# done
 
 #######################################################################################
 # convert BAM to FASTQ and discount adapter sequences using SamToFastq
@@ -153,14 +153,14 @@ done
 ### Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144 SamToFastq \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
 I=${raw_data}/${BASE}_markilluminaadapters.bam \
 FASTQ=/dev/stdout \
 CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
 TMP_DIR=/path/shlee | \
 bwa mem -M -t 7 -p ${ref_genome} /dev/stdin | \
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144 MergeBamAlignment \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
 ALIGNED_BAM=/dev/stdin \
 UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
 OUTPUT=${raw_data}/${BASE}_piped.bam \
