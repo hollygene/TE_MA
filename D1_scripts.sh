@@ -173,6 +173,12 @@ module load ${GATK_module}
 
 
 ### Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
+for file in ${raw_data}/*_markilluminaadapters.bam
+
+do
+
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
@@ -192,7 +198,7 @@ INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
 PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
 TMP_DIR=/path/shlee
 
-
+done
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
