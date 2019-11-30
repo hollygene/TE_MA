@@ -305,7 +305,7 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 #### D20 samples
-for file in ${raw_data}/${BASE}_piped.bam
+for file in ${raw_data}/${BASE}*_piped.bam
 
 do
 
