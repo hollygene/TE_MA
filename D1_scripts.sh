@@ -173,32 +173,32 @@ module load ${GATK_module}
 
 
 ### Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
-for file in ${raw_data}/*_markilluminaadapters.bam
-
-do
-
-FBASE=$(basename $file _markilluminaadapters.bam)
-BASE=${FBASE%_markilluminaadapters.bam}
-
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-I=${raw_data}/${BASE}_markilluminaadapters.bam \
-FASTQ=/dev/stdout \
-CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-TMP_DIR=${raw_data}/TMP | \
-bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-ALIGNED_BAM=/dev/stdin \
-UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
-OUTPUT=${raw_data}/${BASE}_piped.bam \
-R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-TMP_DIR=${raw_data}/TMP
-
-done
+# for file in ${raw_data}/*_markilluminaadapters.bam
+#
+# do
+#
+# FBASE=$(basename $file _markilluminaadapters.bam)
+# BASE=${FBASE%_markilluminaadapters.bam}
+#
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+# I=${raw_data}/${BASE}_markilluminaadapters.bam \
+# FASTQ=/dev/stdout \
+# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+# TMP_DIR=${raw_data}/TMP | \
+# bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+# ALIGNED_BAM=/dev/stdin \
+# UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
+# OUTPUT=${raw_data}/${BASE}_piped.bam \
+# R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+# TMP_DIR=${raw_data}/TMP
+#
+# done
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
@@ -333,13 +333,13 @@ done
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
-mkdir ${genomicsdb_workspace_path}
-mkdir ${tmp_DIR}
-
-gatk --java-options "-Xmx4g -Xms4g" \
-       GenomicsDBImport \
-       --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-       --batch-size 50 \
-       --sample-name-map ${sample_name_map} \
-       --TMP_DIR: ${tmp_DIR} \
-       --reader-threads 12
+# mkdir ${genomicsdb_workspace_path}
+# mkdir ${tmp_DIR}
+#
+# gatk --java-options "-Xmx4g -Xms4g" \
+#        GenomicsDBImport \
+#        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
+#        --batch-size 50 \
+#        --sample-name-map ${sample_name_map} \
+#        --TMP_DIR:${tmp_DIR} \
+#        --reader-threads 12
