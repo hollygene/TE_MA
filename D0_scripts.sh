@@ -2,8 +2,8 @@
 #PBS -q highmem_q
 #PBS -N D0_scripts
 #PBS -l nodes=1:ppn=12:HIGHMEM
-#PBS -l walltime=120:00:00
-#PBS -l mem=300gb
+#PBS -l walltime=72:00:00
+#PBS -l mem=500gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
