@@ -320,19 +320,18 @@ module load ${GATK_module}
 # ### Jointly genotype 8 random samples to identify consensus sequences
 # ###################################################################################################
 
-gatk --java-options "-Xmx4g -Xms4g" \
-        -T GenotypeGVCFs \
+gatk --java-options "-Xmx4g -Xms4g" GenotypeGVCFs \
         -nt 12 \
         -R ${reference_genome} \
-        --variant ${output_directory}/HM-H0-A_variants.g.vcf \
-        --variant ${output_directory}/HM-H0-10_variants.g.vcf \
-        --variant ${output_directory}/HM-H0-11_variants.g.vcf \
-        --variant ${output_directory}/HM-H0-12_variants.g.vcf \
-        --variant ${output_directory}/HM-H0-13_variants.g.vcf \
-        --variant ${output_directory}/HM-H0-14_variants.g.vcf \
-        --variant ${output_directory}/HM-H0-15_variants.g.vcf \
-        --variant ${output_directory}/HM-H0-16_variants.g.vcf \
-        -o ${output_directory}/H0_variants_8Samples.vcf
+        -V ${output_directory}/HM-H0-A_variants.g.vcf \
+        -V ${output_directory}/HM-H0-10_variants.g.vcf \
+        -V ${output_directory}/HM-H0-11_variants.g.vcf \
+        -V ${output_directory}/HM-H0-12_variants.g.vcf \
+        -V ${output_directory}/HM-H0-13_variants.g.vcf \
+        -V ${output_directory}/HM-H0-14_variants.g.vcf \
+        -V ${output_directory}/HM-H0-15_variants.g.vcf \
+        -V ${output_directory}/HM-H0-16_variants.g.vcf \
+        -O ${output_directory}/H0_variants_8Samples.vcf
 
 # ###################################################################################################
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
