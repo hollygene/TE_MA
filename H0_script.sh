@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N H0_scripts
+#PBS -N H0_scripts_recalibration
 #PBS -l nodes=1:ppn=12:HIGHMEM
-#PBS -l walltime=72:00:00
-#PBS -l mem=500gb
+#PBS -l walltime=48:00:00
+#PBS -l mem=250gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -54,9 +54,9 @@ tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp"
 # cd ${output_directory}
 # rm *
 
-module load ${picard_module}
-module load ${bwa_module}
-module load ${samtools_module}
+# module load ${picard_module}
+# module load ${bwa_module}
+# module load ${samtools_module}
 module load ${GATK_module}
 
 ### Much of the following obtained from https://software.broadinstitute.org/gatk/documentation/article?id=6483#step3
@@ -289,21 +289,21 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 #### D20 samples
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${raw_data}/${BASE}_piped.bam \
-     -ploidy 2 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${raw_data}/${BASE}_piped.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/${BASE}_variants.g.vcf
+#
+# done
 
 
 # module load GATK/4.0.3.0-Java-1.8.0_144
@@ -317,11 +317,53 @@ done
 #
 #
 # ###################################################################################################
+# ### Jointly genotype 8 random samples to identify consensus sequences
+# ###################################################################################################
+
+gatk --java-options "-Xmx4g -Xms4g" \
+        -T GenotypeGVCFs \
+        -nt 12 \
+        -R ${reference_genome} \
+        --variant ${output_directory}/HM-H0-A_variants.g.vcf \
+        --variant ${output_directory}/HM-H0-10_variants.g.vcf \
+        --variant ${output_directory}/HM-H0-11_variants.g.vcf \
+        --variant ${output_directory}/HM-H0-12_variants.g.vcf \
+        --variant ${output_directory}/HM-H0-13_variants.g.vcf \
+        --variant ${output_directory}/HM-H0-14_variants.g.vcf \
+        --variant ${output_directory}/HM-H0-15_variants.g.vcf \
+        --variant ${output_directory}/HM-H0-16_variants.g.vcf \
+        -o ${output_directory}/H0_variants_8Samples.vcf
+
+# ###################################################################################################
+# ## Recalibrate base quality scores in all samples to mask any likely consensus variants
+# ###################################################################################################
+
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+
+
+gatk --java-options "-Xmx4g -Xms4g" \
+   -T BaseRecalibrator \
+   -R ${reference_genome} \
+   -I ${raw_data}/${BASE}_piped.bam \
+   -knownSites ${output_directory}/H0_variants_8Samples.vcf \
+   -o ${output_directory}/${BASE}_recal_data.table
+
+done
+
+
+
+
+# ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
 # mkdir ${genomicsdb_workspace_path}
 # mkdir ${tmp_DIR}
-#
+
 # gatk --java-options "-Xmx4g -Xms4g" \
 #        GenomicsDBImport \
 #        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
