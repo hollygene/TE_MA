@@ -47,6 +47,7 @@ output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0"
 #location of TRIMMED data to be used in the analysis
 trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed/H0"
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/H0"
+do_again="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/H0/do_again"
 genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB"
 sample_name_map="/home/hcm14449/Github/TE_MA/H0_sample_map.txt"
 tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp"
@@ -288,22 +289,22 @@ module load ${GATK_module}
 # #
 module load ${GATK_module}
 
-#### D20 samples
-# for file in ${raw_data}/${BASE}*_piped.bam
-#
-# do
-#
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-#
-# time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I ${raw_data}/${BASE}_piped.bam \
-#      -ploidy 2 \
-#      -O ${output_directory}/${BASE}_variants.g.vcf
-#
-# done
+#### H0 samples
+for file in ${do_again}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${do_again}/${BASE}_piped.bam \
+     -ploidy 2 \
+     -O ${output_directory}/${BASE}_variants.g.vcf
+
+done
 
 
 # module load GATK/4.0.3.0-Java-1.8.0_144
@@ -321,7 +322,6 @@ module load ${GATK_module}
 # ###################################################################################################
 
 gatk --java-options "-Xmx4g -Xms4g" GenotypeGVCFs \
-        -nt 12 \
         -R ${reference_genome} \
         -V ${output_directory}/HM-H0-A_variants.g.vcf \
         -V ${output_directory}/HM-H0-10_variants.g.vcf \
@@ -345,8 +345,7 @@ FBASE=$(basename $file _piped.bam)
 BASE=${FBASE%_piped.bam}
 
 
-gatk --java-options "-Xmx4g -Xms4g" \
-   -T BaseRecalibrator \
+gatk --java-options "-Xmx4g -Xms4g" BaseRecalibrator \
    -R ${reference_genome} \
    -I ${raw_data}/${BASE}_piped.bam \
    -knownSites ${output_directory}/H0_variants_8Samples.vcf \

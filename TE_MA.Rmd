@@ -1,5 +1,5 @@
 ---
-title: "TE_MA_Paradoxus"
+title: "TE_MA_Paradoxus Practice Analyses"
 output: html_document
 ---
 
@@ -14,23 +14,63 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r packages}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("Sushi")
+# library(sushi)
+# 
+# plotManhattan(bedfile=Sushi_GWAS.bed,pvalues=Sushi_GWAS.bed[,5],
+#                  col=SushiColors(6),genome=Sushi_hg18_genome,cex=0.75)
+# labelgenome(genome=Sushi_hg18_genome,n=4,scale="Mb",
+#                  edgeblankfraction=0.20,cex.axis=.5)
+# axis(side=2,las=2,tcl=.2)
+# mtext("log10(P)",side=2,line=1.75,cex=1,font=2)
+# mtext("chromosome",side=1,line=1.75,cex=1,font=2)
+# 
+# plotBedgraph(Sushi_DNaseI.bedgraph,chrom,chromstart,chromend,colorbycol= SushiColors(5))
 
-BiocManager::install("Sushi")
-library(sushi)
+library(vcfR)
+library(adegenet)
+library(adegraphics)
+library(pegas)
+library(StAMPP)
+library(lattice)
+library(gplots)
+library(ape)
+library(ggmap)
 
-plotManhattan(bedfile=Sushi_GWAS.bed,pvalues=Sushi_GWAS.bed[,5],
-                 col=SushiColors(6),genome=Sushi_hg18_genome,cex=0.75)
-labelgenome(genome=Sushi_hg18_genome,n=4,scale="Mb",
-                 edgeblankfraction=0.20,cex.axis=.5)
-axis(side=2,las=2,tcl=.2)
-mtext("log10(P)",side=2,line=1.75,cex=1,font=2)
-mtext("chromosome",side=1,line=1.75,cex=1,font=2)
+vcf <- read.vcfR("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Practice_Analyses/Sample1.vcf")
+head(vcf)
+vcf@fix[1:10,1:5]
 
-plotBedgraph(Sushi_DNaseI.bedgraph,chrom,chromstart,chromend,colorbycol= SushiColors(5))
+chrom <- create.chromR(name="sample1_data",vcf=vcf)
+plot(chrom)
 
+dp <- extract.gt(vcf,element="DP",as.numeric = TRUE)
 
+pdf("DP_sample1_data.pdf",width=10,height=3) #boxplot
+boxplot(dp, las=3, col=c("#C0C0C0", "#808080"), ylab="Read Depth (DP)",
+las=2, cex=0.4, cex.axis=0.5)
+dev.off()
+
+pdf("DP_sample1_data_zoom.pdf", width = 10, height=3) # boxplot
+boxplot(dp, las=3, col=c("#C0C0C0", "#808080"), ylab="Read Depth (DP)",
+las=2, cex=0.4, cex.axis=0.5, ylim=c(0,50))
+abline(h=8, col="red")
+dev.off()
+
+getwd()
+
+### Basic Manipulation of a SNP matrix (genlight)
+# Convert data into adegenet-native format called genlight:
+aa.genlight <- vcfR2genlight(vcf,n.cores=1)
+locNames(aa.genlight) <- paste(vcf@fix[,1]) # add real SNP names
+pop(aa.genlight) <- substr(indNames(aa.genlight),1,3) # add pop names: here "population" (group) names are 1st 3 chars of ind name 
+
+glPlot(aa.genlight)
+x <- summary(t(as.matrix(aa.genlight)))
+View(x)
 
 
 ```
