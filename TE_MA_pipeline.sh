@@ -12,7 +12,7 @@
 #location of current update of muver
 # muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 #location of trimgalore moedule
-# trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
+trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
 #location of fastqc module
 # fastqc_module="FastQC/0.11.8-Java-1.8.0_144"
 #location of BWA module
@@ -74,49 +74,68 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # #######################################################################################
 # # works: trims files
 # #######################################################################################
-# # cd ${data_dir}
-# #
-# # mkdir ${trimmed_data}
-# #
-# # module load ${trimgalore_module}
-# #
-# # #need to remove TruSeq adapters Index 6
-# #
-# #
-# #
-# # # trim all fastq files
-# # for file in $data_dir/*.fastq
-# #
-# # do
-# #
-# # FBASE=$(basename $file .fastq)
-# # BASE=${FBASE%.fastq}
-# #
-# # trim_galore --phred33 -q 20 -o $trimmed_data ${BASE}.fastq
-# #
-# # done
-# #
-# # module unload ${trimgalore_module}
+# cd ${data_dir}
 #
-#  #######################################################################################
-# # works: aligns samples to reference genome. Output is a .sam file
-# #######################################################################################
+# mkdir ${trimmed_data}
 #
-# module load ${bwa_module}
-# #
-# #  #index the ref genome
-# bwa index ${ref_genome}
-# #
-# for file in ${raw_data}/*_R1_001.fastq
+# module load ${trimgalore_module}
 #
-#  do
+# #need to remove TruSeq adapters Index 6
 #
-#  FBASE=$(basename $file _R1_001.fastq)
-#  BASE=${FBASE%_R1_001.fastq}
 #
-# bwa mem -M -t 12 ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq ${raw_data}/${BASE}_R2_001.fastq > ${output_directory}/${BASE}_aln.sam
 #
-#  done
+# # trim all fastq files
+# for file in $data_dir/*.fastq
+#
+# do
+#
+# FBASE=$(basename $file .fastq)
+# BASE=${FBASE%.fastq}
+#
+# trim_galore --phred33 -q 20 -o $trimmed_data ${BASE}.fastq
+#
+# done
+#
+# module unload ${trimgalore_module}
+#######################################################################################
+# convert fastq to unmapped bam (ubam) 
+# add read group information
+#######################################################################################
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+    FASTQ=${raw_data}/${BASE}_R1_001.fastq \ #first read file of pair
+    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \ #second read file of pair
+    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+    READ_GROUP_NAME=H0164.2 \ #required; changed from default of A
+    SAMPLE_NAME=NA12878 \ #required
+    LIBRARY_NAME=Solexa-272222 \ #required
+    PLATFORM_UNIT=H0164ALXX140820.2 \
+    PLATFORM=illumina \ #recommended
+    SEQUENCING_CENTER=BI \
+    RUN_DATE=2014-08-20T00:00:00-0400
+
+ #######################################################################################
+# works: aligns samples to reference genome. Output is a .sam file
+#######################################################################################
+
+module load ${bwa_module}
+#
+#  #index the ref genome
+bwa index ${ref_genome}
+#
+for file in ${raw_data}/*_R1_001.fastq
+
+ do
+
+ FBASE=$(basename $file _R1_001.fastq)
+ BASE=${FBASE%_R1_001.fastq}
+
+bwa mem -M -t 12 ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq ${raw_data}/${BASE}_R2_001.fastq > ${output_directory}/${BASE}_aln.sam
+
+ done
+
+
 #
 # #########################################################################################
 # #samtools: converts sam files to bam files and sorts them

@@ -332,6 +332,54 @@ done
 #      -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-10_variants.g.vcf
 #
 #
+
+# ###################################################################################################
+### Combine gVCFs before joint genotyping
+# ###################################################################################################
+
+
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/D0_cohort.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/HM-D0-A_variants.g.vcf \
+#  --variant ${output_directory}/HM-D0-10_variants.g.vcf \
+#  --variant ${output_directory}/HM-D0-11_variants.g.vcf \
+#  --variant ${output_directory}/HM-D0-12_variants.g.vcf \
+#  --variant ${output_directory}/HM-D0-13_variants.g.vcf \
+#  --variant ${output_directory}/HM-D0-14_variants.g.vcf \
+#  --variant ${output_directory}/HM-D0-15_variants.g.vcf \
+#  --variant ${output_directory}/HM-D0-16_variants.g.vcf
+
+
+# ###################################################################################################
+# ### Jointly genotype 8 random samples to identify consensus sequences
+# ###################################################################################################
+
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         --variant ${output_directory}/D0_cohort.g.vcf \
+#         -O ${output_directory}/D0_variants_8Samples.vcf
+
+
+# ###################################################################################################
+# ## Recalibrate base quality scores in all samples to mask any likely consensus variants
+# ###################################################################################################
+
+for file in ${raw_data}/${BASE}*_piped.bam
+
+        do
+
+        FBASE=$(basename $file _piped.bam)
+        BASE=${FBASE%_piped.bam}
+
+
+        gatk --java-options "-Xmx4g -Xms4g" BaseRecalibrator \
+           -R ${reference_genome} \
+           -I ${raw_data}/${BASE}_piped.bam \
+           -knownSites ${output_directory}/D0_variants_8Samples.vcf \
+           -o ${output_directory}/${BASE}_recal_data.table
+
+        done
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################

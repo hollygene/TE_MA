@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N D1_scripts
+#PBS -N D1_base_recal
 #PBS -l nodes=1:ppn=12:HIGHMEM
-#PBS -l walltime=72:00:00
-#PBS -l mem=500gb
+#PBS -l walltime=48:00:00
+#PBS -l mem=250gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -303,22 +303,22 @@ module load ${GATK_module}
 # #
 module load ${GATK_module}
 
-#### D20 samples
-for file in ${do_again}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${do_again}/${BASE}_piped.bam \
-     -ploidy 2 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
-
-done
+#### D1 samples
+# for file in ${do_again}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${do_again}/${BASE}_piped.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/${BASE}_variants.g.vcf
+#
+# done
 
 
 # module load GATK/4.0.3.0-Java-1.8.0_144
@@ -330,22 +330,32 @@ done
 #      -ploidy 2 \
 #      -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-10_variants.g.vcf
 #
-#
 # ###################################################################################################
-# ### Jointly genotype 8 random samples to identify consensus sequences
+### Combine gVCFs before joint genotyping
 # ###################################################################################################
 
-gatk --java-options "-Xmx4g -Xms4g" GenotypeGVCFs \
-        -R ${reference_genome} \
-        -V ${output_directory}/HM-D1-A_variants.g.vcf \
-        -V ${output_directory}/HM-D1-10_variants.g.vcf \
-        -V ${output_directory}/HM-D1-11_variants.g.vcf \
-        -V ${output_directory}/HM-D1-12_variants.g.vcf \
-        -V ${output_directory}/HM-D1-13_variants.g.vcf \
-        -V ${output_directory}/HM-D1-14_variants.g.vcf \
-        -V ${output_directory}/HM-D1-15_variants.g.vcf \
-        -V ${output_directory}/HM-D1-16_variants.g.vcf \
-        -O ${output_directory}/D1_variants_8Samples.vcf
+
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/D1_cohort.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/HM-D1-A_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-10_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-11_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-12_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-13_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-14_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-15_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-16_variants.g.vcf
+#
+#
+# # ###################################################################################################
+# # ### Jointly genotype 8 random samples to identify consensus sequences
+# # ###################################################################################################
+#
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         --variant ${output_directory}/D1_cohort.g.vcf \
+#         -O ${output_directory}/D1_variants_8Samples.vcf
 
 # ###################################################################################################
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
@@ -362,7 +372,7 @@ BASE=${FBASE%_piped.bam}
 gatk --java-options "-Xmx4g -Xms4g" BaseRecalibrator \
    -R ${reference_genome} \
    -I ${raw_data}/${BASE}_piped.bam \
-   -knownSites ${output_directory}/H0_variants_8Samples.vcf \
+   -knownSites ${output_directory}/D1_variants_8Samples.vcf \
    -o ${output_directory}/${BASE}_recal_data.table
 
 done
