@@ -304,22 +304,22 @@ module load ${GATK_module}
 # #
 module load ${GATK_module}
 
-#### D20 samples
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${raw_data}/${BASE}_piped.bam \
-     -ploidy 2 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
-
-done
+#### D0 samples
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${raw_data}/${BASE}_piped.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/${BASE}_variants.g.vcf
+#
+# done
 
 
 # module load GATK/4.0.3.0-Java-1.8.0_144
@@ -380,6 +380,7 @@ for file in ${raw_data}/${BASE}*_piped.bam
            -o ${output_directory}/${BASE}_recal_data.table
 
         done
+        
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
