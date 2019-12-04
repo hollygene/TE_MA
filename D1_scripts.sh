@@ -369,12 +369,11 @@ FBASE=$(basename $file _piped.bam)
 BASE=${FBASE%_piped.bam}
 
 
-gatk --java-options "-Xmx4g -Xms4g" BaseRecalibrator \
-   -R ${reference_genome} \
+time gatk BaseRecalibrator \
    -I ${raw_data}/${BASE}_piped.bam \
-   -knownSites ${output_directory}/D1_variants_8Samples.vcf \
-   -o ${output_directory}/${BASE}_recal_data.table
-
+   --known-sites ${output_directory}/D1_variants_8Samples.vcf \
+   -O ${output_directory}/${BASE}_recal_data.table \
+   -R ${ref_genome}
 done
 
 # ###################################################################################################
