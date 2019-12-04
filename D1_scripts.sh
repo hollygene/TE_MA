@@ -200,6 +200,27 @@ module load ${GATK_module}
 # TMP_DIR=${raw_data}/TMP
 #
 # done
+
+### Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+I=${raw_data}/HM-D1-3_markilluminaadapters.bam \
+FASTQ=/dev/stdout \
+CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+TMP_DIR=${raw_data}/TMP | \
+bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+ALIGNED_BAM=/dev/stdin \
+UNMAPPED_BAM=${raw_data}/HM-D1-3_fastqtosam.bam \
+OUTPUT=${do_again}/HM-D1-3_piped.bam \
+R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+TMP_DIR=${raw_data}/TMP
+
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
@@ -303,22 +324,22 @@ module load ${GATK_module}
 # #
 module load ${GATK_module}
 
-#### D1 samples
-# for file in ${do_again}/${BASE}*_piped.bam
-#
-# do
-#
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-#
-# time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I ${do_again}/${BASE}_piped.bam \
-#      -ploidy 2 \
-#      -O ${output_directory}/${BASE}_variants.g.vcf
-#
-# done
+### D1 samples
+for file in ${do_again}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${do_again}/${BASE}_piped.bam \
+     -ploidy 2 \
+     -O ${output_directory}/${BASE}_variants.g.vcf
+
+done
 
 
 # module load GATK/4.0.3.0-Java-1.8.0_144
@@ -361,20 +382,20 @@ module load ${GATK_module}
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # ###################################################################################################
 
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-
-time gatk BaseRecalibrator \
-   -I ${raw_data}/${BASE}_piped.bam \
-   --known-sites ${output_directory}/D1_variants_8Samples.vcf \
-   -O ${output_directory}/${BASE}_recal_data.table \
-   -R ${ref_genome}
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+#
+# time gatk BaseRecalibrator \
+#    -I ${raw_data}/${BASE}_piped.bam \
+#    --known-sites ${output_directory}/D1_variants_8Samples.vcf \
+#    -O ${output_directory}/${BASE}_recal_data.table \
+#    -R ${ref_genome}
+# done
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
