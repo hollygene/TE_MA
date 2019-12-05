@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
 #PBS -N D1_base_recal
-#PBS -l nodes=1:ppn=12:HIGHMEM
-#PBS -l walltime=48:00:00
-#PBS -l mem=250gb
+#PBS -l nodes=2:ppn=1:HIGHMEM
+#PBS -l walltime=96:00:00
+#PBS -l mem=400gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -46,9 +46,9 @@ output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1"
 # mkdir $output_directory
 #location of TRIMMED data to be used in the analysis
 # raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
-trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed/D1"
+# trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed/D1"
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D1"
-do_again="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D1/do_again"
+# do_again="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D1/do_again"
 genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/GenDB"
 sample_name_map="/home/hcm14449/Github/TE_MA/D1_sample_map.txt"
 tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/GenDB/tmp"
@@ -203,23 +203,23 @@ module load ${GATK_module}
 
 ### Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-I=${raw_data}/HM-D1-3_markilluminaadapters.bam \
-FASTQ=/dev/stdout \
-CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-TMP_DIR=${raw_data}/TMP | \
-bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-ALIGNED_BAM=/dev/stdin \
-UNMAPPED_BAM=${raw_data}/HM-D1-3_fastqtosam.bam \
-OUTPUT=${do_again}/HM-D1-3_piped.bam \
-R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-TMP_DIR=${raw_data}/TMP
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+# I=${raw_data}/HM-D1-3_markilluminaadapters.bam \
+# FASTQ=/dev/stdout \
+# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+# TMP_DIR=${raw_data}/TMP | \
+# bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+# ALIGNED_BAM=/dev/stdin \
+# UNMAPPED_BAM=${raw_data}/HM-D1-3_fastqtosam.bam \
+# OUTPUT=${do_again}/HM-D1-3_piped.bam \
+# R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+# TMP_DIR=${raw_data}/TMP
 
 #######################################################################################
 # works: aligns samples to reference genome. Output is a .sam file
@@ -322,24 +322,24 @@ TMP_DIR=${raw_data}/TMP
 # ###################################################################################################
 # ###################################################################################################
 # #
-module load ${GATK_module}
+# module load ${GATK_module}
 
 ### D1 samples
-for file in ${do_again}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${do_again}/${BASE}_piped.bam \
-     -ploidy 2 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
-
-done
+# for file in ${do_again}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${do_again}/${BASE}_piped.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/${BASE}_variants.g.vcf
+#
+# done
 
 
 # module load GATK/4.0.3.0-Java-1.8.0_144
@@ -396,6 +396,51 @@ done
 #    -O ${output_directory}/${BASE}_recal_data.table \
 #    -R ${ref_genome}
 # done
+
+# ###################################################################################################
+# ## Apply BQSR to bam files
+# ###################################################################################################
+
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+
+
+gatk ApplyBQSR \
+   -R ${ref_genome} \
+   -I ${raw_data}/${BASE}_piped.bam \
+   -bqsr ${output_directory}/${BASE}_recal_data.table \
+   -O ${output_directory}/${BASE}_recalibrated.bam
+
+done
+
+# ###################################################################################################
+### Run HaplotypeCaller again on recalibrated samples
+# ###################################################################################################
+# ###################################################################################################
+# #
+module load ${GATK_module}
+
+### D1 samples
+for file in ${output_directory}/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${output_directory}/${BASE}_recalibrated.bam \
+     -ploidy 2 \
+     -O ${output_directory}/${BASE}_variants.Recal.g.vcf
+
+done
+
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
