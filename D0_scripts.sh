@@ -338,27 +338,27 @@ module load ${GATK_module}
 # ###################################################################################################
 
 
-# time gatk CombineGVCFs \
-#  -O ${output_directory}/D0_cohort.g.vcf \
-#  -R ${ref_genome} \
-#  --variant ${output_directory}/HM-D0-A_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-10_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-11_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-12_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-13_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-14_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-15_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-16_variants.g.vcf
+time gatk CombineGVCFs \
+ -O ${output_directory}/D0_cohort.g.vcf \
+ -R ${ref_genome} \
+ --variant ${output_directory}/HM-D0-A_variants.g.vcf \
+ --variant ${output_directory}/HM-D0-10_variants.g.vcf \
+ --variant ${output_directory}/HM-D0-11_variants.g.vcf \
+ --variant ${output_directory}/HM-D0-12_variants.g.vcf \
+ --variant ${output_directory}/HM-D0-13_variants.g.vcf \
+ --variant ${output_directory}/HM-D0-14_variants.g.vcf \
+ --variant ${output_directory}/HM-D0-15_variants.g.vcf \
+ --variant ${output_directory}/HM-D0-16_variants.g.vcf
 
 
-# ###################################################################################################
-# ### Jointly genotype 8 random samples to identify consensus sequences
-# ###################################################################################################
+###################################################################################################
+### Jointly genotype 8 random samples to identify consensus sequences
+###################################################################################################
 
-# time gatk GenotypeGVCFs \
-#         -R ${ref_genome} \
-#         --variant ${output_directory}/D0_cohort.g.vcf \
-#         -O ${output_directory}/D0_variants_8Samples.vcf
+time gatk GenotypeGVCFs \
+        -R ${ref_genome} \
+        --variant ${output_directory}/D0_cohort.g.vcf \
+        -O ${output_directory}/D0_variants_8Samples.vcf
 
 
 # ###################################################################################################
