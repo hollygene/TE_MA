@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
 #PBS -N H0_scripts_base_recal
-#PBS -l nodes=1:ppn=12:HIGHMEM
-#PBS -l walltime=48:00:00
-#PBS -l mem=250gb
+#PBS -l nodes=3:ppn=1:HIGHMEM
+#PBS -l walltime=96:00:00
+#PBS -l mem=505gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -354,7 +354,49 @@ time gatk BaseRecalibrator \
 
 done
 
+# ###################################################################################################
+# ## Apply BQSR to bam files
+# ###################################################################################################
 
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+
+
+gatk ApplyBQSR \
+   -R ${ref_genome} \
+   -I ${raw_data}/${BASE}_piped.bam \
+   -bqsr ${output_directory}/${BASE}_recal_data.table \
+   -O ${output_directory}/${BASE}_recalibrated.bam
+
+done
+
+# ###################################################################################################
+### Run HaplotypeCaller again on recalibrated samples
+# ###################################################################################################
+# ###################################################################################################
+# #
+module load ${GATK_module}
+
+### D1 samples
+for file in ${output_directory}/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${output_directory}/${BASE}_recalibrated.bam \
+     -ploidy 2 \
+     -O ${output_directory}/${BASE}_variants.Recal.g.vcf
+
+done
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
