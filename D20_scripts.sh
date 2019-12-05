@@ -320,7 +320,7 @@ for file in ${raw_data}/${BASE}*_piped.bam
         gatk --java-options "-Xmx4g -Xms4g" BaseRecalibrator \
            -R ${reference_genome} \
            -I ${raw_data}/${BASE}_piped.bam \
-           -knownSites ${output_directory}/D20_variants_8Samples.vcf \
+           -known-sites ${output_directory}/D20_variants_8Samples.vcf \
            -o ${output_directory}/${BASE}_recal_data.table
 
         done
