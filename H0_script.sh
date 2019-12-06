@@ -393,7 +393,7 @@ time gatk HaplotypeCaller \
      -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/${BASE}_recalibrated.bam \
-     -ploidy 2 \
+     -ploidy 1 \
      -O ${output_directory}/${BASE}_variants.Recal.g.vcf
 
 done

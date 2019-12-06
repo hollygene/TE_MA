@@ -367,6 +367,28 @@ for file in ${raw_data}/${BASE}*_piped.bam
 
                 done
 # ###################################################################################################
+### Genotype gVCFs (individually)
+# ###################################################################################################
+# ###################################################################################################
+# #
+
+for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
+
+do
+
+FBASE=$(basename $file _variants.Recal.g.vcf)
+  BASE=${FBASE%_variants.Recal.g.vcf}
+
+time gatk GenotypeGVCFs \
+     -R ${ref_genome} \
+     --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
+     -O ${output_directory}/${BASE}.vcf
+
+  done
+
+
+
+# ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
 # mkdir ${genomicsdb_workspace_path}
