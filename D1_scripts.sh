@@ -401,21 +401,21 @@ module load ${GATK_module}
 # ## Apply BQSR to bam files
 # ###################################################################################################
 
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-
-gatk ApplyBQSR \
-   -R ${ref_genome} \
-   -I ${raw_data}/${BASE}_piped.bam \
-   -bqsr ${output_directory}/${BASE}_recal_data.table \
-   -O ${output_directory}/${BASE}_recalibrated.bam
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+#
+# gatk ApplyBQSR \
+#    -R ${ref_genome} \
+#    -I ${raw_data}/${BASE}_piped.bam \
+#    -bqsr ${output_directory}/${BASE}_recal_data.table \
+#    -O ${output_directory}/${BASE}_recalibrated.bam
+#
+# done
 
 # ###################################################################################################
 ### Run HaplotypeCaller again on recalibrated samples
@@ -440,6 +440,24 @@ time gatk HaplotypeCaller \
      -O ${output_directory}/${BASE}_variants.Recal.g.vcf
 
 done
+# ###################################################################################################
+### Run GenotypeGVCFs on recalibrated samples
+# ###################################################################################################
+# ###################################################################################################
+# #
+for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
+
+do
+
+FBASE=$(basename $file _variants.Recal.g.vcf)
+  BASE=${FBASE%_variants.Recal.g.vcf}
+
+time gatk GenotypeGVCFs \
+     -R ${ref_genome} \
+     --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
+     -O ${output_directory}/${BASE}.vcf
+
+  done
 
 
 # ###################################################################################################
