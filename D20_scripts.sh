@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N D20_scripts
+#PBS -N D20_scripts_recal_haplotypeCaller
 #PBS -l nodes=2:ppn=1:HIGHMEM
 #PBS -l walltime=96:00:00
 #PBS -l mem=400gb
@@ -309,21 +309,21 @@ module load ${GATK_module}
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # ###################################################################################################
 
-for file in ${raw_data}/${BASE}*_piped.bam
-
-        do
-
-        FBASE=$(basename $file _piped.bam)
-        BASE=${FBASE%_piped.bam}
-
-
-        gatk --java-options "-Xmx4g -Xms4g" BaseRecalibrator \
-           -R ${ref_genome} \
-           -I ${raw_data}/${BASE}_piped.bam \
-           -known-sites ${output_directory}/D20_variants_8Samples.vcf \
-           -O ${output_directory}/${BASE}_recal_data.table
-
-        done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+#         do
+#
+#         FBASE=$(basename $file _piped.bam)
+#         BASE=${FBASE%_piped.bam}
+#
+#
+#         gatk --java-options "-Xmx4g -Xms4g" BaseRecalibrator \
+#            -R ${ref_genome} \
+#            -I ${raw_data}/${BASE}_piped.bam \
+#            -known-sites ${output_directory}/D20_variants_8Samples.vcf \
+#            -O ${output_directory}/${BASE}_recal_data.table
+#
+#         done
 
   # ###################################################################################################
     # ## Apply BQSR to bam files
