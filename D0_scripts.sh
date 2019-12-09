@@ -420,7 +420,7 @@ module load ${GATK_module}
         -ERC GVCF \
         -I ${output_directory}/${BASE}_recalibrated.bam \
         -ploidy 2 \
-        -O ${output_directory}/${BASE}_variants.g.vcf
+        -O ${output_directory}/${BASE}_variants.Recal.g.vcf
         done
 
 # ###################################################################################################
