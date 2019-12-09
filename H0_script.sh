@@ -2,7 +2,7 @@
 #PBS -q highmem_q
 #PBS -N H0_scripts_base_recal
 #PBS -l nodes=3:ppn=1:HIGHMEM
-#PBS -l walltime=96:00:00
+#PBS -l walltime=120:00:00
 #PBS -l mem=505gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
@@ -287,24 +287,24 @@ module load ${GATK_module}
 ###################################################################################################
 # ###################################################################################################
 # #
-module load ${GATK_module}
-
-#### H0 samples
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${raw_data}/${BASE}_piped.bam \
-     -ploidy 1 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
-
-done
+# module load ${GATK_module}
+#
+# #### H0 samples
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${raw_data}/${BASE}_piped.bam \
+#      -ploidy 1 \
+#      -O ${output_directory}/${BASE}_variants.g.vcf
+#
+# done
 
 
 # ###################################################################################################
@@ -390,13 +390,32 @@ FBASE=$(basename $file _recalibrated.bam)
 BASE=${FBASE%_recalibrated.bam}
 
 time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${output_directory}/${BASE}_recalibrated.bam \
-     -ploidy 1 \
-     -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/${BASE}_recalibrated.bam \
+-ploidy 2 \
+-O ${output_directory}/${BASE}_variants.Recal.g.vcf
 done
+
+# ###################################################################################################
+### Genotype gVCFs (individually)
+# ###################################################################################################
+# ###################################################################################################
+# #
+
+for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
+
+do
+
+FBASE=$(basename $file _variants.Recal.g.vcf)
+  BASE=${FBASE%_variants.Recal.g.vcf}
+
+time gatk GenotypeGVCFs \
+     -R ${ref_genome} \
+     --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
+     -O ${output_directory}/${BASE}.vcf
+
+  done
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
