@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
-#PBS -N H0_HC_46
-#PBS -l nodes=1:ppn=1:HIGHMEM
+#PBS -q batch
+#PBS -N H0_HC_47
+#PBS -l nodes=1:ppn=1:AMD
 #PBS -l walltime=120:00:00
-#PBS -l mem=505gb
+#PBS -l mem=100gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -319,19 +319,19 @@ module load ${GATK_module}
 #           -I ${raw_data}/HM-H0-45_piped.bam \
 #           -ploidy 1 \
 #           -O ${output_directory}/HM-H0-45_variants.g.vcf
-time gatk HaplotypeCaller \
-               -R ${ref_genome} \
-               -ERC GVCF \
-               -I ${raw_data}/HM-H0-46_piped.bam \
-               -ploidy 1 \
-               -O ${output_directory}/HM-H0-46_variants.g.vcf
+# time gatk HaplotypeCaller \
+#                -R ${ref_genome} \
+#                -ERC GVCF \
+#                -I ${raw_data}/HM-H0-46_piped.bam \
+#                -ploidy 1 \
+#                -O ${output_directory}/HM-H0-46_variants.g.vcf
 
-#                time gatk HaplotypeCaller \
-#                     -R ${ref_genome} \
-#                     -ERC GVCF \
-#                     -I ${raw_data}/HM-H0-47_piped.bam \
-#                     -ploidy 1 \
-#                     -O ${output_directory}/HM-H0-47_variants.g.vcf
+               time gatk HaplotypeCaller \
+                    -R ${ref_genome} \
+                    -ERC GVCF \
+                    -I ${raw_data}/HM-H0-47_piped.bam \
+                    -ploidy 1 \
+                    -O ${output_directory}/HM-H0-47_variants.g.vcf
 #
 #                     time gatk HaplotypeCaller \
 #                          -R ${ref_genome} \
