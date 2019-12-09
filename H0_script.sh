@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N H0_HC_44
+#PBS -N H0_HC_45
 #PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l walltime=120:00:00
 #PBS -l mem=505gb
@@ -306,19 +306,19 @@ module load ${GATK_module}
 #
 # done
 
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${raw_data}/HM-H0-44_piped.bam \
-     -ploidy 1 \
-     -O ${output_directory}/HM-H0-44_variants.g.vcf
-
 # time gatk HaplotypeCaller \
-#           -R ${ref_genome} \
-#           -ERC GVCF \
-#           -I ${raw_data}/HM-H0-45_piped.bam \
-#           -ploidy 1 \
-#           -O ${output_directory}/HM-H0-45_variants.g.vcf
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${raw_data}/HM-H0-44_piped.bam \
+#      -ploidy 1 \
+#      -O ${output_directory}/HM-H0-44_variants.g.vcf
+
+time gatk HaplotypeCaller \
+          -R ${ref_genome} \
+          -ERC GVCF \
+          -I ${raw_data}/HM-H0-45_piped.bam \
+          -ploidy 1 \
+          -O ${output_directory}/HM-H0-45_variants.g.vcf
 # time gatk HaplotypeCaller \
 #                -R ${ref_genome} \
 #                -ERC GVCF \
