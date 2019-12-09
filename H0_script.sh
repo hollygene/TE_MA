@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q batch
-#PBS -N H0_HC_47
+#PBS -N H0_HC_48
 #PBS -l nodes=1:ppn=1:AMD
 #PBS -l walltime=120:00:00
 #PBS -l mem=100gb
@@ -326,19 +326,19 @@ module load ${GATK_module}
 #                -ploidy 1 \
 #                -O ${output_directory}/HM-H0-46_variants.g.vcf
 
-               time gatk HaplotypeCaller \
-                    -R ${ref_genome} \
-                    -ERC GVCF \
-                    -I ${raw_data}/HM-H0-47_piped.bam \
-                    -ploidy 1 \
-                    -O ${output_directory}/HM-H0-47_variants.g.vcf
+               # time gatk HaplotypeCaller \
+               #      -R ${ref_genome} \
+               #      -ERC GVCF \
+               #      -I ${raw_data}/HM-H0-47_piped.bam \
+               #      -ploidy 1 \
+               #      -O ${output_directory}/HM-H0-47_variants.g.vcf
 #
-#                     time gatk HaplotypeCaller \
-#                          -R ${ref_genome} \
-#                          -ERC GVCF \
-#                          -I ${raw_data}/HM-H0-48_piped.bam \
-#                          -ploidy 1 \
-#                          -O ${output_directory}/HM-H0-48_variants.g.vcf
+                    time gatk HaplotypeCaller \
+                         -R ${ref_genome} \
+                         -ERC GVCF \
+                         -I ${raw_data}/HM-H0-48_piped.bam \
+                         -ploidy 1 \
+                         -O ${output_directory}/HM-H0-48_variants.g.vcf
 
 # ###################################################################################################
 ### Combine gVCFs before joint genotyping
