@@ -3,7 +3,7 @@
 #PBS -N D0_scripts_recal_haplotypecaller_genotype
 #PBS -l nodes=2:ppn=1:HIGHMEM
 #PBS -l walltime=96:00:00
-#PBS -l mem=400gb
+#PBS -l mem=505gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
