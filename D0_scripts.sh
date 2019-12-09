@@ -385,20 +385,20 @@ module load ${GATK_module}
   # ## Apply BQSR to bam files
   # ###################################################################################################
 
-for file in ${raw_data}/${BASE}*_piped.bam
-
-      do
-        FBASE=$(basename $file _piped.bam)
-        BASE=${FBASE%_piped.bam}
-
-
-        gatk ApplyBQSR \
-           -R ${ref_genome} \
-           -I ${raw_data}/${BASE}_piped.bam \
-           -bqsr ${output_directory}/${BASE}_recal_data.table \
-           -O ${output_directory}/${BASE}_recalibrated.bam
-
-        done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+#       do
+#         FBASE=$(basename $file _piped.bam)
+#         BASE=${FBASE%_piped.bam}
+#
+#
+#         gatk ApplyBQSR \
+#            -R ${ref_genome} \
+#            -I ${raw_data}/${BASE}_piped.bam \
+#            -bqsr ${output_directory}/${BASE}_recal_data.table \
+#            -O ${output_directory}/${BASE}_recalibrated.bam
+#
+#         done
 
   # ###################################################################################################
   ### Run HaplotypeCaller again on recalibrated samples
@@ -408,7 +408,7 @@ for file in ${raw_data}/${BASE}*_piped.bam
         # module load ${GATK_module}
 
         ### D1 samples
-    for file in ${output_directory}/${BASE}*_recalibrated.bam
+        for file in ${output_directory}/${BASE}*_recalibrated.bam
 
         do
 
@@ -416,12 +416,11 @@ for file in ${raw_data}/${BASE}*_piped.bam
         BASE=${FBASE%_recalibrated.bam}
 
         time gatk HaplotypeCaller \
-             -R ${ref_genome} \
-             -ERC GVCF \
-             -I ${output_directory}/${BASE}_recalibrated.bam \
-             -ploidy 2 \
-             -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-
+        -R ${ref_genome} \
+        -ERC GVCF \
+        -I ${output_directory}/${BASE}_recalibrated.bam \
+        -ploidy 2 \
+        -O ${output_directory}/${BASE}_variants.g.vcf
         done
 
 # ###################################################################################################
