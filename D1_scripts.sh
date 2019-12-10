@@ -538,5 +538,4 @@ time gatk GenotypeGVCFs \
          -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-30 \
          -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-40 \
          -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-41 \
-         -newQual \
          -O test_output.vcf
