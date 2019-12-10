@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q batch
-#PBS -N H0_HC_48
-#PBS -l nodes=1:ppn=1:AMD
+#PBS -N H0_BQSR_HC_GT
+#PBS -l nodes=2:ppn=1:AMD
 #PBS -l walltime=120:00:00
-#PBS -l mem=100gb
+#PBS -l mem=505gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
