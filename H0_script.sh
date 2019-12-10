@@ -333,12 +333,12 @@ module load ${GATK_module}
                #      -ploidy 1 \
                #      -O ${output_directory}/HM-H0-47_variants.g.vcf
 #
-                    time gatk HaplotypeCaller \
-                         -R ${ref_genome} \
-                         -ERC GVCF \
-                         -I ${raw_data}/HM-H0-48_piped.bam \
-                         -ploidy 1 \
-                         -O ${output_directory}/HM-H0-48_variants.g.vcf
+                    # time gatk HaplotypeCaller \
+                    #      -R ${ref_genome} \
+                    #      -ERC GVCF \
+                    #      -I ${raw_data}/HM-H0-48_piped.bam \
+                    #      -ploidy 1 \
+                    #      -O ${output_directory}/HM-H0-48_variants.g.vcf
 
 # ###################################################################################################
 ### Combine gVCFs before joint genotyping
@@ -387,68 +387,68 @@ module load ${GATK_module}
 #
 # done
 
-# ###################################################################################################
-# ## Apply BQSR to bam files
-# ###################################################################################################
+###################################################################################################
+## Apply BQSR to bam files
+###################################################################################################
 
-# for file in ${raw_data}/${BASE}*_piped.bam
-#
-# do
-#
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-#
-#
-# gatk ApplyBQSR \
-#    -R ${ref_genome} \
-#    -I ${raw_data}/${BASE}_piped.bam \
-#    -bqsr ${output_directory}/${BASE}_recal_data.table \
-#    -O ${output_directory}/${BASE}_recalibrated.bam
-#
-# done
+for file in ${raw_data}/${BASE}*_piped.bam
 
-# ###################################################################################################
-### Run HaplotypeCaller again on recalibrated samples
-# ###################################################################################################
-# ###################################################################################################
-# #
-# module load ${GATK_module}
-#
-# ### D1 samples
-# for file in ${output_directory}/${BASE}*_recalibrated.bam
-#
-# do
-#
-# FBASE=$(basename $file _recalibrated.bam)
-# BASE=${FBASE%_recalibrated.bam}
-#
-# time gatk HaplotypeCaller \
-# -R ${ref_genome} \
-# -ERC GVCF \
-# -I ${output_directory}/${BASE}_recalibrated.bam \
-# -ploidy 2 \
-# -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-# done
+do
 
-# ###################################################################################################
-### Genotype gVCFs (individually)
-# ###################################################################################################
-# ###################################################################################################
-# #
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
 
-# for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
+
+gatk ApplyBQSR \
+   -R ${ref_genome} \
+   -I ${raw_data}/${BASE}_piped.bam \
+   -bqsr ${output_directory}/${BASE}_recal_data.table \
+   -O ${output_directory}/${BASE}_recalibrated.bam
+
+done
+
+###################################################################################################
+## Run HaplotypeCaller again on recalibrated samples
+###################################################################################################
+###################################################################################################
 #
-# do
+module load ${GATK_module}
+
+### D1 samples
+for file in ${output_directory}/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+
+time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/${BASE}_recalibrated.bam \
+-ploidy 2 \
+-O ${output_directory}/${BASE}_variants.Recal.g.vcf
+done
+
+###################################################################################################
+## Genotype gVCFs (individually)
+###################################################################################################
+###################################################################################################
 #
-# FBASE=$(basename $file _variants.Recal.g.vcf)
-#   BASE=${FBASE%_variants.Recal.g.vcf}
-#
-# time gatk GenotypeGVCFs \
-#      -R ${ref_genome} \
-#      --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
-#      -O ${output_directory}/${BASE}.vcf
-#
-#   done
+
+for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
+
+do
+
+FBASE=$(basename $file _variants.Recal.g.vcf)
+  BASE=${FBASE%_variants.Recal.g.vcf}
+
+time gatk GenotypeGVCFs \
+     -R ${ref_genome} \
+     --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
+     -O ${output_directory}/${BASE}.vcf
+
+  done
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
