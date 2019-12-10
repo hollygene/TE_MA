@@ -461,15 +461,33 @@ time gatk GenotypeGVCFs \
 
 
 # ###################################################################################################
+### Run GenotypeGVCFs on recalibrated samples
+# ###################################################################################################
+# ###################################################################################################
+# #
+
+
+# time gatk GenotypeGVCFs \
+#      -R ${ref_genome} \
+#      --variant ${output_directory}/HM-D1-11_variants.Recal.g.vcf \
+#      -O ${output_directory}/HM-D1-11.vcf
+
+# time gatk CombineVariants \
+#     -R reference.fasta \
+#     --variant ${output_directory}/HM-D1-10.vcf \
+#     --variant ${output_directory}/HM-D1-11.vcf \
+#     -o ${output_directory}/combined10_11.vcf \
+#     -genotypeMergeOptions UNIQUIFY
+#
+# ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
-# mkdir ${genomicsdb_workspace_path}
-# mkdir ${tmp_DIR}
+mkdir ${genomicsdb_workspace_path}
+mkdir ${tmp_DIR}
 #
-# gatk --java-options "-Xmx4g -Xms4g" \
-#        GenomicsDBImport \
-#        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-#        --batch-size 50 \
-#        --sample-name-map ${sample_name_map} \
-#        --TMP_DIR:${tmp_DIR} \
-#        --reader-threads 12
+gatk --java-options "-Xmx4g -Xms4g" \
+       GenomicsDBImport \
+       --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
+       --batch-size 50 \
+       --sample-name-map ${sample_name_map} \
+       --TMP_DIR:${tmp_DIR}
