@@ -425,39 +425,39 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 ### D1 samples
-for file in ${output_directory}/${BASE}*_recalibrated.bam
-
-do
-
-FBASE=$(basename $file _recalibrated.bam)
-BASE=${FBASE%_recalibrated.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${output_directory}/${BASE}_recalibrated.bam \
-     -ploidy 2 \
-     -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-
-done
+# for file in ${output_directory}/${BASE}*_recalibrated.bam
+#
+# do
+#
+# FBASE=$(basename $file _recalibrated.bam)
+# BASE=${FBASE%_recalibrated.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${output_directory}/${BASE}_recalibrated.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/${BASE}_variants.Recal.g.vcf
+#
+# done
 # ###################################################################################################
 ### Run GenotypeGVCFs on recalibrated samples
 # ###################################################################################################
 # ###################################################################################################
 # #
-for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
-
-do
-
-FBASE=$(basename $file _variants.Recal.g.vcf)
-  BASE=${FBASE%_variants.Recal.g.vcf}
-
-time gatk GenotypeGVCFs \
-     -R ${ref_genome} \
-     --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
-     -O ${output_directory}/${BASE}.vcf
-
-  done
+# for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
+#
+# do
+#
+# FBASE=$(basename $file _variants.Recal.g.vcf)
+#   BASE=${FBASE%_variants.Recal.g.vcf}
+#
+# time gatk GenotypeGVCFs \
+#      -R ${ref_genome} \
+#      --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
+#      -O ${output_directory}/${BASE}.vcf
+#
+#   done
 
 
 # ###################################################################################################
@@ -485,9 +485,17 @@ time gatk GenotypeGVCFs \
 mkdir ${genomicsdb_workspace_path}
 mkdir ${tmp_DIR}
 #
-gatk --java-options "-Xmx4g -Xms4g" \
-       GenomicsDBImport \
+time gatk GenomicsDBImport \
        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-       --batch-size 50 \
        --sample-name-map ${sample_name_map} \
        --TMP_DIR:${tmp_DIR}
+
+
+       # ###################################################################################################
+       # ### joint genotype vcfs
+       # ###################################################################################################
+time gatk GenotypeGVCFs \
+         -R ${ref_genome} \
+         -V gendb://${genomicsdb_workspace_path} \
+         -newQual \
+         -O test_output.vcf 
