@@ -487,8 +487,7 @@ mkdir ${tmp_DIR}
 #
 time gatk GenomicsDBImport \
        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-       --sample-name-map ${sample_name_map} \
-       --TMP_DIR:${tmp_DIR}
+       --sample-name-map ${sample_name_map}
 
 
        # ###################################################################################################
@@ -498,4 +497,4 @@ time gatk GenotypeGVCFs \
          -R ${ref_genome} \
          -V gendb://${genomicsdb_workspace_path} \
          -newQual \
-         -O test_output.vcf 
+         -O test_output.vcf
