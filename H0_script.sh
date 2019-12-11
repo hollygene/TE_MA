@@ -391,21 +391,21 @@ module load ${GATK_module}
 ## Apply BQSR to bam files
 ###################################################################################################
 
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-
-gatk ApplyBQSR \
-   -R ${ref_genome} \
-   -I ${raw_data}/${BASE}_piped.bam \
-   -bqsr ${output_directory}/${BASE}_recal_data.table \
-   -O ${output_directory}/${BASE}_recalibrated.bam
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+#
+# gatk ApplyBQSR \
+#    -R ${ref_genome} \
+#    -I ${raw_data}/${BASE}_piped.bam \
+#    -bqsr ${output_directory}/${BASE}_recal_data.table \
+#    -O ${output_directory}/${BASE}_recalibrated.bam
+#
+# done
 
 ###################################################################################################
 ## Run HaplotypeCaller again on recalibrated samples
@@ -453,13 +453,16 @@ time gatk GenotypeGVCFs \
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
-# mkdir ${genomicsdb_workspace_path}
-# mkdir ${tmp_DIR}
+mkdir ${genomicsdb_workspace_path}
+mkdir ${tmp_DIR}
 
-# gatk --java-options "-Xmx4g -Xms4g" \
-#        GenomicsDBImport \
-#        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-#        --batch-size 50 \
-#        --sample-name-map ${sample_name_map} \
-#        --TMP_DIR: ${tmp_DIR} \
-#        --reader-threads 12
+gatk --java-options "-Xmx4g -Xms4g" \
+       GenomicsDBImport \
+       --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
+       --batch-size 50 \
+       --sample-name-map ${sample_name_map} \
+       --TMP_DIR: ${tmp_DIR}
+
+
+
+       
