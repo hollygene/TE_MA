@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N D1_HC_CMB_GT
+#PBS -N D1_bedgraphs
 #PBS -l nodes=2:ppn=1:HIGHMEM
 #PBS -l walltime=96:00:00
 #PBS -l mem=505gb
