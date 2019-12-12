@@ -98,6 +98,37 @@ View(x)
 ```
 ## Including Plots
 
+```{r plot bedgraphs}
+#file.names -> reads in the files you want to run 
+
+bedgraph.names <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA", pattern="*.bedgraph",full.names = TRUE)
+bedgraph.names
+
+H0_anc <- bedgraph.names[1] 
+H0_anc <- read.table(H0_anc)
+dim(H0_anc)
+colnames(H0_anc) <- c("Chromosome","Start","End","Coverage")
+
+read.table(H0_anc, sep= "\t", header=FALSE)
+colnames(H0_anc) <- c("Chromosome","Start","End","Coverage")
+plot(H0_anc$Coverage, col=as.factor(H0_anc$Chromosome), ylab="Coverage",ylim=c(0,20000), xlab="Bins (10kb)",main="H0_anc")
+
+
+
+#if you want to try loop: 
+
+#for(i in 1:length(file.names)){
+  
+#  pdf(paste("Graphs",file.names[i],".CovGraph.pdf", sep=""))
+#  files <- read.table(file.names[i], sep= "\t", header=TRUE)
+#  plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,30000), xlab="Bins (10kb)")
+#  dev.off()
+#}
+
+
+
+```
+
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}

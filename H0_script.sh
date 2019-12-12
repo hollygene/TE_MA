@@ -27,6 +27,8 @@ python_module="Python/3.5.2-foss-2016b"
 picard_module="picard/2.4.1-Java-1.8.0_144"
 #location of GATK module
 GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
+#deeptools location
+deeptools_module="deepTools/3.2.1-foss-2018a-Python-3.6.4"
 #location of bamtoBigWig script and accessories
 script_location="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts"
 #location of bam to bigwig script
@@ -412,23 +414,23 @@ module load ${GATK_module}
 ###################################################################################################
 ###################################################################################################
 #
-module load ${GATK_module}
-
-### D1 samples
-for file in ${output_directory}/${BASE}*_recalibrated.bam
-
-do
-
-FBASE=$(basename $file _recalibrated.bam)
-BASE=${FBASE%_recalibrated.bam}
-
-time gatk HaplotypeCaller \
--R ${ref_genome} \
--ERC GVCF \
--I ${output_directory}/${BASE}_recalibrated.bam \
--ploidy 2 \
--O ${output_directory}/${BASE}_variants.Recal.g.vcf
-done
+# module load ${GATK_module}
+#
+# ### D1 samples
+# for file in ${output_directory}/${BASE}*_recalibrated.bam
+#
+# do
+#
+# FBASE=$(basename $file _recalibrated.bam)
+# BASE=${FBASE%_recalibrated.bam}
+#
+# time gatk HaplotypeCaller \
+# -R ${ref_genome} \
+# -ERC GVCF \
+# -I ${output_directory}/${BASE}_recalibrated.bam \
+# -ploidy 2 \
+# -O ${output_directory}/${BASE}_variants.Recal.g.vcf
+# done
 
 ###################################################################################################
 ## Genotype gVCFs (individually)
@@ -436,33 +438,47 @@ done
 ###################################################################################################
 #
 
-for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
-
-do
-
-FBASE=$(basename $file _variants.Recal.g.vcf)
-  BASE=${FBASE%_variants.Recal.g.vcf}
-
-time gatk GenotypeGVCFs \
-     -R ${ref_genome} \
-     --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
-     -O ${output_directory}/${BASE}.vcf
-
-  done
+# for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
+#
+# do
+#
+# FBASE=$(basename $file _variants.Recal.g.vcf)
+#   BASE=${FBASE%_variants.Recal.g.vcf}
+#
+# time gatk GenotypeGVCFs \
+#      -R ${ref_genome} \
+#      --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
+#      -O ${output_directory}/${BASE}.vcf
+#
+#   done
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
-mkdir ${genomicsdb_workspace_path}
-mkdir ${tmp_DIR}
+# mkdir ${genomicsdb_workspace_path}
+# mkdir ${tmp_DIR}
+#
+# gatk --java-options "-Xmx4g -Xms4g" \
+#        GenomicsDBImport \
+#        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
+#        --batch-size 50 \
+#        --sample-name-map ${sample_name_map} \
+#        --TMP_DIR: ${tmp_DIR}
 
-gatk --java-options "-Xmx4g -Xms4g" \
-       GenomicsDBImport \
-       --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-       --batch-size 50 \
-       --sample-name-map ${sample_name_map} \
-       --TMP_DIR: ${tmp_DIR}
+# ###################################################################################################
+# ### Find coverage and put into 10k chunks
+# ###################################################################################################
+
+module load ${deeptools_module}
 
 
+for file in ${raw_data}/${BASE}*_piped.bam
 
-       
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+
+bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
+
+done
