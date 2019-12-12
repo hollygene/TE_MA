@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
+#PBS -q batch
 #PBS -N D1_bedgraphs
-#PBS -l nodes=2:ppn=1:HIGHMEM
-#PBS -l walltime=96:00:00
-#PBS -l mem=505gb
+#PBS -l nodes=1:ppn=1:AMD
+#PBS -l walltime=24:00:00
+#PBS -l mem=10gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
