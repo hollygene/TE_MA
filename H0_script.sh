@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N fours
+#PBS -N rest
 #PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l walltime=120:00:00
 #PBS -l mem=250gb
@@ -417,7 +417,7 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 ### D1 samples
-for file in ${output_directory}/fours/${BASE}*_recalibrated.bam
+for file in ${output_directory}/rest/${BASE}*_recalibrated.bam
 
 do
 
@@ -427,9 +427,9 @@ BASE=${FBASE%_recalibrated.bam}
 time gatk HaplotypeCaller \
 -R ${ref_genome} \
 -ERC GVCF \
--I ${output_directory}/fours/${BASE}_recalibrated.bam \
+-I ${output_directory}/rest/${BASE}_recalibrated.bam \
 -ploidy 1 \
--O ${output_directory}/fours/${BASE}_variants.Recal.g.vcf
+-O ${output_directory}/rest/${BASE}_variants.Recal.g.vcf
 done
 
 ###################################################################################################
@@ -447,7 +447,7 @@ FBASE=$(basename $file _variants.Recal.g.vcf)
 
 time gatk GenotypeGVCFs \
      -R ${ref_genome} \
-     --variant ${output_directory}/fours/${BASE}_variants.Recal.g.vcf \
+     --variant ${output_directory}/rest/${BASE}_variants.Recal.g.vcf \
      -O ${output_directory}/${BASE}.recal.vcf
 
   done
