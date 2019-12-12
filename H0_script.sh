@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q batch
-#PBS -N H0_cov_plots
-#PBS -l nodes=1:ppn=1:AMD
+#PBS -q highmem_q
+#PBS -N twos
+#PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l walltime=120:00:00
-#PBS -l mem=50gb
+#PBS -l mem=505gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -414,23 +414,23 @@ module load ${GATK_module}
 ###################################################################################################
 ###################################################################################################
 #
-# module load ${GATK_module}
-#
-# ### D1 samples
-# for file in ${output_directory}/${BASE}*_recalibrated.bam
-#
-# do
-#
-# FBASE=$(basename $file _recalibrated.bam)
-# BASE=${FBASE%_recalibrated.bam}
-#
-# time gatk HaplotypeCaller \
-# -R ${ref_genome} \
-# -ERC GVCF \
-# -I ${output_directory}/${BASE}_recalibrated.bam \
-# -ploidy 2 \
-# -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-# done
+module load ${GATK_module}
+
+### D1 samples
+for file in ${output_directory}/twos/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+
+time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/twos/${BASE}_recalibrated.bam \
+-ploidy 1 \
+-O ${output_directory}/twos/${BASE}_variants.Recal.g.vcf
+done
 
 ###################################################################################################
 ## Genotype gVCFs (individually)
@@ -438,19 +438,19 @@ module load ${GATK_module}
 ###################################################################################################
 #
 
-# for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
-#
-# do
-#
-# FBASE=$(basename $file _variants.Recal.g.vcf)
-#   BASE=${FBASE%_variants.Recal.g.vcf}
-#
-# time gatk GenotypeGVCFs \
-#      -R ${ref_genome} \
-#      --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
-#      -O ${output_directory}/${BASE}.vcf
-#
-#   done
+for file in ${output_directory}/twos/${BASE}*_variants.Recal.g.vcf
+
+do
+
+FBASE=$(basename $file _variants.Recal.g.vcf)
+  BASE=${FBASE%_variants.Recal.g.vcf}
+
+time gatk GenotypeGVCFs \
+     -R ${ref_genome} \
+     --variant ${output_directory}/twos/${BASE}_variants.Recal.g.vcf \
+     -O ${output_directory}/twos/${BASE}.vcf
+
+  done
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
@@ -469,16 +469,16 @@ module load ${GATK_module}
 # ### Find coverage and put into 10k chunks
 # ###################################################################################################
 
-module load ${deeptools_module}
-
-
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
-
-done
+# module load ${deeptools_module}
+#
+#
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
+#
+# done
