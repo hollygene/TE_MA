@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q batch
-#PBS -N D1_bedgraphs
-#PBS -l nodes=1:ppn=1:AMD
-#PBS -l walltime=24:00:00
-#PBS -l mem=10gb
+#PBS -N D1_recal_gvcfs
+#PBS -l nodes=2:ppn=1:AMD
+#PBS -l walltime=96:00:00
+#PBS -l mem=505gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -555,21 +555,21 @@ module load ${GATK_module}
 # ###################################################################################################
 # ###################################################################################################
 # #
-# for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
-#
-# do
-#
-# FBASE=$(basename $file _recalibrated.bam)
-# BASE=${FBASE%_recalibrated.bam}
-#
-# time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I ${output_directory}/do_again/${BASE}_recalibrated.bam \
-#      -ploidy 2 \
-#      -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
-#
-# done
+for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${output_directory}/do_again/${BASE}_recalibrated.bam \
+     -ploidy 2 \
+     -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
+
+done
 
 # time gatk CombineVariants \
 #     -R reference.fasta \
@@ -577,7 +577,7 @@ module load ${GATK_module}
 #     --variant ${output_directory}/HM-D1-11.vcf \
 #     -o ${output_directory}/combined10_11.vcf \
 #     -genotypeMergeOptions UNIQUIFY
-#
+
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
@@ -590,61 +590,61 @@ module load ${GATK_module}
 
 
 
-# time gatk CombineGVCFs \
-#    -R ${ref_genome} \
-#    -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/cohort.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-A_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-10_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-20_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-31_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-42_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-21_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-32_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-44_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-11_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-22_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-33_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-45_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-12_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-24_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-35_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-46_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-13_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-25_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-36_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-4_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-14_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-26_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-37_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-5_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-15_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-27_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-38_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-6_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-16_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-28_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-39_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-7_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-17_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-29_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-3_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-8_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-18_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-2_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-9_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-19_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-30_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-40_variants.Recal.g.vcf \
-#    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-41_variants.Recal.g.vcf
+time gatk CombineGVCFs \
+   -R ${ref_genome} \
+   -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/cohort.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-A_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-10_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-20_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-31_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-42_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-21_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-32_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-44_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-11_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-22_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-33_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-45_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-12_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-24_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-35_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-46_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-13_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-25_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-36_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-4_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-14_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-26_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-37_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-5_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-15_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-27_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-38_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-6_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-16_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-28_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-39_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-7_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-17_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-29_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-3_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-8_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-18_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-2_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-9_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-19_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-30_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-40_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-41_variants.Recal.g.vcf
 #
 #        # ###################################################################################################
 #        # ### joint genotype vcfs
 #        # ###################################################################################################
 #
-# time gatk GenotypeGVCFs \
-#          -R ${ref_genome} \
-#          --variant /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/cohort.g.vcf \
-#          -O ${output_directory}/Full_cohort.vcf
+time gatk GenotypeGVCFs \
+         -R ${ref_genome} \
+         --variant /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/cohort.g.vcf \
+         -O ${output_directory}/Full_cohort.vcf
 
 
 
@@ -654,19 +654,19 @@ module load ${GATK_module}
          # ### Find coverage and put into 10k chunks
          # ###################################################################################################
 
-         module load ${deeptools_module}
-
-
-         for file in ${raw_data}/${BASE}*_piped.bam
-
-         do
-
-         FBASE=$(basename $file _piped.bam)
-         BASE=${FBASE%_piped.bam}
-
-         bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
-
-         done
+         # module load ${deeptools_module}
+         #
+         #
+         # for file in ${raw_data}/${BASE}*_piped.bam
+         #
+         # do
+         #
+         # FBASE=$(basename $file _piped.bam)
+         # BASE=${FBASE%_piped.bam}
+         #
+         # bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
+         #
+         # done
 
 # time gatk SelectVariants \
 #             -R ${ref_genome} \
