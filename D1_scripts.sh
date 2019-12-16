@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
-#PBS -q batch
+#PBS -q highmem_q
 #PBS -N D1_recal_gvcfs
-#PBS -l nodes=2:ppn=1:AMD
+#PBS -l nodes=2:ppn=1:HIGHMEM
 #PBS -l walltime=96:00:00
 #PBS -l mem=505gb
 #PBS -M hcm14449@uga.edu
