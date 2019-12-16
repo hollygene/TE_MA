@@ -417,20 +417,89 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 ### D1 samples
-for file in ${output_directory}/rest/${BASE}*_recalibrated.bam
+# for file in ${output_directory}/rest/${BASE}*_recalibrated.bam
+#
+# do
+#
+# FBASE=$(basename $file _recalibrated.bam)
+# BASE=${FBASE%_recalibrated.bam}
+#
+# time gatk HaplotypeCaller \
+# -R ${ref_genome} \
+# -ERC GVCF \
+# -I ${output_directory}/rest/${BASE}_recalibrated.bam \
+# -ploidy 1 \
+# -O ${output_directory}/rest/${BASE}_variants.Recal.g.vcf
+# done
 
-do
+###################################################################################################
+## Combine gvcfs
+###################################################################################################
+###################################################################################################
+#
 
-FBASE=$(basename $file _recalibrated.bam)
-BASE=${FBASE%_recalibrated.bam}
+time gatk CombineGVCFs \
+   -R ${ref_genome} \
+   -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/H0_cohort.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-A_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-10_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-20_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-31_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-42_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-21_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-32_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-44_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-11_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-22_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-33_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-45_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-12_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-24_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-35_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-46_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-13_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-34_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-36_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-4_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-14_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-26_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-37_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-5_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-15_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-27_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-38_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-23_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-16_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-28_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-39_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-7_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-17_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-29_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-1_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-8_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-18_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-2_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-9_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-19_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-30_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-40_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-43_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-47_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-48_variants.Recal.g.vcf \
+   -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-41_variants.Recal.g.vcf
 
-time gatk HaplotypeCaller \
--R ${ref_genome} \
--ERC GVCF \
--I ${output_directory}/rest/${BASE}_recalibrated.bam \
--ploidy 1 \
--O ${output_directory}/rest/${BASE}_variants.Recal.g.vcf
-done
+
+
+   ###################################################################################################
+   ## Genotype gVCFs (jointly)
+   ###################################################################################################
+   ###################################################################################################
+   #
+
+   time gatk GenotypeGVCFs \
+        -R ${ref_genome} \
+        --variant ${output_directory}/H0_cohort.g.vcf \
+        -O ${output_directory}/H0_cohort.vcf
 
 ###################################################################################################
 ## Genotype gVCFs (individually)
@@ -438,19 +507,19 @@ done
 ###################################################################################################
 #
 
-for file in ${output_directory}/fours/${BASE}*_variants.Recal.g.vcf
-
-do
-
-FBASE=$(basename $file _variants.Recal.g.vcf)
-  BASE=${FBASE%_variants.Recal.g.vcf}
-
-time gatk GenotypeGVCFs \
-     -R ${ref_genome} \
-     --variant ${output_directory}/rest/${BASE}_variants.Recal.g.vcf \
-     -O ${output_directory}/${BASE}.recal.vcf
-
-  done
+# for file in ${output_directory}/fours/${BASE}*_variants.Recal.g.vcf
+#
+# do
+#
+# FBASE=$(basename $file _variants.Recal.g.vcf)
+#   BASE=${FBASE%_variants.Recal.g.vcf}
+#
+# time gatk GenotypeGVCFs \
+#      -R ${ref_genome} \
+#      --variant ${output_directory}/rest/${BASE}_variants.Recal.g.vcf \
+#      -O ${output_directory}/${BASE}.recal.vcf
+#
+#   done
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
