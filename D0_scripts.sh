@@ -408,7 +408,7 @@ module load ${GATK_module}
         # module load ${GATK_module}
 
         ### D1 samples
-        for file in ${output_directory}/${BASE}*_recalibrated.bam
+        for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
 
         do
 
@@ -418,9 +418,9 @@ module load ${GATK_module}
         time gatk HaplotypeCaller \
         -R ${ref_genome} \
         -ERC GVCF \
-        -I ${output_directory}/${BASE}_recalibrated.bam \
+        -I ${output_directory}/do_again/${BASE}_recalibrated.bam \
         -ploidy 2 \
-        -O ${output_directory}/${BASE}_variants.Recal.g.vcf
+        -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
         done
 
 # ###################################################################################################
@@ -429,7 +429,7 @@ module load ${GATK_module}
 # ###################################################################################################
 # #
 
-        for file in ${output_directory}/${BASE}*_variants.Recal.g.vcf
+        for file in ${output_directory}/do_again/${BASE}*_variants.Recal.g.vcf
 
         do
 
@@ -438,7 +438,7 @@ module load ${GATK_module}
 
         time gatk GenotypeGVCFs \
              -R ${ref_genome} \
-             --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
+             --variant ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf \
              -O ${output_directory}/${BASE}.vcf
 
           done
