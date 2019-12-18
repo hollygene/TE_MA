@@ -40,16 +40,16 @@ library(gplots)
 library(ape)
 library(ggmap)
 
-vcf <- read.vcfR("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Practice_Analyses/Sample1.vcf")
+vcf <- read.vcfR("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_cohort.vcf")
 head(vcf)
 vcf@fix[1:10,1:5]
 
-chrom <- create.chromR(name="sample1_data",vcf=vcf)
+chrom <- create.chromR(name="H0_data",vcf=vcf)
 plot(chrom)
 
 dp <- extract.gt(vcf,element="DP",as.numeric = TRUE)
 
-pdf("DP_sample1_data.pdf",width=10,height=3) #boxplot
+pdf("DP_H0_data.pdf",width=10,height=3) #boxplot
 boxplot(dp, las=3, col=c("#C0C0C0", "#808080"), ylab="Read Depth (DP)",
 las=2, cex=0.4, cex.axis=0.5)
 dev.off()

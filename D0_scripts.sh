@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N D0_scripts_recal_haplotypecaller_genotype
+#PBS -N D0_joint_genotype
 #PBS -l nodes=2:ppn=1:HIGHMEM
 #PBS -l walltime=96:00:00
 #PBS -l mem=505gb
@@ -408,20 +408,20 @@ module load ${GATK_module}
         # module load ${GATK_module}
 
         ### D1 samples
-        for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
-
-        do
-
-        FBASE=$(basename $file _recalibrated.bam)
-        BASE=${FBASE%_recalibrated.bam}
-
-        time gatk HaplotypeCaller \
-        -R ${ref_genome} \
-        -ERC GVCF \
-        -I ${output_directory}/do_again/${BASE}_recalibrated.bam \
-        -ploidy 2 \
-        -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
-        done
+        # for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
+        #
+        # do
+        #
+        # FBASE=$(basename $file _recalibrated.bam)
+        # BASE=${FBASE%_recalibrated.bam}
+        #
+        # time gatk HaplotypeCaller \
+        # -R ${ref_genome} \
+        # -ERC GVCF \
+        # -I ${output_directory}/do_again/${BASE}_recalibrated.bam \
+        # -ploidy 2 \
+        # -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
+        # done
 
 # ###################################################################################################
   ### Genotype gVCFs (individually)
@@ -429,19 +429,87 @@ module load ${GATK_module}
 # ###################################################################################################
 # #
 
-        for file in ${output_directory}/do_again/${BASE}*_variants.Recal.g.vcf
+        # for file in ${output_directory}/do_again/${BASE}*_variants.Recal.g.vcf
+        #
+        # do
+        #
+        # FBASE=$(basename $file _variants.Recal.g.vcf)
+        #   BASE=${FBASE%_variants.Recal.g.vcf}
+        #
+        # time gatk GenotypeGVCFs \
+        #      -R ${ref_genome} \
+        #      --variant ${output_directory}/${BASE}_variants.Recal.g.vcf \
+        #      -O ${output_directory}/${BASE}.vcf
+        #
+        #   done
 
-        do
 
-        FBASE=$(basename $file _variants.Recal.g.vcf)
-          BASE=${FBASE%_variants.Recal.g.vcf}
+          ###################################################################################################
+          ## Combine gvcfs
+          ###################################################################################################
+          ###################################################################################################
+          #
 
-        time gatk GenotypeGVCFs \
+          time gatk CombineGVCFs \
              -R ${ref_genome} \
-             --variant ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf \
-             -O ${output_directory}/${BASE}.vcf
+             -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/D0_cohort.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-A_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-10_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-20_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-31_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-42_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-21_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-32_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-44_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-11_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-22_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-33_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-12_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-24_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-35_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-46_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-13_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-34_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-36_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-4_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-14_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-26_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-37_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-5_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-15_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-27_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-38_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-23_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-16_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-3_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-39_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-7_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-17_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-25_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-1_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-6_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-18_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-2_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-9_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-19_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-30_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-40_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-43_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-47_variants.Recal.g.vcf \
+             -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-48_variants.Recal.g.vcf
 
-          done
+
+             ###################################################################################################
+             ## Genotype gVCFs (jointly)
+             ###################################################################################################
+             ###################################################################################################
+             #
+
+             time gatk GenotypeGVCFs \
+                  -R ${ref_genome} \
+                  -ploidy 2 \
+                  --variant ${output_directory}/D0_cohort.g.vcf \
+                  -O ${output_directory}/D0_cohort.vcf
 
 # ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
