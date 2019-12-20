@@ -3,7 +3,7 @@
 #PBS -N D1_recal_gvcfs
 #PBS -l nodes=2:ppn=1:HIGHMEM
 #PBS -l walltime=96:00:00
-#PBS -l mem=505gb
+#PBS -l mem=300gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -555,21 +555,21 @@ module load ${GATK_module}
 # ###################################################################################################
 # ###################################################################################################
 # #
-for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
-
-do
-
-FBASE=$(basename $file _recalibrated.bam)
-BASE=${FBASE%_recalibrated.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${output_directory}/do_again/${BASE}_recalibrated.bam \
-     -ploidy 2 \
-     -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
-
-done
+# for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
+#
+# do
+#
+# FBASE=$(basename $file _recalibrated.bam)
+# BASE=${FBASE%_recalibrated.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${output_directory}/do_again/${BASE}_recalibrated.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
+#
+# done
 
 # time gatk CombineVariants \
 #     -R reference.fasta \
@@ -644,7 +644,7 @@ time gatk CombineGVCFs \
 time gatk GenotypeGVCFs \
          -R ${ref_genome} \
          --variant /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/cohort.g.vcf \
-         -O ${output_directory}/Full_cohort.vcf
+         -O ${output_directory}/Full_cohort_D1.vcf
 
 
 
