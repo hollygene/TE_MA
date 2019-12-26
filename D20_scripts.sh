@@ -250,21 +250,21 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 ### D20 samples
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${raw_data}/${BASE}_piped.bam \
-     -ploidy 2 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${raw_data}/${BASE}_piped.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/${BASE}_variants.g.vcf
+#
+# done
 
 
 # module load GATK/4.0.3.0-Java-1.8.0_144
@@ -282,27 +282,27 @@ done
 # ###################################################################################################
 
 
-time gatk CombineGVCFs \
- -O ${output_directory}/D20_cohort.g.vcf \
- -R ${ref_genome} \
- --variant ${output_directory}/HM-D20-A_variants.g.vcf \
- --variant ${output_directory}/HM-D20-10_variants.g.vcf \
- --variant ${output_directory}/HM-D20-11_variants.g.vcf \
- --variant ${output_directory}/HM-D20-12_variants.g.vcf \
- --variant ${output_directory}/HM-D20-13_variants.g.vcf \
- --variant ${output_directory}/HM-D20-14_variants.g.vcf \
- --variant ${output_directory}/HM-D20-15_variants.g.vcf \
- --variant ${output_directory}/HM-D20-16_variants.g.vcf
-
-
-# ###################################################################################################
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/D20_cohort.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/HM-D20-A_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-10_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-11_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-12_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-13_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-14_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-15_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-16_variants.g.vcf
+#
+#
+# # ###################################################################################################
 # ### Jointly genotype 8 random samples to identify consensus sequences
 # ###################################################################################################
 
-time gatk GenotypeGVCFs \
-        -R ${ref_genome} \
-        --variant ${output_directory}/D20_cohort.g.vcf \
-        -O ${output_directory}/D20_variants_8Samples.vcf
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         --variant ${output_directory}/D20_cohort.g.vcf \
+#         -O ${output_directory}/D20_variants_8Samples.vcf
 
 
 # ###################################################################################################
