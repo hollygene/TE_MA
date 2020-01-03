@@ -139,6 +139,17 @@ D1_45 <- read.table(bedgraph.names.D1[35], sep= "\t", header=FALSE)
 plot(D1_45$Coverage, col=as.factor(D1_45$Chromosome), ylab="Coverage",ylim=c(0,1340000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
 dev.off()
 
+
+
+bedgraph.names.D0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D0", pattern="*.bedgraph",full.names = TRUE)
+
+for(i in 1:length(bedgraph.names.D0)){
+  pdf(paste("",bedgraph.names.D0[i],".CovGraph.pdf", sep=""))
+  file <- read.table(bedgraph.names.D0[i], sep= "\t", header=FALSE)
+  colnames(file) <- c("Chromosome","Start","End","Coverage")
+plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+dev.off()
+}
 #if you want to try loop: 
 
 #for(i in 1:length(file.names)){

@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N haplotype_caller_redo
+#PBS -N haplotype_caller_onRecals
 #PBS -l nodes=2:ppn=1:HIGHMEM
 #PBS -l walltime=480:00:00
 #PBS -l mem=600gb
@@ -292,21 +292,21 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 #### H0 samples
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${raw_data}/${BASE}_piped.bam \
-     -ploidy 1 \
-     -O ${output_directory}/${BASE}_variants.g.vcf
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${raw_data}/${BASE}_piped.bam \
+#      -ploidy 1 \
+#      -O ${output_directory}/${BASE}_variants.g.vcf
+#
+# done
 
 # time gatk HaplotypeCaller \
 #      -R ${ref_genome} \
@@ -347,48 +347,48 @@ done
 # ###################################################################################################
 
 
-time gatk CombineGVCFs \
- -O ${output_directory}/H0_cohort.g.vcf \
- -R ${ref_genome} \
- --variant ${output_directory}/HM-H0-A_variants.g.vcf \
- --variant ${output_directory}/HM-H0-10_variants.g.vcf \
- --variant ${output_directory}/HM-H0-11_variants.g.vcf \
- --variant ${output_directory}/HM-H0-12_variants.g.vcf \
- --variant ${output_directory}/HM-H0-13_variants.g.vcf \
- --variant ${output_directory}/HM-H0-14_variants.g.vcf \
- --variant ${output_directory}/HM-H0-15_variants.g.vcf \
- --variant ${output_directory}/HM-H0-16_variants.g.vcf
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/H0_cohort.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/HM-H0-A_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-10_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-11_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-12_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-13_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-14_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-15_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-16_variants.g.vcf
 
 
 # ###################################################################################################
 # ### Jointly genotype 8 random samples to identify consensus sequences
 # ###################################################################################################
 
-time gatk GenotypeGVCFs \
-        -R ${ref_genome} \
-        -ploidy 1 \
-        --variant ${output_directory}/H0_cohort.g.vcf \
-        -O ${output_directory}/H0_variants_8Samples.vcf
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         -ploidy 1 \
+#         --variant ${output_directory}/H0_cohort_test.g.vcf \
+#         -O ${output_directory}/H0_variants_7Samples.vcf
 
 # ###################################################################################################
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # ###################################################################################################
 
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-
-time gatk BaseRecalibrator \
-   -I ${raw_data}/${BASE}_piped.bam \
-   --known-sites ${output_directory}/H0_variants_8Samples.vcf \
-   -O ${output_directory}/${BASE}_recal_data.table \
-   -R ${ref_genome}
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+#
+# time gatk BaseRecalibrator \
+#    -I ${raw_data}/${BASE}_piped.bam \
+#    --known-sites ${output_directory}/H0_variants_8Samples.vcf \
+#    -O ${output_directory}/${BASE}_recal_data.table \
+#    -R ${ref_genome}
+#
+# done
 
 ###################################################################################################
 ## Apply BQSR to bam files
@@ -428,9 +428,9 @@ BASE=${FBASE%_recalibrated.bam}
 time gatk HaplotypeCaller \
 -R ${ref_genome} \
 -ERC GVCF \
--I ${output_directory}/rest/${BASE}_recalibrated.bam \
+-I ${output_directory}/${BASE}_recalibrated.bam \
 -ploidy 1 \
--O ${output_directory}/rest/${BASE}_variants.Recal.g.vcf
+-O ${output_directory}/${BASE}_variants.Recal.g.vcf
 
 done
 
