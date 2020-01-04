@@ -383,20 +383,20 @@ module load ${GATK_module}
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # ###################################################################################################
 
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-
-time gatk BaseRecalibrator \
-   -I ${raw_data}/${BASE}_piped.bam \
-   --known-sites ${output_directory}/D1_variants_8Samples.vcf \
-   -O ${output_directory}/${BASE}_recal_data.table \
-   -R ${ref_genome}
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+#
+# time gatk BaseRecalibrator \
+#    -I ${raw_data}/${BASE}_piped.bam \
+#    --known-sites ${output_directory}/D1_variants_8Samples.vcf \
+#    -O ${output_directory}/${BASE}_recal_data.table \
+#    -R ${ref_genome}
+# done
 
 # ###################################################################################################
 # ## Apply BQSR to bam files
