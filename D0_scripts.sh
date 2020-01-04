@@ -408,7 +408,7 @@ module load ${GATK_module}
   # #
         # module load ${GATK_module}
 
-        ### D1 samples
+        ## D1 samples
         # for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
         #
         # do
@@ -423,6 +423,13 @@ module load ${GATK_module}
         # -ploidy 2 \
         # -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
         # done
+
+        time gatk HaplotypeCaller \
+        -R ${ref_genome} \
+        -ERC GVCF \
+        -I ${output_directory}/HM-D0-4_recalibrated.bam \
+        -ploidy 2 \
+        -O ${output_directory}/HM-D0-4_variants.Recal.g.vcf
 
 # ###################################################################################################
   ### Genotype gVCFs (individually)
