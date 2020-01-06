@@ -559,21 +559,21 @@ done
 # ###################################################################################################
 # ###################################################################################################
 #
-# for file in ${output_directory}/do_again/${BASE}*_recalibrated.bam
-#
-# do
-#
-# FBASE=$(basename $file _recalibrated.bam)
-# BASE=${FBASE%_recalibrated.bam}
-#
-# time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I ${output_directory}/do_again/${BASE}_recalibrated.bam \
-#      -ploidy 2 \
-#      -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
-#
-# done
+for file in ${output_directory}/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${output_directory}/${BASE}_recalibrated.bam \
+     -ploidy 2 \
+     -O ${output_directory}/${BASE}_variants.Recal.g.vcf
+
+done
 
 # time gatk CombineVariants \
 #     -R reference.fasta \
