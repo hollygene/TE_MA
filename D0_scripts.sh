@@ -538,6 +538,33 @@ module load ${GATK_module}
                   # done
                  # ################
 # ###################################################################################################
+# ### Filter variants
+# ###################################################################################################
+
+# Get only those lines where there is actually a genotype call in the ancestor
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0_FullCohort.vcf \
+-O ${output_directory}/D0_FullCohort_AncCalls.vcf \
+-select 'vc.getGenotype("HM-D0-A").isCalled()'
+
+
+# remove all lines in the ancestor that have a heterozygous genotype 
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0_FullCohort_AncCalls.vcf \
+-O ${output_directory}/D0_FullCohort_AnCalls_NoHets.vcf \
+-select '!vc.getGenotype("HM-D0-A").isHet()'
+
+
+
+
+
+
+
+
+
+# ###################################################################################################
 # ### Aggregate the GVCF files using GenomicsDBImport
 # ###################################################################################################
 # mkdir ${genomicsdb_workspace_path}
