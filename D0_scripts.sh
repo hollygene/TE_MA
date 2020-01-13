@@ -123,7 +123,7 @@ do
 	cd /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/${i}
 	file=(*_001.fastq)
   R1=${file[_R1]_001.fastq}
-  R2=${file[_R2]%_001.fastq}
+  R2=${file[_R2]_001.fastq}
 	OUT="${i}_bwa_mem.sh"
 	echo "#!/bin/bash" > ${OUT}
 	echo "#PBS -N ${i}_FastqToSam" >> ${OUT}
@@ -141,7 +141,7 @@ do
   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
       FASTQ=${R1} \
-      FASTQ2=${file}_R2_001.fastq  \
+      FASTQ2=${R2}  \
       OUTPUT=${file}_fastqtosam.bam \
       READ_GROUP_NAME=${file} \
       SAMPLE_NAME=${file} \
