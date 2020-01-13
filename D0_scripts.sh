@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
-#PBS -N D0_genotyping
-#PBS -l nodes=1:ppn=1:HIGHMEM
-#PBS -l walltime=96:00:00
-#PBS -l mem=250gb
+#PBS -q batch
+#PBS -N test_submit
+#PBS -l nodes=1:ppn=1:AMD
+#PBS -l walltime=2:00:00
+#PBS -l mem=5gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -29,11 +29,11 @@ picard_module="picard/2.4.1-Java-1.8.0_144"
 GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
 deeptools_module="deepTools/3.2.1-foss-2018a-Python-3.6.4"
 #location of bamtoBigWig script and accessories
-script_location="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts"
+# script_location="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts"
 #location of bam to bigwig script
-bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
+# bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
 #location of data to be analyzed
-data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
+# data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
@@ -43,14 +43,14 @@ ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus"
 #what sample should all other samples be compared to?
 # control_sample_name="Ancestor"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0"
+# output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0"
 # mkdir $output_directory
 #location of TRIMMED data to be used in the analysis
-raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D0"
-trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed/D0"
-genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB"
-sample_name_map="/home/hcm14449/Github/TE_MA/D0_sample_map.txt"
-tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB/tmp"
+# raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D0"
+# trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed/D0"
+# genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB"
+# sample_name_map="/home/hcm14449/Github/TE_MA/D0_sample_map.txt"
+# # tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB/tmp"
 
 # cd ${output_directory}
 # rm *
@@ -59,6 +59,36 @@ module load ${picard_module}
 module load ${bwa_module}
 module load ${samtools_module}
 module load ${GATK_module}
+
+
+
+# # !/bin/bash
+
+# AR=(Ambo_002 Ambo_003 Ambo_004)
+#
+# DIR=/lustre1/bewickaj/leebens_mack/amborella_trichopoda/mapping_pop
+#
+# for i in "${AR[@]}"
+# do
+# 	cd /lustre1/bewickaj/leebens_mack/amborella_trichopoda/mapping_pop/${i}
+# 	files=(*P.fastq)
+# 	R1=${files[0]%.fastq}
+# 	R2=${files[1]%.fastq}
+# 	OUT="${i}_bwa_mem.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${i}_bwa_mem" >> ${OUT}
+# 	echo "#PBS -l walltime=128:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=4:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=24gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd /lustre1/bewickaj/leebens_mack/amborella_trichopoda/mapping_pop/${i}" >> ${OUT}
+# 	echo "module load bwa/0.7.15" >> ${OUT}
+# 	echo "module load samtools/1.6" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "time bwa mem -t 4 -R \"@RG\tID:${i}\tSM:${i}\" ${DIR}/AT_V6.genome.fa ${R1}.fastq ${R2}.fastq | samtools sort -o ${i}_aln-pe_sorted.bam -@ 4 -" >> ${OUT}
+# 	qsub ${OUT}
+# done
 
 #######################################################################################
 # create a uBAM file
@@ -82,6 +112,44 @@ module load ${GATK_module}
 #     SEQUENCING_CENTER=GGBC
 #
 # done
+
+AR=(H0 D0 D1 D20)
+
+DIR=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/
+
+
+for i in "${AR[@]}"
+do
+	cd /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/${i}
+	files=(*_001.fastq)
+	R1=${files[_R1]%_001.fastq}
+	R2=${files[_R2]%_001.fastq}
+	OUT="${i}_bwa_mem.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${i}_FastqToSam" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=40gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/${i}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+      FASTQ=${R1} \
+      FASTQ2=${R2}  \
+      OUTPUT=${R1}_fastqtosam.bam \
+      READ_GROUP_NAME=${R1} \
+      SAMPLE_NAME=${R1} \
+      LIBRARY_NAME=${i} \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC" >> ${OUT}
+	qsub ${OUT}
+done
 
 #######################################################################################
 # mark Illumina adapters
@@ -303,7 +371,7 @@ module load ${GATK_module}
 # # will need to do this separtely for haploid and diploid samples
 # ###################################################################################################
 # #
-module load ${GATK_module}
+# module load ${GATK_module}
 
 #### D0 samples
 # for file in ${raw_data}/${BASE}*_piped.bam
@@ -543,85 +611,85 @@ module load ${GATK_module}
 # ###################################################################################################
 
 # Get only those lines where there is actually a genotype call in the ancestor
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D0_FullCohort.vcf \
--O ${output_directory}/D0_FullCohort_AncCalls.vcf \
--select 'vc.getGenotype("HM-D0-A").isCalled()'
-
-
-# remove all lines in the ancestor that have a heterozygous genotype
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D0_FullCohort_AncCalls.vcf \
--O ${output_directory}/D0_FullCohort_AncCalls_NoHets.vcf \
--select '!vc.getGenotype("HM-D0-A").isHet()'
-
-# filter out sites with low read depth
-gatk VariantFiltration \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   --set-filtered-genotype-to-no-call TRUE \
-   -G-filter "DP < 10"  -G-filter-name "depthGr10" \
-   -filter "MQ < 50.0" -filter-name "MQ50" \
-   -filter "SOR < 0.01" -filter-name "strandBias"
-
-
-  # remove filtered sites (these were set to no calls ./.)
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   --exclude-filtered TRUE
-
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -select 'vc.getGenotype("HM-D0-A").isCalled()'
-
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-   -select-type SNP \
-   -select-type INDEL \
-   -select-type MIXED \
-   -select-type MNP \
-   -select-type SYMBOLIC
-
-
-#gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
-# depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
-
-#Variants to table
-gatk VariantsToTable \
-     -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-     -F CHROM -F POS -F REF -F ALT -F QUAL \
-     -GF AD -GF DP -GF GQ -GF GT \
-     -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-
-     gatk VariantsToTable \
-          -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-          -F CHROM -F POS -F REF -F ALT  \
-          -GF AD -GF GT \
-          -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_varsGT.txt
-
-
-
-# ###################################################################################################
-# ### Aggregate the GVCF files using GenomicsDBImport
-# ###################################################################################################
-# mkdir ${genomicsdb_workspace_path}
-# mkdir ${tmp_DIR}
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D0_FullCohort.vcf \
+# -O ${output_directory}/D0_FullCohort_AncCalls.vcf \
+# -select 'vc.getGenotype("HM-D0-A").isCalled()'
 #
 #
-# gatk --java-options "-Xmx4g -Xms4g" \
-#        GenomicsDBImport \
-#        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-#        --batch-size 50 \
-#        --sample-name-map ${sample_name_map} \
-#        --reader-threads 12
-
-   # --TMP_DIR:${tmp_DIR} \
+# # remove all lines in the ancestor that have a heterozygous genotype
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D0_FullCohort_AncCalls.vcf \
+# -O ${output_directory}/D0_FullCohort_AncCalls_NoHets.vcf \
+# -select '!vc.getGenotype("HM-D0-A").isHet()'
+#
+# # filter out sites with low read depth
+# gatk VariantFiltration \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D0_FullCohort_AncCalls_NoHets.vcf \
+#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+#    --set-filtered-genotype-to-no-call TRUE \
+#    -G-filter "DP < 10"  -G-filter-name "depthGr10" \
+#    -filter "MQ < 50.0" -filter-name "MQ50" \
+#    -filter "SOR < 0.01" -filter-name "strandBias"
+#
+#
+#   # remove filtered sites (these were set to no calls ./.)
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+#    --exclude-filtered TRUE
+#
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -select 'vc.getGenotype("HM-D0-A").isCalled()'
+#
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+#    -select-type SNP \
+#    -select-type INDEL \
+#    -select-type MIXED \
+#    -select-type MNP \
+#    -select-type SYMBOLIC
+#
+#
+# #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
+# # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
+#
+# #Variants to table
+# gatk VariantsToTable \
+#      -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+#      -F CHROM -F POS -F REF -F ALT -F QUAL \
+#      -GF AD -GF DP -GF GQ -GF GT \
+#      -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
+#
+#      gatk VariantsToTable \
+#           -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+#           -F CHROM -F POS -F REF -F ALT  \
+#           -GF AD -GF GT \
+#           -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_varsGT.txt
+#
+#
+#
+# # ###################################################################################################
+# # ### Aggregate the GVCF files using GenomicsDBImport
+# # ###################################################################################################
+# # mkdir ${genomicsdb_workspace_path}
+# # mkdir ${tmp_DIR}
+# #
+# #
+# # gatk --java-options "-Xmx4g -Xms4g" \
+# #        GenomicsDBImport \
+# #        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
+# #        --batch-size 50 \
+# #        --sample-name-map ${sample_name_map} \
+# #        --reader-threads 12
+#
+#    # --TMP_DIR:${tmp_DIR} \
