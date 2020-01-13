@@ -140,7 +140,7 @@ do
 	echo "" >> ${OUT}
   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-      FASTQ=${file}_R1_001.fastq \
+      FASTQ=${R1} \
       FASTQ2=${file}_R2_001.fastq  \
       OUTPUT=${file}_fastqtosam.bam \
       READ_GROUP_NAME=${file} \
