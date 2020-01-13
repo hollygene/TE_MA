@@ -121,9 +121,7 @@ DIR=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/
 for i in "${AR[@]}"
 do
 	cd /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/${i}
-	files=(*_001.fastq)
-	R1=${files[_R1]%_001.fastq}
-	R2=${files[_R2]%_001.fastq}
+	file=(*_R1_001.fastq)
 	OUT="${i}_bwa_mem.sh"
 	echo "#!/bin/bash" > ${OUT}
 	echo "#PBS -N ${i}_FastqToSam" >> ${OUT}
@@ -131,7 +129,6 @@ do
 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
 	echo "#PBS -q batch" >> ${OUT}
 	echo "#PBS -l mem=40gb" >> ${OUT}
-  echo "#PBS -j oe" >> ${OUT}
 	echo "" >> ${OUT}
 	echo "cd /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/${i}" >> ${OUT}
 	echo "module load ${picard_module}" >> ${OUT}
@@ -141,11 +138,11 @@ do
 	echo "" >> ${OUT}
   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-      FASTQ=${R1} \
-      FASTQ2=${R2}  \
-      OUTPUT=${R1}_fastqtosam.bam \
-      READ_GROUP_NAME=${R1} \
-      SAMPLE_NAME=${R1} \
+      FASTQ=${file}_R1_001.fastq \
+      FASTQ2=${file}_R2_001.fastq  \
+      OUTPUT=${file}_fastqtosam.bam \
+      READ_GROUP_NAME=${file} \
+      SAMPLE_NAME=${file} \
       LIBRARY_NAME=${i} \
       PLATFORM=illumina \
       SEQUENCING_CENTER=GGBC" >> ${OUT}
