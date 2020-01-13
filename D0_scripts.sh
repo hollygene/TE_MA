@@ -121,7 +121,9 @@ DIR=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/
 for i in "${AR[@]}"
 do
 	cd /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/${i}
-	file=(*_R1_001.fastq)
+	file=(*_001.fastq)
+  R1=${file[_R1]%_001.fastq}
+  R2=${file[_R2]%_001.fastq}
 	OUT="${i}_bwa_mem.sh"
 	echo "#!/bin/bash" > ${OUT}
 	echo "#PBS -N ${i}_FastqToSam" >> ${OUT}
