@@ -131,6 +131,7 @@ do
 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
 	echo "#PBS -q batch" >> ${OUT}
 	echo "#PBS -l mem=40gb" >> ${OUT}
+  echo "#PBS -j oe" >> ${OUT}
 	echo "" >> ${OUT}
 	echo "cd /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/${i}" >> ${OUT}
 	echo "module load ${picard_module}" >> ${OUT}
