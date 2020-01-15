@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q batch
-#PBS -N test_submit
-#PBS -l nodes=1:ppn=1:AMD
-#PBS -l walltime=2:00:00
-#PBS -l mem=5gb
+#PBS -q highmem_q
+#PBS -N piped_command
+#PBS -l nodes=2:ppn=1:HIGHMEM
+#PBS -l walltime=480:00:00
+#PBS -l mem=600gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -653,7 +653,7 @@ done
 #    -select-type MIXED \
 #    -select-type MNP \
 #    -select-type SYMBOLIC
-# 
+#
 # #
 # # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
 # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
