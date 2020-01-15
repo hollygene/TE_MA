@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N D20_fullPipeline
-#PBS -l nodes=2:ppn=1:HIGHMEM
-#PBS -l walltime=480:00:00
-#PBS -l mem=600gb
+#PBS -N piped_command
+#PBS -l nodes=1:ppn=1:HIGHMEM
+#PBS -l walltime=48:00:00
+#PBS -l mem=100gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
