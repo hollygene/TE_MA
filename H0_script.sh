@@ -247,8 +247,21 @@ do
 
 FBASE=$(basename $file _markilluminaadapters.bam)
 BASE=${FBASE%_markilluminaadapters.bam}
-
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+OUT="${BASE}_piped.sh"
+echo "#!/bin/bash" > ${OUT}
+echo "#PBS -N ${BASE}_piped" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=30gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${bwa_module}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
 I=${raw_data}/${BASE}_markilluminaadapters.bam \
 FASTQ=/dev/stdout \
@@ -264,7 +277,8 @@ R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
 CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
 INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
 PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-TMP_DIR=${raw_data}/TMP
+TMP_DIR=${raw_data}/TMP" >> ${OUT}
+qsub ${OUT}
 
 done
 # #########################################################################################
@@ -661,3 +675,52 @@ done
 # # bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
 # #
 # # done
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+OUT="${BASE}_bamCoverage.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=20gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${deeptools_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
+qsub ${OUT}
+
+done
+
+
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+OUT="${BASE}_samtoolsDepth.sh"
+echo "#!/bin/bash" > ${OUT}
+echo "#PBS -N ${BASE}_samtoolsDepth" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=20gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "" >> ${OUT}
+
+echo "samtools sort ${raw_data}/${BASE}_piped.bam \
+-o ${raw_data}/${BASE}.sorted.bam
+
+samtools depth \
+${raw_data}/${BASE}.sorted.bam \
+|  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt" >> ${OUT}
+qsub ${OUT}
+done

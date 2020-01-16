@@ -266,32 +266,46 @@ module load ${GATK_module}
 # done
 
 ## Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
-for file in ${raw_data}/*_markilluminaadapters.bam
-
-do
-
-FBASE=$(basename $file _markilluminaadapters.bam)
-BASE=${FBASE%_markilluminaadapters.bam}
-
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-I=${raw_data}/${BASE}_markilluminaadapters.bam \
-FASTQ=/dev/stdout \
-CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-TMP_DIR=${raw_data}/TMP | \
-bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-ALIGNED_BAM=/dev/stdin \
-UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
-OUTPUT=${raw_data}/${BASE}_piped.bam \
-R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-TMP_DIR=${raw_data}/TMP
-
-done
+# for file in ${raw_data}/*_markilluminaadapters.bam
+#
+# do
+#
+# FBASE=$(basename $file _markilluminaadapters.bam)
+# BASE=${FBASE%_markilluminaadapters.bam}
+# OUT="${BASE}_piped.sh"
+# echo "#!/bin/bash" > ${OUT}
+# echo "#PBS -N ${BASE}_piped" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=30gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${raw_data}" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
+# echo "module load ${bwa_module}" >> ${OUT}
+# echo "module load ${samtools_module}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+# I=${raw_data}/${BASE}_markilluminaadapters.bam \
+# FASTQ=/dev/stdout \
+# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+# TMP_DIR=${raw_data}/TMP | \
+# bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+# ALIGNED_BAM=/dev/stdin \
+# UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
+# OUTPUT=${raw_data}/${BASE}_piped.bam \
+# R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+# TMP_DIR=${raw_data}/TMP" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 ###################################################################################################
@@ -357,7 +371,7 @@ done
 #
 # module load ${GATK_module}
 
-### D0 samples
+## D0 samples
 # for file in ${raw_data}/${BASE}*_piped.bam
 #
 # do
@@ -372,6 +386,32 @@ done
 #      -ploidy 2 \
 #      -O ${output_directory}/${BASE}_variants.g.vcf
 #
+# done
+
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+# 	OUT="${BASE}_HaplotypeCaller.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
+# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=50gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "time gatk HaplotypeCaller \
+#        -R ${ref_genome} \
+#        -ERC GVCF \
+#        -I ${raw_data}/${BASE}_piped.bam \
+#        -ploidy 2 \
+#        -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
+# 	qsub ${OUT}
 # done
 
 # for file in ${raw_data}/${BASE}*_piped.bam
@@ -582,10 +622,10 @@ done
 #                   --variant ${output_directory}/D0_FullCohort.g.vcf \
 #                   -O ${output_directory}/D0_FullCohort.vcf
 #
-# # ###################################################################################################
-# # ### Find coverage and put into 10k chunks
-# # ###################################################################################################
-#
+# ###################################################################################################
+# ### Find coverage and put into 10k chunks
+# ###################################################################################################
+
 # module load ${deeptools_module}
 #
 #
@@ -595,10 +635,37 @@ done
 #
 # FBASE=$(basename $file _piped.bam)
 # BASE=${FBASE%_piped.bam}
-#
-# bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
+# OUT="${BASE}_bamCoverage.sh"
+# echo "#!/bin/bash" > ${OUT}
+# echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=20gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${raw_data}" >> ${OUT}
+# echo "module load ${deeptools_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
+# qsub ${OUT}
 #
 # done
+
+
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+samtools sort ${raw_data}/${BASE}_piped.bam \
+-o ${raw_data}/${BASE}.sorted.bam
+
+samtools depth \
+${raw_data}/${BASE}.sorted.bam \
+|  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
+
+done
 #                  # ################
 # # ###################################################################################################
 # # ### Filter variants
