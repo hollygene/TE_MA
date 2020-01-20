@@ -59,7 +59,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 
 # module load ${picard_module}
 # module load ${bwa_module}
-# module load ${samtools_module}
+module load ${samtools_module}
 # module load ${GATK_module}
 
 ### Much of the following obtained from https://software.broadinstitute.org/gatk/documentation/article?id=6483#step3
