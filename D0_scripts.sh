@@ -64,24 +64,24 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-# for file in ${raw_data}/*_R1_001.fastq
-#
-# do
-#
-# FBASE=$(basename $file _R1_001.fastq)
-# BASE=${FBASE%_R1_001.fastq}
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-#     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-#     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#     READ_GROUP_NAME=${BASE} \
-#     SAMPLE_NAME=${BASE} \
-#     LIBRARY_NAME=D0 \
-#     PLATFORM=illumina \
-#     SEQUENCING_CENTER=GGBC
-#
-# done
+for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/*_R1.fq
+
+do
+
+FBASE=$(basename $file _R1.q)
+BASE=${FBASE%_R1.fq}
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+    FASTQ=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_R1.fq \
+    FASTQ2=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_R2.fq  \
+    OUTPUT=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_fastqtosam.bam \
+    READ_GROUP_NAME=${BASE} \
+    SAMPLE_NAME=${BASE} \
+    LIBRARY_NAME=D0 \
+    PLATFORM=illumina \
+    SEQUENCING_CENTER=GGBC
+
+done
 
 # for file in ${raw_data}/*_R1_001.fastq
 #
@@ -121,21 +121,21 @@ module load ${GATK_module}
 
 # mkdir ${raw_data}/TMP
 #
-# for file in ${raw_data}/*_fastqtosam.bam
-#
-# do
-#
-# FBASE=$(basename $file _fastqtosam.bam)
-# BASE=${FBASE%_fastqtosam.bam}
-#
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-# I=${raw_data}/${BASE}_fastqtosam.bam \
-# O=${raw_data}/${BASE}_markilluminaadapters.bam \
-# M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-# TMP_DIR=${raw_data}/TMP
-#
-# done
+for file in ${raw_data}/*_fastqtosam.bam
+
+do
+
+FBASE=$(basename $file _fastqtosam.bam)
+BASE=${FBASE%_fastqtosam.bam}
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+I=${raw_data}/${BASE}_fastqtosam.bam \
+O=${raw_data}/${BASE}_markilluminaadapters.bam \
+M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+TMP_DIR=${raw_data}/TMP
+
+done
 
 # for file in ${raw_data}/*_fastqtosam.bam
 #
@@ -652,20 +652,25 @@ module load ${GATK_module}
 # done
 
 
-for file in ${raw_data}/${BASE}*_piped.bam
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+# samtools sort ${raw_data}/${BASE}_piped.bam \
+# -o ${raw_data}/${BASE}.sorted.bam
+#
+# samtools depth \
+# ${raw_data}/${BASE}.sorted.bam \
+# |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
+#
+# done
+#
+# #combine depths with filenames into the same file
+# find . -type f -name "*.txt" -exec awk '{s=$0};END{if(s)print FILENAME,s}' {} \; > D0_depth.txt
 
-do
 
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-samtools sort ${raw_data}/${BASE}_piped.bam \
--o ${raw_data}/${BASE}.sorted.bam
-
-samtools depth \
-${raw_data}/${BASE}.sorted.bam \
-|  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
-
-done
 #                  # ################
 # # ###################################################################################################
 # # ### Filter variants
@@ -737,3 +742,13 @@ done
 #           -F CHROM -F POS -F REF -F ALT  \
 #           -GF AD -GF GT \
 #           -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_varsGT.txt
+
+# # ###################################################################################################
+### This stuff is in Excel
+# # ###################################################################################################
+#
+# 3 columns after last genotype: # samples (count # samples you have), #same (meaning number of samples that have the same genotype as the ancestor),
+# and # variant (# samples different genotype than the ancestor).
+# Codes are:
+#same: =COUNTIFS(E2:CL2,CN2)
+#variant: =CO2-CP2 ( just subtract the # same from the # samples)

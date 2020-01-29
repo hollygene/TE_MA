@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q batch
-#PBS -N genotyping
-#PBS -l nodes=1:ppn=1:AMD
+#PBS -q highmem_q
+#PBS -N samtoolsDepth
+#PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l walltime=48:00:00
-#PBS -l mem=50gb
+#PBS -l mem=100gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -36,7 +36,6 @@ bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
 #location of data to be analyzed
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
-new_ref_genome="//scratch/jc33471/pilon/337/annotation/genome.337.fasta"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
 ref_genome_dir="/scratch/jc33471/pilon/337/"
@@ -67,94 +66,94 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # #######################################################################################
 # # create a uBAM file
 # #######################################################################################
-# #
-# for file in ${raw_data}/*_R1_001.fastq
 #
-# do
-#
-# FBASE=$(basename $file _R1_001.fastq)
-# BASE=${FBASE%_R1_001.fastq}
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-#     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-#     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#     READ_GROUP_NAME=${BASE} \
-#     SAMPLE_NAME=${BASE} \
-#     LIBRARY_NAME=H0 \
-#     PLATFORM=illumina \
-#     SEQUENCING_CENTER=GGBC
-#
-# done
-#
-#
-# for file in ${raw_data}/*q
-#
-# do
-#   FBASE=$(basename $file q)
-#   BASE=${FBASE%q}
-# 	OUT="${BASE}_FastqToSam.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=40gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#       FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-#       FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-#       OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#       READ_GROUP_NAME=${BASE} \
-#       SAMPLE_NAME=${BASE} \
-#       LIBRARY_NAME=D0 \
-#       PLATFORM=illumina \
-#       SEQUENCING_CENTER=GGBC" >> ${OUT}
-# 	qsub ${OUT}
-# done
+for file in ${raw_data}/*_R1_001.fastq
+
+do
+
+FBASE=$(basename $file _R1_001.fastq)
+BASE=${FBASE%_R1_001.fastq}
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+    FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+    READ_GROUP_NAME=${BASE} \
+    SAMPLE_NAME=${BASE} \
+    LIBRARY_NAME=H0 \
+    PLATFORM=illumina \
+    SEQUENCING_CENTER=GGBC
+
+done
+
+
+for file in ${raw_data}/*_R1_001.fastq
+
+do
+  FBASE=$(basename $file _R1_001.fastq)
+  BASE=${FBASE%_R1_001.fastq}
+	OUT="${BASE}_FastqToSam.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=40gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+      FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+      FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+      OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+      READ_GROUP_NAME=${BASE} \
+      SAMPLE_NAME=${BASE} \
+      LIBRARY_NAME=D0 \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC" >> ${OUT}
+	qsub ${OUT}
+done
 
 
 
 
-#
-# for file in ${raw_data}/*R1.fq
-#
-# do
-#   FBASE=$(basename $file R1.fq)
-#   BASE=${FBASE%R1.fq}
-# 	OUT="${BASE}_FastqToSam.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=40gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#       FASTQ=${raw_data}/${BASE}R1.fq \
-#       FASTQ2=${raw_data}/${BASE}R1.fq  \
-#       OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#       READ_GROUP_NAME=${BASE} \
-#       SAMPLE_NAME=${BASE} \
-#       LIBRARY_NAME=D0 \
-#       PLATFORM=illumina \
-#       SEQUENCING_CENTER=GGBC" >> ${OUT}
-# 	qsub ${OUT}
-# done
+
+for file in ${raw_data}/*R1.fq
+
+do
+  FBASE=$(basename $file R1.fq)
+  BASE=${FBASE%R1.fq}
+	OUT="${BASE}_FastqToSam.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=40gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+      FASTQ=${raw_data}/${BASE}R1.fq \
+      FASTQ2=${raw_data}/${BASE}R1.fq  \
+      OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+      READ_GROUP_NAME=${BASE} \
+      SAMPLE_NAME=${BASE} \
+      LIBRARY_NAME=D0 \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC" >> ${OUT}
+	qsub ${OUT}
+done
 # #######################################################################################
 # # mark Illumina adapters
 # #######################################################################################
@@ -177,35 +176,35 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # USE_JDK_DEFLATER=true USE_JDK_INFLATER=true
 #
 # done
-# #
-# for file in ${raw_data}/*_fastqtosam.bam
 #
-# do
-#   FBASE=$(basename $file _fastqtosam.bam)
-#   BASE=${FBASE%_fastqtosam.bam}
-# 	OUT="${BASE}_MarkIlluminaAdapters.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=20gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "mkdir ${raw_data}/TMP" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-#   I=${raw_data}/${BASE}_fastqtosam.bam \
-#   O=${raw_data}/${BASE}_markilluminaadapters.bam \
-#   M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-#   TMP_DIR=${raw_data}/TMP" >> ${OUT}
-# 	qsub ${OUT}
-# done
+for file in ${raw_data}/*_fastqtosam.bam
+
+do
+  FBASE=$(basename $file _fastqtosam.bam)
+  BASE=${FBASE%_fastqtosam.bam}
+	OUT="${BASE}_MarkIlluminaAdapters.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=20gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "mkdir ${raw_data}/TMP" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+  I=${raw_data}/${BASE}_fastqtosam.bam \
+  O=${raw_data}/${BASE}_markilluminaadapters.bam \
+  M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+  TMP_DIR=${raw_data}/TMP" >> ${OUT}
+	qsub ${OUT}
+done
 # #######################################################################################
 # # convert BAM to FASTQ and discount adapter sequences using SamToFastq
 # #######################################################################################
@@ -589,32 +588,32 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # #
 # module load ${GATK_module}
 #
-# ### D1 samples
-# for file in ${output_directory}/${BASE}*_recalibrated.bam
-#
-# do
-#
-# FBASE=$(basename $file _recalibrated.bam)
-# BASE=${FBASE%_recalibrated.bam}
-# OUT="${BASE}_recalHC.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_recalHC" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=50gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "time gatk HaplotypeCaller \
-# -R ${ref_genome} \
-# -ERC GVCF \
-# -I ${output_directory}/${BASE}_recalibrated.bam \
-# -ploidy 1 \
-# -O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+### D1 samples
+for file in ${output_directory}/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+OUT="${BASE}_recalHC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_recalHC" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=50gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/${BASE}_recalibrated.bam \
+-ploidy 1 \
+-O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
 #
 # OUT="HM-H0-12_recalhapCall.sh"
 # echo "#!/bin/bash" >> ${OUT}
@@ -802,7 +801,7 @@ module load ${GATK_module}
 # Get only those lines where there is actually a genotype call in the ancestor
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/H0_FullCohort.vcf \
+-V ${output_directory}/H0_fullCohort_int.vcf \
 -O ${output_directory}/H0_FullCohort_AncCalls.vcf \
 -select 'vc.getGenotype("H0-A").isCalled()'
 
@@ -864,3 +863,7 @@ gatk VariantsToTable \
           -F CHROM -F POS -F REF -F ALT  \
           -GF AD -GF GT \
           -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_varsGT.txt
+
+##################################################################################################
+#### UNIFIED GENOTYPER
+##################################################################################################

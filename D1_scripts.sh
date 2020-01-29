@@ -139,34 +139,34 @@ module load ${GATK_module}
 # USE_JDK_INFLATER=true
 #
 # done
-# for file in ${raw_data}/*_fastqtosam.bam
-#
-# do
-#   FBASE=$(basename $file _fastqtosam.bam)
-#   BASE=${FBASE%_fastqtosam.bam}
-# 	OUT="${BASE}_MarkIlluminaAdapters.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=20gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "mkdir ${raw_data}/TMP" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-#   I=${raw_data}/${BASE}_fastqtosam.bam \
-#   O=${raw_data}/${BASE}_markilluminaadapters.bam \
-#   M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-#   TMP_DIR=${raw_data}/TMP" >> ${OUT}
-# 	qsub ${OUT}
-# done
+for file in ${raw_data}/*_fastqtosam.bam
+
+do
+  FBASE=$(basename $file _fastqtosam.bam)
+  BASE=${FBASE%_fastqtosam.bam}
+	OUT="${BASE}_MarkIlluminaAdapters.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=20gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "mkdir ${raw_data}/TMP" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+  I=${raw_data}/${BASE}_fastqtosam.bam \
+  O=${raw_data}/${BASE}_markilluminaadapters.bam \
+  M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+  TMP_DIR=${raw_data}/TMP" >> ${OUT}
+	qsub ${OUT}
+done
 #######################################################################################
 # #
 # #
@@ -426,21 +426,50 @@ module load ${GATK_module}
 # module load ${GATK_module}
 
 ## D1 samples
-# for file in ${raw_data}/${BASE}*_piped.bam
-#
-# do
-#
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-#
-# time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I ${raw_data}/${BASE}_piped.bam \
-#      -ploidy 2 \
-#      -O ${output_directory}/${BASE}_variants.g.vcf
-#
-# done
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${raw_data}/${BASE}_piped.bam \
+     -ploidy 2 \
+     -O ${output_directory}/${BASE}_variants.g.i.vcf
+
+done
+
+### D1 samples
+for file in ${output_directory}/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+OUT="${BASE}_recalHC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_recalHC" >> ${OUT}
+echo "#PBS -l walltime=5:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=100gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/${BASE}_recalibrated.bam \
+-ploidy 2 \
+-O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
+
+
 
 
 # module load GATK/4.0.3.0-Java-1.8.0_144

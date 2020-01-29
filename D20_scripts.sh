@@ -428,44 +428,82 @@ module load ${GATK_module}
 
   # ###################################################################################################
     # ## Apply BQSR to bam files
-        #   # ###################################################################################################
-        # for file in ${raw_data}/${BASE}*_piped.bam
-        #
-        #       do
-        #         FBASE=$(basename $file _piped.bam)
-        #         BASE=${FBASE%_piped.bam}
-        #
-        #
-        #         gatk ApplyBQSR \
-        #            -R ${ref_genome} \
-        #            -I ${raw_data}/${BASE}_piped.bam \
-        #            -bqsr ${output_directory}/${BASE}_recal_data.table \
-        #            -O ${output_directory}/${BASE}_recalibrated.bam
-        #
-        #         done
+          # ###################################################################################################
+        for file in ${raw_data}/${BASE}*_piped.bam
+
+              do
+                FBASE=$(basename $file _piped.bam)
+                BASE=${FBASE%_piped.bam}
+
+
+                gatk ApplyBQSR \
+                   -R ${ref_genome} \
+                   -I ${raw_data}/${BASE}_piped.bam \
+                   -bqsr ${output_directory}/${BASE}_recal_data.table \
+                   -O ${output_directory}/${BASE}_recalibrated.bam
+
+                done
+
+                for file in ${raw_data}/${BASE}*_piped.bam
+
+                do
+
+                FBASE=$(basename $file _piped.bam)
+                BASE=${FBASE%_piped.bam}
+                OUT="${BASE}_BQSR.sh"
+                echo "#!/bin/bash" >> ${OUT}
+                echo "#PBS -N ${BASE}_BQSR" >> ${OUT}
+                echo "#PBS -l walltime=4:00:00" >> ${OUT}
+                echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+                echo "#PBS -q batch" >> ${OUT}
+                echo "#PBS -l mem=50gb" >> ${OUT}
+                echo "" >> ${OUT}
+                echo "cd ${raw_data}" >> ${OUT}
+                echo "module load ${GATK_module}" >> ${OUT}
+                echo "" >> ${OUT}
+                echo "gatk ApplyBQSR \
+                   -R ${ref_genome} \
+                   -I ${raw_data}/${BASE}_piped.bam \
+                   -bqsr ${output_directory}/${BASE}_recal_data.table \
+                   -O ${output_directory}/${BASE}_recalibrated.bam" >> ${OUT}
+                qsub ${OUT}
+
+                done
 
           # ###################################################################################################
           ### Run HaplotypeCaller again on recalibrated samples
           # ###################################################################################################
           # ###################################################################################################
           # #
-                # module load ${GATK_module}
+                module load ${GATK_module}
 
-#                 ### D1 samples
-# for file in ${output_directory}/${BASE}*_recalibrated.bam
-#
-# do
-#
-# FBASE=$(basename $file _recalibrated.bam)
-# BASE=${FBASE%_recalibrated.bam}
-#
-# time gatk HaplotypeCaller \
-# -R ${ref_genome} \
-# -ERC GVCF \
-# -I ${output_directory}/${BASE}_recalibrated.bam \
-# -ploidy 2 \
-# -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-# done
+                ### D1 samples
+for file in ${output_directory}/redo/${BASE}*_recalibrated.bam
+
+do
+
+FBASE=$(basename $file _recalibrated.bam)
+BASE=${FBASE%_recalibrated.bam}
+OUT="${BASE}_HC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_HC" >> ${OUT}
+echo "#PBS -l walltime=5:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=150gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}/redo/" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/redo/${BASE}_recalibrated.bam \
+-ploidy 2 \
+-O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
 
 # ###################################################################################################
 ### Genotype gVCFs (individually)
