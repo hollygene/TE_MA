@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
-#PBS -N samtoolsDepth
+#PBS -N genotype
 #PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l walltime=48:00:00
-#PBS -l mem=100gb
+#PBS -l mem=150gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -36,9 +36,10 @@ bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
 #location of data to be analyzed
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
+# ref_genome="/scratch/jc33471/pilon/337/annotation/genome.337.fasta"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
-ref_genome_dir="/scratch/jc33471/pilon/337/"
+# ref_genome_dir="/scratch/jc33471/pilon/337/"
 #text file listing the fastq files with their full extensions
 # fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
@@ -67,93 +68,93 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # # create a uBAM file
 # #######################################################################################
 #
-for file in ${raw_data}/*_R1_001.fastq
-
-do
-
-FBASE=$(basename $file _R1_001.fastq)
-BASE=${FBASE%_R1_001.fastq}
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-    FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-    READ_GROUP_NAME=${BASE} \
-    SAMPLE_NAME=${BASE} \
-    LIBRARY_NAME=H0 \
-    PLATFORM=illumina \
-    SEQUENCING_CENTER=GGBC
-
-done
-
-
-for file in ${raw_data}/*_R1_001.fastq
-
-do
-  FBASE=$(basename $file _R1_001.fastq)
-  BASE=${FBASE%_R1_001.fastq}
-	OUT="${BASE}_FastqToSam.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=40gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${raw_data}" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-      FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-      FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-      OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-      READ_GROUP_NAME=${BASE} \
-      SAMPLE_NAME=${BASE} \
-      LIBRARY_NAME=D0 \
-      PLATFORM=illumina \
-      SEQUENCING_CENTER=GGBC" >> ${OUT}
-	qsub ${OUT}
-done
+# for file in ${raw_data}/*_R1_001.fastq
+#
+# do
+#
+# FBASE=$(basename $file _R1_001.fastq)
+# BASE=${FBASE%_R1_001.fastq}
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+#     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+#     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+#     READ_GROUP_NAME=${BASE} \
+#     SAMPLE_NAME=${BASE} \
+#     LIBRARY_NAME=H0 \
+#     PLATFORM=illumina \
+#     SEQUENCING_CENTER=GGBC
+#
+# done
 
 
+# for file in ${raw_data}/*_R1_001.fastq
+#
+# do
+#   FBASE=$(basename $file _R1_001.fastq)
+#   BASE=${FBASE%_R1_001.fastq}
+# 	OUT="${BASE}_FastqToSam.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=40gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
+# 	echo "module load ${picard_module}" >> ${OUT}
+#   echo "module load ${bwa_module}" >> ${OUT}
+#   echo "module load ${samtools_module}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#       FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+#       FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+#       OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+#       READ_GROUP_NAME=${BASE} \
+#       SAMPLE_NAME=${BASE} \
+#       LIBRARY_NAME=D0 \
+#       PLATFORM=illumina \
+#       SEQUENCING_CENTER=GGBC" >> ${OUT}
+# 	qsub ${OUT}
+# done
 
 
 
-for file in ${raw_data}/*R1.fq
 
-do
-  FBASE=$(basename $file R1.fq)
-  BASE=${FBASE%R1.fq}
-	OUT="${BASE}_FastqToSam.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=40gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${raw_data}" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-      FASTQ=${raw_data}/${BASE}R1.fq \
-      FASTQ2=${raw_data}/${BASE}R1.fq  \
-      OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-      READ_GROUP_NAME=${BASE} \
-      SAMPLE_NAME=${BASE} \
-      LIBRARY_NAME=D0 \
-      PLATFORM=illumina \
-      SEQUENCING_CENTER=GGBC" >> ${OUT}
-	qsub ${OUT}
-done
+
+# for file in ${raw_data}/*R1.fq
+#
+# do
+#   FBASE=$(basename $file R1.fq)
+#   BASE=${FBASE%R1.fq}
+# 	OUT="${BASE}_FastqToSam.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=40gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
+# 	echo "module load ${picard_module}" >> ${OUT}
+#   echo "module load ${bwa_module}" >> ${OUT}
+#   echo "module load ${samtools_module}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#       FASTQ=${raw_data}/${BASE}R1.fq \
+#       FASTQ2=${raw_data}/${BASE}R1.fq  \
+#       OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+#       READ_GROUP_NAME=${BASE} \
+#       SAMPLE_NAME=${BASE} \
+#       LIBRARY_NAME=D0 \
+#       PLATFORM=illumina \
+#       SEQUENCING_CENTER=GGBC" >> ${OUT}
+# 	qsub ${OUT}
+# done
 # #######################################################################################
 # # mark Illumina adapters
 # #######################################################################################
@@ -177,34 +178,34 @@ done
 #
 # done
 #
-for file in ${raw_data}/*_fastqtosam.bam
-
-do
-  FBASE=$(basename $file _fastqtosam.bam)
-  BASE=${FBASE%_fastqtosam.bam}
-	OUT="${BASE}_MarkIlluminaAdapters.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
-	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=20gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${raw_data}" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "mkdir ${raw_data}/TMP" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-  I=${raw_data}/${BASE}_fastqtosam.bam \
-  O=${raw_data}/${BASE}_markilluminaadapters.bam \
-  M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-  TMP_DIR=${raw_data}/TMP" >> ${OUT}
-	qsub ${OUT}
-done
+# for file in ${raw_data}/*_fastqtosam.bam
+#
+# do
+#   FBASE=$(basename $file _fastqtosam.bam)
+#   BASE=${FBASE%_fastqtosam.bam}
+# 	OUT="${BASE}_MarkIlluminaAdapters.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=20gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
+# 	echo "module load ${picard_module}" >> ${OUT}
+#   echo "module load ${bwa_module}" >> ${OUT}
+#   echo "module load ${samtools_module}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "mkdir ${raw_data}/TMP" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+#   I=${raw_data}/${BASE}_fastqtosam.bam \
+#   O=${raw_data}/${BASE}_markilluminaadapters.bam \
+#   M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+#   TMP_DIR=${raw_data}/TMP" >> ${OUT}
+# 	qsub ${OUT}
+# done
 # #######################################################################################
 # # convert BAM to FASTQ and discount adapter sequences using SamToFastq
 # #######################################################################################
@@ -278,7 +279,7 @@ done
 #   TMP_DIR=${raw_data}/TMP" >> ${OUT}
 # 	qsub ${OUT}
 # done
-# ## Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
+## Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 # for file in ${raw_data}/*_markilluminaadapters.bam
 #
 # do
@@ -431,7 +432,7 @@ done
 # module load ${GATK_module}
 #
 # ## H0 samples
-# for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/H0/Resequenced/${BASE}*_piped.bam
+# for file in /${raw_data}/${BASE}*_piped.bam
 #
 # do
 #
@@ -452,7 +453,7 @@ done
 # echo "time gatk HaplotypeCaller \
 #      -R ${ref_genome} \
 #      -ERC GVCF \
-#      -I /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/H0/Resequenced/${BASE}_piped.bam \
+#      -I /${raw_data}/${BASE}_piped.bam \
 #      -ploidy 1 \
 #      -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
 # qsub ${OUT}
@@ -589,31 +590,31 @@ done
 # module load ${GATK_module}
 #
 ### D1 samples
-for file in ${output_directory}/${BASE}*_recalibrated.bam
-
-do
-
-FBASE=$(basename $file _recalibrated.bam)
-BASE=${FBASE%_recalibrated.bam}
-OUT="${BASE}_recalHC.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_recalHC" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-echo "#PBS -q batch" >> ${OUT}
-echo "#PBS -l mem=50gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk HaplotypeCaller \
--R ${ref_genome} \
--ERC GVCF \
--I ${output_directory}/${BASE}_recalibrated.bam \
--ploidy 1 \
--O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
-qsub ${OUT}
-
-done
+# for file in ${output_directory}/${BASE}*_recalibrated.bam
+#
+# do
+#
+# FBASE=$(basename $file _recalibrated.bam)
+# BASE=${FBASE%_recalibrated.bam}
+# OUT="${BASE}_recalHC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_recalHC" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=50gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk HaplotypeCaller \
+# -R ${ref_genome} \
+# -ERC GVCF \
+# -I ${output_directory}/${BASE}_recalibrated.bam \
+# -ploidy 1 \
+# -O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 #
 # OUT="HM-H0-12_recalhapCall.sh"
 # echo "#!/bin/bash" >> ${OUT}
@@ -693,8 +694,8 @@ module load ${GATK_module}
 #    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-47_variants.Recal.g.vcf \
 #    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-48_variants.Recal.g.vcf \
 #    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/HM-H0-41_variants.Recal.g.vcf
-
 #
+# #
 #
 #    ###################################################################################################
 #    ## Genotype gVCFs (jointly)
@@ -799,71 +800,71 @@ module load ${GATK_module}
 # ###################################################################################################
 
 # Get only those lines where there is actually a genotype call in the ancestor
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/H0_fullCohort_int.vcf \
--O ${output_directory}/H0_FullCohort_AncCalls.vcf \
--select 'vc.getGenotype("H0-A").isCalled()'
-
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/H0_fullCohort_int.vcf \
+# -O ${output_directory}/H0_FullCohort_AncCalls.vcf \
+# -select 'vc.getGenotype("H0-A").isCalled()'
+#
 
 # remove all lines in the ancestor that have a heterozygous genotype
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/H0_FullCohort_AncCalls.vcf \
--O ${output_directory}/H0_FullCohort_AncCalls_NoHets.vcf \
--select '!vc.getGenotype("H0-A").isHet()'
-
-# filter out sites with low read depth
-gatk VariantFiltration \
-   -R ${ref_genome} \
-   -V ${output_directory}/H0_FullCohort_AncCalls_NoHets.vcf \
-   -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   --set-filtered-genotype-to-no-call TRUE \
-   -G-filter "DP < 10"  -G-filter-name "depthGr10" \
-   -filter "MQ < 50.0" -filter-name "MQ50" \
-   -filter "SOR < 0.01" -filter-name "strandBias"
-
-
-  # remove filtered sites (these were set to no calls ./.)
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   --exclude-filtered TRUE
-
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -select 'vc.getGenotype("H0-A").isCalled()'
-
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-   -select-type SNP \
-   -select-type INDEL \
-   -select-type MIXED \
-   -select-type MNP \
-   -select-type SYMBOLIC
-
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/H0_FullCohort_AncCalls.vcf \
+# -O ${output_directory}/H0_FullCohort_AncCalls_NoHets.vcf \
+# -select '!vc.getGenotype("H0-A").isHet()'
 #
-# #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
-# # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
+# # filter out sites with low read depth
+# gatk VariantFiltration \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/H0_FullCohort_AncCalls_NoHets.vcf \
+#    -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+#    --set-filtered-genotype-to-no-call TRUE \
+#    -G-filter "DP < 10"  -G-filter-name "depthGr10" \
+#    -filter "MQ < 50.0" -filter-name "MQ50" \
+#    -filter "SOR < 0.01" -filter-name "strandBias"
 #
-# #Variants to table
-gatk VariantsToTable \
-     -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-     -F CHROM -F POS -F REF -F ALT -F QUAL \
-     -GF AD -GF DP -GF GQ -GF GT \
-     -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-
-     gatk VariantsToTable \
-          -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-          -F CHROM -F POS -F REF -F ALT  \
-          -GF AD -GF GT \
-          -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_varsGT.txt
-
-##################################################################################################
-#### UNIFIED GENOTYPER
-##################################################################################################
+#
+#   # remove filtered sites (these were set to no calls ./.)
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+#    -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+#    --exclude-filtered TRUE
+#
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+#    -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -select 'vc.getGenotype("H0-A").isCalled()'
+#
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+#    -select-type SNP \
+#    -select-type INDEL \
+#    -select-type MIXED \
+#    -select-type MNP \
+#    -select-type SYMBOLIC
+#
+# #
+# # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
+# # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
+# #
+# # #Variants to table
+# gatk VariantsToTable \
+#      -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+#      -F CHROM -F POS -F REF -F ALT -F QUAL \
+#      -GF AD -GF DP -GF GQ -GF GT \
+#      -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
+#
+#      gatk VariantsToTable \
+#           -V ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+#           -F CHROM -F POS -F REF -F ALT  \
+#           -GF AD -GF GT \
+#           -O ${output_directory}/H0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_varsGT.txt
+#
+# ##################################################################################################
+# #### UNIFIED GENOTYPER
+# ##################################################################################################
