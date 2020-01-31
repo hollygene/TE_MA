@@ -234,7 +234,7 @@ module load ${GATK_module}
 # #######################################################################################
 #
  #index the ref genome
-bwa index ${ref_genome}
+# bwa index ${ref_genome}
 #
 # for file in ${raw_data}/*_samtofastq_interleaved.fq
 #
@@ -281,9 +281,10 @@ bwa index ${ref_genome}
 # done
 # Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 
-java -jar picard.jar CreateSequenceDictionary \
-      R=${ref_genome} \
-      O=${ref_genome_dir}/reference.dict
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
+#       R=${ref_genome} \
+#       O=${ref_genome_dir}/genome.337.dict
 
 for file in ${raw_data}/*_markilluminaadapters.bam
 
