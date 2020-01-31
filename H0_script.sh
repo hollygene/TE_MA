@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
+#PBS -q batch
 #PBS -N genotype
-#PBS -l nodes=1:ppn=1:HIGHMEM
-#PBS -l walltime=48:00:00
-#PBS -l mem=150gb
+#PBS -l nodes=1:ppn=1:AMD
+#PBS -l walltime=1:00:00
+#PBS -l mem=5gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -36,8 +36,8 @@ bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
 #location of data to be analyzed
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
-# ref_genome="/scratch/jc33471/pilon/337/annotation/genome.337.fasta"
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
+ref_genome="/scratch/jc33471/pilon/337/annotation/genome.337.fasta"
+# ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
 # ref_genome_dir="/scratch/jc33471/pilon/337/"
 #text file listing the fastq files with their full extensions
@@ -233,21 +233,21 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # # works: aligns samples to reference genome. Output is a .sam file
 # #######################################################################################
 #
-# #  #index the ref genome
-# # bwa index ${ref_genome}
-# # #
-# # for file in ${raw_data}/*_samtofastq_interleaved.fq
-# #
-# # do
-# #
-# # FBASE=$(basename $file _samtofastq_interleaved.fq)
-# # BASE=${FBASE%_samtofastq_interleaved.fq}
-# #
-# # bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
-# #
-# #
-# #
-# # done
+ #index the ref genome
+bwa index ${ref_genome}
+#
+# for file in ${raw_data}/*_samtofastq_interleaved.fq
+#
+# do
+#
+# FBASE=$(basename $file _samtofastq_interleaved.fq)
+# BASE=${FBASE%_samtofastq_interleaved.fq}
+#
+# bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
+#
+#
+#
+# done
 #
 # for file in ${raw_data}/*_markilluminaadapters.bam
 #
@@ -279,47 +279,47 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 #   TMP_DIR=${raw_data}/TMP" >> ${OUT}
 # 	qsub ${OUT}
 # done
-## Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
-# for file in ${raw_data}/*_markilluminaadapters.bam
-#
-# do
-#
-# FBASE=$(basename $file _markilluminaadapters.bam)
-# BASE=${FBASE%_markilluminaadapters.bam}
-# OUT="${BASE}_pipedNewRef.sh"
-# echo "#!/bin/bash" > ${OUT}
-# echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# echo "#PBS -q highmem_q" >> ${OUT}
-# echo "#PBS -l mem=150gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
-# echo "module load ${picard_module}" >> ${OUT}
-# echo "module load ${bwa_module}" >> ${OUT}
-# echo "module load ${samtools_module}" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-# I=${raw_data}/${BASE}_markilluminaadapters.bam \
-# FASTQ=/dev/stdout \
-# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-# TMP_DIR=${raw_data}/TMP | \
-# bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-# ALIGNED_BAM=/dev/stdin \
-# UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
-# OUTPUT=${raw_data}/${BASE}_pipedNewRef.bam \
-# R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-# TMP_DIR=${raw_data}/TMP" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+# Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
+for file in ${raw_data}/*_markilluminaadapters.bam
+
+do
+
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
+OUT="${BASE}_pipedNewRef.sh"
+echo "#!/bin/bash" > ${OUT}
+echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=150gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${bwa_module}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+I=${raw_data}/${BASE}_markilluminaadapters.bam \
+FASTQ=/dev/stdout \
+CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+TMP_DIR=${raw_data}/TMP | \
+bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+ALIGNED_BAM=/dev/stdin \
+UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
+OUTPUT=${raw_data}/${BASE}_pipedNewRef.bam \
+R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+TMP_DIR=${raw_data}/TMP" >> ${OUT}
+qsub ${OUT}
+
+done
 # # #########################################################################################
 # # #samtools: converts sam files to bam files and sorts them
 # # #########################################################################################
@@ -643,7 +643,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 ###################################################################################################
 #
 #
-module load ${GATK_module}
+# module load ${GATK_module}
 
 # time gatk CombineGVCFs \
 #    -R ${ref_genome} \
@@ -703,11 +703,11 @@ module load ${GATK_module}
 #    ###################################################################################################
 #    #
 #
-   time gatk GenotypeGVCFs \
-        -R ${ref_genome} \
-        -ploidy 1 \
-        --variant ${output_directory}/H0_fullCohort.g.vcf \
-        -O ${output_directory}/H0_fullCohort_int.vcf
+   # time gatk GenotypeGVCFs \
+   #      -R ${ref_genome} \
+   #      -ploidy 1 \
+   #      --variant ${output_directory}/H0_fullCohort.g.vcf \
+   #      -O ${output_directory}/H0_fullCohort_int.vcf
 
 # ###################################################################################################
 # ## Genotype gVCFs (individually)
