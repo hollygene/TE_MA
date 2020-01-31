@@ -55,7 +55,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 # sample_name_map="/home/hcm14449/Github/TE_MA/H0_sample_map.txt"
 # tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/GenDB/tmp"
 
-# cd ${output_directory}
+cd ${raw_data}
 # rm *
 
 # # module load ${picard_module}
