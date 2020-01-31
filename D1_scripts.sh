@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
+#PBS -q batch
 #PBS -N piped_command
-#PBS -l nodes=1:ppn=1:HIGHMEM
-#PBS -l walltime=48:00:00
-#PBS -l mem=100gb
+#PBS -l nodes=1:ppn=1:AMD
+#PBS -l walltime=1:00:00
+#PBS -l mem=15gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -35,9 +35,10 @@ bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
 #location of data to be analyzed
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
+# ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
-ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus"
+ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #text file listing the fastq files with their full extensions
 # fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
@@ -139,34 +140,34 @@ module load ${GATK_module}
 # USE_JDK_INFLATER=true
 #
 # done
-for file in ${raw_data}/*_fastqtosam.bam
-
-do
-  FBASE=$(basename $file _fastqtosam.bam)
-  BASE=${FBASE%_fastqtosam.bam}
-	OUT="${BASE}_MarkIlluminaAdapters.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
-	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=20gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${raw_data}" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "mkdir ${raw_data}/TMP" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-  I=${raw_data}/${BASE}_fastqtosam.bam \
-  O=${raw_data}/${BASE}_markilluminaadapters.bam \
-  M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-  TMP_DIR=${raw_data}/TMP" >> ${OUT}
-	qsub ${OUT}
-done
+# for file in ${raw_data}/*_fastqtosam.bam
+#
+# do
+#   FBASE=$(basename $file _fastqtosam.bam)
+#   BASE=${FBASE%_fastqtosam.bam}
+# 	OUT="${BASE}_MarkIlluminaAdapters.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=20gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
+# 	echo "module load ${picard_module}" >> ${OUT}
+#   echo "module load ${bwa_module}" >> ${OUT}
+#   echo "module load ${samtools_module}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "mkdir ${raw_data}/TMP" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+#   I=${raw_data}/${BASE}_fastqtosam.bam \
+#   O=${raw_data}/${BASE}_markilluminaadapters.bam \
+#   M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+#   TMP_DIR=${raw_data}/TMP" >> ${OUT}
+# 	qsub ${OUT}
+# done
 #######################################################################################
 # #
 # #
@@ -258,49 +259,53 @@ done
 #
 #
 # done
-
-
-## Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
-# for file in ${raw_data}/*_markilluminaadapters.bam
-#
-# do
-#
-# FBASE=$(basename $file _markilluminaadapters.bam)
-# BASE=${FBASE%_markilluminaadapters.bam}
-# OUT="${BASE}_piped.sh"
-# echo "#!/bin/bash" > ${OUT}
-# echo "#PBS -N ${BASE}_piped" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=30gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
-# echo "module load ${picard_module}" >> ${OUT}
-# echo "module load ${bwa_module}" >> ${OUT}
-# echo "module load ${samtools_module}" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-# I=${raw_data}/${BASE}_markilluminaadapters.bam \
-# FASTQ=/dev/stdout \
-# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-# TMP_DIR=${raw_data}/TMP | \
-# bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
 # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-# ALIGNED_BAM=/dev/stdin \
-# UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
-# OUTPUT=${raw_data}/${BASE}_piped.bam \
-# R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-# TMP_DIR=${raw_data}/TMP" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
+#       R=${ref_genome} \
+#       O=${ref_genome_dir}/genome.337.dict
+
+
+# Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
+for file in ${raw_data}/*_markilluminaadapters.bam
+
+do
+
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
+OUT="${BASE}_piped.sh"
+echo "#!/bin/bash" > ${OUT}
+echo "#PBS -N ${BASE}_piped" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=30gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${bwa_module}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+I=${raw_data}/${BASE}_markilluminaadapters.bam \
+FASTQ=/dev/stdout \
+CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+TMP_DIR=${raw_data}/TMP | \
+bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+ALIGNED_BAM=/dev/stdin \
+UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
+OUTPUT=${raw_data}/${BASE}_pipedNewRef.bam \
+R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+TMP_DIR=${raw_data}/TMP" >> ${OUT}
+qsub ${OUT}
+
+done
 
 ### Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 
@@ -426,48 +431,48 @@ done
 # module load ${GATK_module}
 
 ## D1 samples
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-
-time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I ${raw_data}/${BASE}_piped.bam \
-     -ploidy 2 \
-     -O ${output_directory}/${BASE}_variants.g.i.vcf
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+#
+# time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I ${raw_data}/${BASE}_piped.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/${BASE}_variants.g.i.vcf
+#
+# done
 
 ### D1 samples
-for file in ${output_directory}/${BASE}*_recalibrated.bam
-
-do
-
-FBASE=$(basename $file _recalibrated.bam)
-BASE=${FBASE%_recalibrated.bam}
-OUT="${BASE}_recalHC.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_recalHC" >> ${OUT}
-echo "#PBS -l walltime=5:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=100gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk HaplotypeCaller \
--R ${ref_genome} \
--ERC GVCF \
--I ${output_directory}/${BASE}_recalibrated.bam \
--ploidy 2 \
--O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
-qsub ${OUT}
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+# OUT="${BASE}_HC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -l walltime=48:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk HaplotypeCaller \
+# -R ${ref_genome} \
+# -ERC GVCF \
+# -I ${raw_data}/${BASE}_piped.bam \
+# -ploidy 2 \
+# -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 
@@ -489,7 +494,7 @@ done
 # time gatk CombineGVCFs \
 #  -O ${output_directory}/D1_cohort.g.vcf \
 #  -R ${ref_genome} \
-#  --variant ${output_directory}/HM-D1-A_variants.g.vcf \
+#  --variant ${output_directory}/D1-A_variants.g.vcf \
 #  --variant ${output_directory}/HM-D1-10_variants.g.vcf \
 #  --variant ${output_directory}/HM-D1-11_variants.g.vcf \
 #  --variant ${output_directory}/HM-D1-12_variants.g.vcf \
@@ -511,7 +516,7 @@ done
 # ###################################################################################################
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # ###################################################################################################
-
+#
 # for file in ${raw_data}/${BASE}*_piped.bam
 #
 # do
@@ -530,7 +535,7 @@ done
 # ###################################################################################################
 # ## Apply BQSR to bam files
 # ###################################################################################################
-
+#
 # for file in ${raw_data}/${BASE}*_piped.bam
 #
 # do
@@ -551,10 +556,10 @@ done
 ### Run HaplotypeCaller again on recalibrated samples
 # ###################################################################################################
 # ###################################################################################################
-# #
+# # #
 # module load ${GATK_module}
-
-## D1 samples
+#
+# # D1 samples
 # for file in ${output_directory}/${BASE}*_recalibrated.bam
 #
 # do
@@ -570,7 +575,36 @@ done
 #      -O ${output_directory}/${BASE}_variants.Recal.g.vcf
 #
 # done
+#
 
+# ########################################################################################'
+# #HaplotypeCaller on recalibrated samples '
+# for file in ${output_directory}/${BASE}*_recalibrated.bam
+#
+# do
+#
+# FBASE=$(basename $file _recalibrated.bam)
+# BASE=${FBASE%_recalibrated.bam}
+# OUT="${BASE}_HC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -l walltime=48:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=150gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${raw_data}/redo/" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk HaplotypeCaller \
+# -R ${ref_genome} \
+# -ERC GVCF \
+# -I ${output_directory}/${BASE}_recalibrated.bam \
+# -ploidy 2 \
+# -O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 # ###################################################################################################
 ### Run GenotypeGVCFs on recalibrated samples
 # ###################################################################################################
@@ -721,7 +755,8 @@ done
 #        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
 #        --sample-name-map ${sample_name_map}
 
-#
+# #
+# module load ${GATK_module}
 #
 # time gatk CombineGVCFs \
 #    -R ${ref_genome} \
@@ -770,36 +805,86 @@ done
 #    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-45_variants.Recal.g.vcf \
 #    -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/HM-D1-46_variants.Recal.g.vcf
 #
-# #        # ###################################################################################################
-# #        # ### joint genotype vcfs
-# #        # ###################################################################################################
-# #
+# # #        # ###################################################################################################
+# # #        # ### joint genotype vcfs
+# # #        # ###################################################################################################
+# # #
 # time gatk GenotypeGVCFs \
 #          -R ${ref_genome} \
 #          --variant /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/cohort.g.vcf \
 #          -O ${output_directory}/Full_cohort_D1.vcf
 #
 #
+# #
+# #
+# #
+# #          # ###################################################################################################
+# #          # ### Find coverage and put into 10k chunks
+# #          # ###################################################################################################
+# #
+# #          module load ${deeptools_module}
+# #
+# #
+# #          for file in ${raw_data}/${BASE}*_piped.bam
+# #
+# #          do
+# #
+# #          FBASE=$(basename $file _piped.bam)
+# #          BASE=${FBASE%_piped.bam}
+# #
+# #          bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
+# #
+# #          done
+# #
+# # for file in ${raw_data}/${BASE}*_piped.bam
+# #
+# # do
+# #
+# # FBASE=$(basename $file _piped.bam)
+# # BASE=${FBASE%_piped.bam}
+# # OUT="${BASE}_bamCoverage.sh"
+# # echo "#!/bin/bash" >> ${OUT}
+# # echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
+# # echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# # echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# # echo "#PBS -q batch" >> ${OUT}
+# # echo "#PBS -l mem=20gb" >> ${OUT}
+# # echo "" >> ${OUT}
+# # echo "cd ${raw_data}" >> ${OUT}
+# # echo "module load ${deeptools_module}" >> ${OUT}
+# # echo "" >> ${OUT}
+# # echo "bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
+# # qsub ${OUT}
+# #
+# # done
 #
 #
-#
-#          # ###################################################################################################
-#          # ### Find coverage and put into 10k chunks
-#          # ###################################################################################################
-#
-#          module load ${deeptools_module}
-#
-#
-#          for file in ${raw_data}/${BASE}*_piped.bam
-#
-#          do
-#
-#          FBASE=$(basename $file _piped.bam)
-#          BASE=${FBASE%_piped.bam}
-#
-#          bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
-#
-#          done
+# # for file in ${raw_data}/${BASE}*_piped.bam
+# #
+# # do
+# #
+# # FBASE=$(basename $file _piped.bam)
+# # BASE=${FBASE%_piped.bam}
+# # OUT="${BASE}_samtoolsDepth.sh"
+# # echo "#!/bin/bash" > ${OUT}
+# # echo "#PBS -N ${BASE}_samtoolsDepth" >> ${OUT}
+# # echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# # echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# # echo "#PBS -q batch" >> ${OUT}
+# # echo "#PBS -l mem=20gb" >> ${OUT}
+# # echo "" >> ${OUT}
+# # echo "cd ${raw_data}" >> ${OUT}
+# # echo "module load ${samtools_module}" >> ${OUT}
+# # echo "" >> ${OUT}
+# #
+# # echo "samtools sort ${raw_data}/${BASE}_piped.bam \
+# # -o ${raw_data}/${BASE}.sorted.bam
+# #
+# # samtools depth \
+# # ${raw_data}/${BASE}.sorted.bam \
+# # |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt" >> ${OUT}
+# # qsub ${OUT}
+# # done
 #
 # for file in ${raw_data}/${BASE}*_piped.bam
 #
@@ -807,64 +892,14 @@ done
 #
 # FBASE=$(basename $file _piped.bam)
 # BASE=${FBASE%_piped.bam}
-# OUT="${BASE}_bamCoverage.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=20gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
-# echo "module load ${deeptools_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
-# qsub ${OUT}
-#
-# done
-
-
-# for file in ${raw_data}/${BASE}*_piped.bam
-#
-# do
-#
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-# OUT="${BASE}_samtoolsDepth.sh"
-# echo "#!/bin/bash" > ${OUT}
-# echo "#PBS -N ${BASE}_samtoolsDepth" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=20gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
-# echo "module load ${samtools_module}" >> ${OUT}
-# echo "" >> ${OUT}
-#
-# echo "samtools sort ${raw_data}/${BASE}_piped.bam \
+# samtools sort ${raw_data}/${BASE}_piped.bam \
 # -o ${raw_data}/${BASE}.sorted.bam
 #
 # samtools depth \
 # ${raw_data}/${BASE}.sorted.bam \
-# |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt" >> ${OUT}
-# qsub ${OUT}
+# |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
+#
 # done
-
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-samtools sort ${raw_data}/${BASE}_piped.bam \
--o ${raw_data}/${BASE}.sorted.bam
-
-samtools depth \
-${raw_data}/${BASE}.sorted.bam \
-|  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
-
-done
 # # time gatk SelectVariants \
 # #             -R ${ref_genome} \
 # #             -V ${output_directory}/Full_cohort.vcf \

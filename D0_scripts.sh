@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
+#PBS -q batch
 #PBS -N piped_command
-#PBS -l nodes=1:ppn=1:HIGHMEM
+#PBS -l nodes=1:ppn=1:AMD
 #PBS -l walltime=48:00:00
-#PBS -l mem=100gb
+#PBS -l mem=5gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -35,9 +35,10 @@ deeptools_module="deepTools/3.2.1-foss-2018a-Python-3.6.4"
 #location of data to be analyzed
 # data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
+# ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
-ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus"
+ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #text file listing the fastq files with their full extensions
 # fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
@@ -64,24 +65,24 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/*_R1.fq
-
-do
-
-FBASE=$(basename $file _R1.q)
-BASE=${FBASE%_R1.fq}
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-    FASTQ=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_R1.fq \
-    FASTQ2=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_R2.fq  \
-    OUTPUT=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_fastqtosam.bam \
-    READ_GROUP_NAME=${BASE} \
-    SAMPLE_NAME=${BASE} \
-    LIBRARY_NAME=D0 \
-    PLATFORM=illumina \
-    SEQUENCING_CENTER=GGBC
-
-done
+# for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/*_R1.fq
+#
+# do
+#
+# FBASE=$(basename $file _R1.q)
+# BASE=${FBASE%_R1.fq}
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#     FASTQ=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_R1.fq \
+#     FASTQ2=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_R2.fq  \
+#     OUTPUT=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_fastqtosam.bam \
+#     READ_GROUP_NAME=${BASE} \
+#     SAMPLE_NAME=${BASE} \
+#     LIBRARY_NAME=D0 \
+#     PLATFORM=illumina \
+#     SEQUENCING_CENTER=GGBC
+#
+# done
 
 # for file in ${raw_data}/*_R1_001.fastq
 #
@@ -121,21 +122,21 @@ done
 
 # mkdir ${raw_data}/TMP
 #
-for file in ${raw_data}/*_fastqtosam.bam
-
-do
-
-FBASE=$(basename $file _fastqtosam.bam)
-BASE=${FBASE%_fastqtosam.bam}
-
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-I=${raw_data}/${BASE}_fastqtosam.bam \
-O=${raw_data}/${BASE}_markilluminaadapters.bam \
-M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-TMP_DIR=${raw_data}/TMP
-
-done
+# for file in ${raw_data}/*_fastqtosam.bam
+#
+# do
+#
+# FBASE=$(basename $file _fastqtosam.bam)
+# BASE=${FBASE%_fastqtosam.bam}
+#
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+# I=${raw_data}/${BASE}_fastqtosam.bam \
+# O=${raw_data}/${BASE}_markilluminaadapters.bam \
+# M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+# TMP_DIR=${raw_data}/TMP
+#
+# done
 
 # for file in ${raw_data}/*_fastqtosam.bam
 #
@@ -265,47 +266,47 @@ done
 # 	qsub ${OUT}
 # done
 
-## Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
-# for file in ${raw_data}/*_markilluminaadapters.bam
-#
-# do
-#
-# FBASE=$(basename $file _markilluminaadapters.bam)
-# BASE=${FBASE%_markilluminaadapters.bam}
-# OUT="${BASE}_piped.sh"
-# echo "#!/bin/bash" > ${OUT}
-# echo "#PBS -N ${BASE}_piped" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=30gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
-# echo "module load ${picard_module}" >> ${OUT}
-# echo "module load ${bwa_module}" >> ${OUT}
-# echo "module load ${samtools_module}" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-# I=${raw_data}/${BASE}_markilluminaadapters.bam \
-# FASTQ=/dev/stdout \
-# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-# TMP_DIR=${raw_data}/TMP | \
-# bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-# ALIGNED_BAM=/dev/stdin \
-# UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
-# OUTPUT=${raw_data}/${BASE}_piped.bam \
-# R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-# TMP_DIR=${raw_data}/TMP" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+# Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
+for file in ${raw_data}/*_markilluminaadapters.bam
+
+do
+
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
+OUT="${BASE}_piped.sh"
+echo "#!/bin/bash" > ${OUT}
+echo "#PBS -N ${BASE}_piped" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=30gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${bwa_module}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+I=${raw_data}/${BASE}_markilluminaadapters.bam \
+FASTQ=/dev/stdout \
+CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+TMP_DIR=${raw_data}/TMP | \
+bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+ALIGNED_BAM=/dev/stdin \
+UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
+OUTPUT=${raw_data}/${BASE}_pipedNewRef.bam \
+R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+TMP_DIR=${raw_data}/TMP" >> ${OUT}
+qsub ${OUT}
+
+done
 
 
 ###################################################################################################
@@ -560,7 +561,9 @@ done
 #           ###################################################################################################
 #           ###################################################################################################
 #           #
-# #           #
+#           #
+#   module load ${GATK_module}
+#
 #           time gatk CombineGVCFs \
 #              -R ${ref_genome} \
 #              -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/D0_FullCohort.g.vcf \
@@ -609,7 +612,7 @@ done
 #              -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-47_variants.Recal.g.vcf \
 #              -V /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-48_variants.Recal.g.vcf
 #
-#
+# #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)
 #              ###################################################################################################
