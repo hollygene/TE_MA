@@ -39,7 +39,7 @@ data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
 # ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
-# ref_genome_dir="/scratch/jc33471/pilon/337/"
+ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #text file listing the fastq files with their full extensions
 # fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
@@ -280,6 +280,11 @@ bwa index ${ref_genome}
 # 	qsub ${OUT}
 # done
 # Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
+
+java -jar picard.jar CreateSequenceDictionary \
+      R=${ref_genome} \
+      O=${ref_genome_dir}/reference.dict
+
 for file in ${raw_data}/*_markilluminaadapters.bam
 
 do
