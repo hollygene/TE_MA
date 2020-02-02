@@ -281,10 +281,10 @@ bwa index ${ref_genome}
 # done
 # Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
-#       R=${ref_genome} \
-#       O=${ref_genome_dir}/genome.337.dict
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
+      R=${ref_genome} \
+      O=${ref_genome_dir}/genome.337.dict
 
 # for file in ${raw_data}/*_markilluminaadapters.bam
 #
@@ -334,7 +334,7 @@ bwa index ${ref_genome}
 #
 # # #index reference genome
 # #
-# # samtools faidx ${ref_genome}
+samtools faidx ${ref_genome}
 # # #
 # # # # #convert sam files to bam files
 # # for file in ${output_directory}/*_aln.sam
