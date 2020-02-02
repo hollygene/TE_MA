@@ -234,7 +234,7 @@ module load ${GATK_module}
 # #######################################################################################
 #
  #index the ref genome
-# bwa index ${ref_genome}
+bwa index ${ref_genome}
 #
 # for file in ${raw_data}/*_samtofastq_interleaved.fq
 #
