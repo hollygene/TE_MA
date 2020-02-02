@@ -445,7 +445,7 @@ do
 FBASE=$(basename $file _piped.bam)
 BASE=${FBASE%_piped.bam}
 OUT="${BASE}_HC.sh"
-echo "#!/bin/bash" > ${OUT}
+echo "#!/bin/bash" >> ${OUT}
 echo "#PBS -N ${BASE}_HC" >> ${OUT}
 echo "#PBS -l walltime=72:00:00" >> ${OUT}
 echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
