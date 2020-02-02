@@ -438,7 +438,7 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 ## H0 samples
-for file in /${raw_data}/${BASE}*_piped.bam
+for file in ${raw_data}/${BASE}*_piped.bam
 
 do
 
@@ -463,6 +463,7 @@ echo "time gatk HaplotypeCaller \
      -ploidy 1 \
      -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
 qsub ${OUT}
+
 done
 
 # # time gatk HaplotypeCaller \
