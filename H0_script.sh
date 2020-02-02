@@ -438,12 +438,12 @@ module load ${GATK_module}
 module load ${GATK_module}
 
 ## H0 samples
-for file in ${raw_data}/${BASE}*_piped.bam
+for file in ${raw_data}/${BASE}*_pipedNewRef.bam
 
 do
 
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
+FBASE=$(basename $file _pipedNewRef.bam)
+BASE=${FBASE%_pipedNewRef.bam}
 OUT="${BASE}_HC.sh"
 echo "#!/bin/bash" >> ${OUT}
 echo "#PBS -N ${BASE}_HC" >> ${OUT}
@@ -459,9 +459,9 @@ echo "mkdir ${raw_data}/TMP" >> ${OUT}
 echo "time gatk HaplotypeCaller \
      -R ${ref_genome} \
      -ERC GVCF \
-     -I /${raw_data}/${BASE}_piped.bam \
+     -I /${raw_data}/${BASE}_pipedNewRef.bam \
      -ploidy 1 \
-     -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
+     -O ${output_directory}/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
 qsub ${OUT}
 
 done
