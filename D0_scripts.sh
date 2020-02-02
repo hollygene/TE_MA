@@ -415,30 +415,30 @@ done
 # 	qsub ${OUT}
 # done
 
-# for file in ${raw_data}/${BASE}*_piped.bam
-#
-# do
-#   FBASE=$(basename $file _piped.bam)
-#   BASE=${FBASE%_piped.bam}
-# 	OUT="${BASE}_HaplotypeCaller.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# 	echo "#PBS -q highmem_q" >> ${OUT}
-# 	echo "#PBS -l mem=200gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "time gatk HaplotypeCaller \
-#        -R ${ref_genome} \
-#        -ERC GVCF \
-#        -I ${raw_data}/${BASE}_piped.bam \
-#        -ploidy 2 \
-#        -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
-# 	qsub ${OUT}
-# done
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+  FBASE=$(basename $file _piped.bam)
+  BASE=${FBASE%_piped.bam}
+	OUT="${BASE}_HaplotypeCaller.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
+	echo "#PBS -l walltime=72:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+	echo "#PBS -q highmem_q" >> ${OUT}
+	echo "#PBS -l mem=200gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "time gatk HaplotypeCaller \
+       -R ${ref_genome} \
+       -ERC GVCF \
+       -I ${raw_data}/${BASE}_piped.bam \
+       -ploidy 2 \
+       -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
+	qsub ${OUT}
+done
 
 # ###################################################################################################
 ### Combine gVCFs before joint genotyping
