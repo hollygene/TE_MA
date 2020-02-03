@@ -234,7 +234,7 @@ module load ${GATK_module}
 # #######################################################################################
 #
  #index the ref genome
-bwa index ${ref_genome}
+# bwa index ${ref_genome}
 #
 # for file in ${raw_data}/*_samtofastq_interleaved.fq
 #
@@ -281,10 +281,10 @@ bwa index ${ref_genome}
 # done
 # Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
-      R=${ref_genome} \
-      O=${ref_genome_dir}/genome.337.dict
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
+#       R=${ref_genome} \
+#       O=${ref_genome_dir}/genome.337.dict
 
 # for file in ${raw_data}/*_markilluminaadapters.bam
 #
@@ -562,31 +562,48 @@ module load ${GATK_module}
 # ## Apply BQSR to bam files
 # ###################################################################################################
 #
+
 for file in ${raw_data}/${BASE}*_pipedNewRef.bam
 
 do
 
 FBASE=$(basename $file _pipedNewRef.bam)
 BASE=${FBASE%_pipedNewRef.bam}
-OUT="${BASE}_BQSR.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_BQSR" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-echo "#PBS -q batch" >> ${OUT}
-echo "#PBS -l mem=50gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${raw_data}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "gatk ApplyBQSR \
+
+
+gatk ApplyBQSR \
    -R ${ref_genome} \
    -I ${raw_data}/${BASE}_pipedNewRef.bam \
    -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
-   -O ${output_directory}/${BASE}_recalibratedNewRef.bam" >> ${OUT}
-qsub ${OUT}
+   -O ${output_directory}/${BASE}_recalibratedNewRef.bam
 
 done
+
+# for file in ${raw_data}/${BASE}*_pipedNewRef.bam
+#
+# do
+#
+# FBASE=$(basename $file _pipedNewRef.bam)
+# BASE=${FBASE%_pipedNewRef.bam}
+# OUT="${BASE}_BQSR.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_BQSR" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=50gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${raw_data}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "gatk ApplyBQSR \
+#    -R ${ref_genome} \
+#    -I ${raw_data}/${BASE}_pipedNewRef.bam \
+#    -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
+#    -O ${output_directory}/${BASE}_recalibratedNewRef.bam" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 # ###################################################################################################
@@ -597,31 +614,31 @@ done
 # module load ${GATK_module}
 #
 ### D1 samples
-# for file in ${output_directory}/${BASE}*_recalibrated.bam
-#
-# do
-#
-# FBASE=$(basename $file _recalibrated.bam)
-# BASE=${FBASE%_recalibrated.bam}
-# OUT="${BASE}_recalHC.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_recalHC" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=50gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "time gatk HaplotypeCaller \
-# -R ${ref_genome} \
-# -ERC GVCF \
-# -I ${output_directory}/${BASE}_recalibrated.bam \
-# -ploidy 1 \
-# -O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+
+do
+
+FBASE=$(basename $file _recalibratedNewRef.bam)
+BASE=${FBASE%_recalibratedNewRef.bam}
+OUT="${BASE}_recalHC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_recalHC" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=50gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+-ploidy 1 \
+-O ${output_directory}/${BASE}_variants.RecalNewRef.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
 #
 # OUT="HM-H0-12_recalhapCall.sh"
 # echo "#!/bin/bash" >> ${OUT}
