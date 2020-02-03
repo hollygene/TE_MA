@@ -415,57 +415,57 @@ module load ${GATK_module}
 # 	qsub ${OUT}
 # done
 
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-  FBASE=$(basename $file _piped.bam)
-  BASE=${FBASE%_piped.bam}
-	OUT="${BASE}_HaplotypeCaller.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
-	echo "#PBS -l walltime=72:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-	echo "#PBS -q highmem_q" >> ${OUT}
-	echo "#PBS -l mem=200gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${raw_data}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "time gatk HaplotypeCaller \
-       -R ${ref_genome} \
-       -ERC GVCF \
-       -I ${raw_data}/${BASE}_piped.bam \
-       -ploidy 2 \
-       -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
-	qsub ${OUT}
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#   FBASE=$(basename $file _piped.bam)
+#   BASE=${FBASE%_piped.bam}
+# 	OUT="${BASE}_HaplotypeCaller.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
+# 	echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# 	echo "#PBS -q highmem_q" >> ${OUT}
+# 	echo "#PBS -l mem=200gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "time gatk HaplotypeCaller \
+#        -R ${ref_genome} \
+#        -ERC GVCF \
+#        -I ${raw_data}/${BASE}_piped.bam \
+#        -ploidy 2 \
+#        -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
+# 	qsub ${OUT}
+# done
 
 # ###################################################################################################
 ### Combine gVCFs before joint genotyping
 # ###################################################################################################
 
 
-# time gatk CombineGVCFs \
-#  -O ${output_directory}/D0_cohort.g.vcf \
-#  -R ${ref_genome} \
-#  --variant ${output_directory}/HM-D0-A_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-10_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-11_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-12_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-13_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-14_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-15_variants.g.vcf \
-#  --variant ${output_directory}/HM-D0-16_variants.g.vcf
-#
+time gatk CombineGVCFs \
+ -O ${output_directory}/D0_cohortNewRef.g.vcf \
+ -R ${ref_genome} \
+ --variant ${output_directory}/HM-D0-A_variantsNewRef.g.vcf \
+ --variant ${output_directory}/HM-D0-10_variantsNewRef.g.vcf \
+ --variant ${output_directory}/HM-D0-11_variantsNewRef.g.vcf \
+ --variant ${output_directory}/HM-D0-12_variantsNewRef.g.vcf \
+ --variant ${output_directory}/HM-D0-13_variantsNewRef.g.vcf \
+ --variant ${output_directory}/HM-D0-14_variantsNewRef.g.vcf \
+ --variant ${output_directory}/HM-D0-15_variantsNewRef.g.vcf \
+ --variant ${output_directory}/HM-D0-16_variantsNewRef.g.vcf
+
 
 ###################################################################################################
 ### Jointly genotype 8 random samples to identify consensus sequences
 ###################################################################################################
 
-# time gatk GenotypeGVCFs \
-#         -R ${ref_genome} \
-#         --variant ${output_directory}/D0_cohort.g.vcf \
-#         -O ${output_directory}/D0_variants_8Samples.vcf
+time gatk GenotypeGVCFs \
+        -R ${ref_genome} \
+        --variant ${output_directory}/D0_cohortNewRef.g.vcf \
+        -O ${output_directory}/D0_variants_8SamplesNewRef.vcf
 
 
 # ###################################################################################################
@@ -488,6 +488,31 @@ done
 #
 #         done
 
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+OUT="${BASE}_BR.sh"
+echo "#!/bin/bash" > ${OUT}
+echo "#PBS -N ${BASE}_BR" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=50gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk BaseRecalibrator \
+   -I ${raw_data}/${BASE}_piped.bam \
+   --known-sites ${output_directory}/D0_variants_8SamplesNewRefSamples.vcf \
+   -O ${output_directory}/${BASE}_recal_dataNewRef.table \
+   -R ${ref_genome}" >> ${OUT}
+qsub ${OUT}
+
+done
 # ###################################################################################################
   # ## Apply BQSR to bam files
   # ###################################################################################################
