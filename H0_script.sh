@@ -562,12 +562,12 @@ module load ${GATK_module}
 # ## Apply BQSR to bam files
 # ###################################################################################################
 #
-for file in ${raw_data}/${BASE}*_piped.bam
+for file in ${raw_data}/${BASE}*_pipedNewRef.bam
 
 do
 
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
+FBASE=$(basename $file _pipedNewRef.bam)
+BASE=${FBASE%_pipedNewRef.bam}
 OUT="${BASE}_BQSR.sh"
 echo "#!/bin/bash" >> ${OUT}
 echo "#PBS -N ${BASE}_BQSR" >> ${OUT}
