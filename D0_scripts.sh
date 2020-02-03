@@ -507,7 +507,7 @@ echo "module load ${GATK_module}" >> ${OUT}
 echo "" >> ${OUT}
 echo "time gatk BaseRecalibrator \
    -I ${raw_data}/${BASE}_piped.bam \
-   --known-sites ${output_directory}/D0_variants_8SamplesNewRefSamples.vcf \
+   --known-sites ${output_directory}/D0_variants_8SamplesNewRef.vcf \
    -O ${output_directory}/${BASE}_recal_dataNewRef.table \
    -R ${ref_genome}" >> ${OUT}
 qsub ${OUT}
