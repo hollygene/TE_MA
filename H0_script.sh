@@ -581,9 +581,9 @@ echo "module load ${GATK_module}" >> ${OUT}
 echo "" >> ${OUT}
 echo "gatk ApplyBQSR \
    -R ${ref_genome} \
-   -I ${raw_data}/${BASE}_piped.bam \
-   -bqsr ${output_directory}/${BASE}_recal_data.table \
-   -O ${output_directory}/${BASE}_recalibrated.bam" >> ${OUT}
+   -I ${raw_data}/${BASE}_pipedNewRef.bam \
+   -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
+   -O ${output_directory}/${BASE}_recalibratedNewRef.bam" >> ${OUT}
 qsub ${OUT}
 
 done
