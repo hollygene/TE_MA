@@ -409,27 +409,27 @@ module load ${GATK_module}
 # ###################################################################################################
 
 
-time gatk CombineGVCFs \
- -O ${output_directory}/D20_cohortNewRef.g.vcf \
- -R ${ref_genome} \
- --variant ${output_directory}/HM-D20-A_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D20-10_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D20-11_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D20-12_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D20-13_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D20-14_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D20-15_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D20-16_variantsNewRef.g.vcf
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/D20_cohortNewRef.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/HM-D20-A_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D20-10_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D20-11_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D20-12_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D20-13_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D20-14_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D20-15_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D20-16_variantsNewRef.g.vcf
 
 #
 # # ###################################################################################################
 # ### Jointly genotype 8 random samples to identify consensus sequences
 # ###################################################################################################
 
-time gatk GenotypeGVCFs \
-        -R ${ref_genome} \
-        --variant ${output_directory}/D20_cohortNewRef.g.vcf \
-        -O ${output_directory}/D20_variants_8SamplesNewRef.vcf
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         --variant ${output_directory}/D20_cohortNewRef.g.vcf \
+#         -O ${output_directory}/D20_variants_8SamplesNewRef.vcf
 
 
 # ###################################################################################################
@@ -451,48 +451,48 @@ time gatk GenotypeGVCFs \
 #            -O ${output_directory}/${BASE}_recal_data.table
 #
 #         done
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-OUT="${BASE}_BR.sh"
-echo "#!/bin/bash" > ${OUT}
-echo "#PBS -N ${BASE}_BR" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-echo "#PBS -q batch" >> ${OUT}
-echo "#PBS -l mem=50gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${raw_data}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk BaseRecalibrator \
-   -I ${raw_data}/${BASE}_piped.bam \
-   --known-sites ${output_directory}/D20_variants_7SamplesNewRefSamples.vcf \
-   -O ${output_directory}/${BASE}_recal_dataNewRef.table \
-   -R ${ref_genome}" >> ${OUT}
-qsub ${OUT}
-
-done
+# for file in ${raw_data}/${BASE}*_piped.bam
+#
+# do
+#
+# FBASE=$(basename $file _piped.bam)
+# BASE=${FBASE%_piped.bam}
+# OUT="${BASE}_BR.sh"
+# echo "#!/bin/bash" > ${OUT}
+# echo "#PBS -N ${BASE}_BR" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=50gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${raw_data}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk BaseRecalibrator \
+#    -I ${raw_data}/${BASE}_piped.bam \
+#    --known-sites ${output_directory}/D20_variants_7SamplesNewRefSamples.vcf \
+#    -O ${output_directory}/${BASE}_recal_dataNewRef.table \
+#    -R ${ref_genome}" >> ${OUT}
+# qsub ${OUT}
+#
+# done
   # # ###################################################################################################
   #   # ## Apply BQSR to bam files
   #         # ###################################################################################################
-  #       for file in ${raw_data}/${BASE}*_piped.bam
-  #
-  #             do
-  #               FBASE=$(basename $file _piped.bam)
-  #               BASE=${FBASE%_piped.bam}
-  #
-  #
-  #               gatk ApplyBQSR \
-  #                  -R ${ref_genome} \
-  #                  -I ${raw_data}/${BASE}_piped.bam \
-  #                  -bqsr ${output_directory}/${BASE}_recal_data.table \
-  #                  -O ${output_directory}/${BASE}_recalibrated.bam
-  #
-  #               done
+        for file in ${raw_data}/${BASE}*_piped.bam
+
+              do
+                FBASE=$(basename $file _piped.bam)
+                BASE=${FBASE%_piped.bam}
+
+
+                gatk ApplyBQSR \
+                   -R ${ref_genome} \
+                   -I ${raw_data}/${BASE}_piped.bam \
+                   -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
+                   -O ${output_directory}/${BASE}_recalibratedNewRef.bam
+
+                done
   #
   #               for file in ${raw_data}/${BASE}*_piped.bam
   #
@@ -528,32 +528,32 @@ done
 #                 module load ${GATK_module}
 #
 #                 ### D1 samples
-# for file in ${output_directory}/redo/${BASE}*_recalibrated.bam
-#
-# do
-#
-# FBASE=$(basename $file _recalibrated.bam)
-# BASE=${FBASE%_recalibrated.bam}
-# OUT="${BASE}_HC.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_HC" >> ${OUT}
-# echo "#PBS -l walltime=48:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# echo "#PBS -q highmem_q" >> ${OUT}
-# echo "#PBS -l mem=150gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${raw_data}/redo/" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "time gatk HaplotypeCaller \
-# -R ${ref_genome} \
-# -ERC GVCF \
-# -I ${output_directory}/redo/${BASE}_recalibrated.bam \
-# -ploidy 2 \
-# -O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+
+do
+
+FBASE=$(basename $file _recalibratedNewRef.bam)
+BASE=${FBASE%_recalibratedNewRef.bam}
+OUT="${BASE}_HC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_HC" >> ${OUT}
+echo "#PBS -l walltime=48:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=150gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+-ploidy 2 \
+-O ${output_directory}/${BASE}_variants.RecalNewRef.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
 
 # ###################################################################################################
 ### Genotype gVCFs (individually)
