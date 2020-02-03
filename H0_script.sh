@@ -505,62 +505,32 @@ module load ${GATK_module}
 # # ###################################################################################################
 #
 #
-time gatk CombineGVCFs \
- -O ${output_directory}/H0_smallCohortNewRef.g.vcf \
- -R ${ref_genome} \
- --variant ${output_directory}/H0-A_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-H0-10_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-H0-11_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-H0-12_variantsNewRef.g.vcf \
- --variant ${output_directory}/H0-13_variantsNewRef.g.vcf \
- --variant ${output_directory}/H0-14_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-H0-15_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-H0-16_variantsNewRef.g.vcf
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/H0_smallCohortNewRef.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/H0-A_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-10_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-11_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-12_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/H0-13_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/H0-14_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-15_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-16_variantsNewRef.g.vcf
 
 #
 # # ###################################################################################################
 # # ### Jointly genotype 8 random samples to identify consensus sequences
 # # ###################################################################################################
 #
-time gatk GenotypeGVCFs \
-        -R ${ref_genome} \
-        -ploidy 1 \
-        --variant ${output_directory}/H0_smallCohortNewRef.g.vcf \
-        -O ${output_directory}/H0_variants_7SamplesNewRef.vcf
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         -ploidy 1 \
+#         --variant ${output_directory}/H0_smallCohortNewRef.g.vcf \
+#         -O ${output_directory}/H0_variants_7SamplesNewRef.vcf
 
 # # ###################################################################################################
 # # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # # ###################################################################################################
-#
-for file in ${raw_data}/${BASE}*_piped.bam
-
-do
-
-FBASE=$(basename $file _piped.bam)
-BASE=${FBASE%_piped.bam}
-OUT="${BASE}_BR.sh"
-echo "#!/bin/bash" > ${OUT}
-echo "#PBS -N ${BASE}_BR" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-echo "#PBS -q batch" >> ${OUT}
-echo "#PBS -l mem=50gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${raw_data}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk BaseRecalibrator \
-   -I ${raw_data}/${BASE}_piped.bam \
-   --known-sites ${output_directory}/H0_variants_7SamplesNewRef.vcf \
-   -O ${output_directory}/${BASE}_recal_dataNewRef.table \
-   -R ${ref_genome}" >> ${OUT}
-qsub ${OUT}
-
-done
-
-# ###################################################################################################
-# ## Apply BQSR to bam files
-# ###################################################################################################
 #
 # for file in ${raw_data}/${BASE}*_piped.bam
 #
@@ -568,9 +538,9 @@ done
 #
 # FBASE=$(basename $file _piped.bam)
 # BASE=${FBASE%_piped.bam}
-# OUT="${BASE}_BQSR.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_BQSR" >> ${OUT}
+# OUT="${BASE}_BR.sh"
+# echo "#!/bin/bash" > ${OUT}
+# echo "#PBS -N ${BASE}_BR" >> ${OUT}
 # echo "#PBS -l walltime=12:00:00" >> ${OUT}
 # echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
 # echo "#PBS -q batch" >> ${OUT}
@@ -579,14 +549,44 @@ done
 # echo "cd ${raw_data}" >> ${OUT}
 # echo "module load ${GATK_module}" >> ${OUT}
 # echo "" >> ${OUT}
-# echo "gatk ApplyBQSR \
-#    -R ${ref_genome} \
+# echo "time gatk BaseRecalibrator \
 #    -I ${raw_data}/${BASE}_piped.bam \
-#    -bqsr ${output_directory}/${BASE}_recal_data.table \
-#    -O ${output_directory}/${BASE}_recalibrated.bam" >> ${OUT}
+#    --known-sites ${output_directory}/H0_variants_7SamplesNewRef.vcf \
+#    -O ${output_directory}/${BASE}_recal_dataNewRef.table \
+#    -R ${ref_genome}" >> ${OUT}
 # qsub ${OUT}
 #
 # done
+
+# ###################################################################################################
+# ## Apply BQSR to bam files
+# ###################################################################################################
+#
+for file in ${raw_data}/${BASE}*_piped.bam
+
+do
+
+FBASE=$(basename $file _piped.bam)
+BASE=${FBASE%_piped.bam}
+OUT="${BASE}_BQSR.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_BQSR" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=50gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${raw_data}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "gatk ApplyBQSR \
+   -R ${ref_genome} \
+   -I ${raw_data}/${BASE}_piped.bam \
+   -bqsr ${output_directory}/${BASE}_recal_data.table \
+   -O ${output_directory}/${BASE}_recalibrated.bam" >> ${OUT}
+qsub ${OUT}
+
+done
 
 
 # ###################################################################################################
