@@ -40,7 +40,8 @@ output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0"
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/H0"
 
 
-cd ${raw_data}
+# cd ${raw_data}
+cd ${output_directory}
 
 module load ${picard_module}
 module load ${bwa_module}
@@ -73,11 +74,11 @@ module load ${GATK_module}
 
 # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 # /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#     FASTQ=${raw_data}/HM-H0-10_R1_001.fastq.gz \
-#     FASTQ2=${raw_data}/HM-H0-10_R2_001.fastq.gz  \
-#     OUTPUT=${output_directory}/GATK_workflow_files/HM-H0-10_fastqtosam.bam \
-#     READ_GROUP_NAME=HM-H0-10 \
-#     SAMPLE_NAME=HM-H0-10 \
+#     FASTQ=${raw_data}/HM-H0-11_R1_001.fastq.gz \
+#     FASTQ2=${raw_data}/HM-H0-11_R2_001.fastq.gz  \
+#     OUTPUT=${output_directory}/GATK_workflow_files/HM-H0-11_fastqtosam.bam \
+#     READ_GROUP_NAME=HM-H0-11 \
+#     SAMPLE_NAME=HM-H0-11 \
 #     LIBRARY_NAME=H0 \
 #     PLATFORM=illumina \
 #     SEQUENCING_CENTER=GGBC
@@ -176,9 +177,9 @@ module load ${GATK_module}
 #
 # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 # /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-# I=${output_directory}/GATK_workflow_files/HM-H0-10_fastqtosam.bam \
-# O=${output_directory}/GATK_workflow_files/HM-H0-10_markilluminaadapters.bam \
-# M=${output_directory}/GATK_workflow_files/HM-H0-10_markilluminaadapters_metrics.txt \
+# I=${output_directory}/GATK_workflow_files/HM-H0-11_fastqtosam.bam \
+# O=${output_directory}/GATK_workflow_files/HM-H0-11_markilluminaadapters.bam \
+# M=${output_directory}/GATK_workflow_files/HM-H0-11_markilluminaadapters_metrics.txt \
 # TMP_DIR=${output_directory}/GATK_workflow_files/TMP \
 # USE_JDK_DEFLATER=true USE_JDK_INFLATER=true
 #
@@ -255,15 +256,15 @@ module load ${GATK_module}
 # #
 # # done
 #
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-# I=${output_directory}/GATK_workflow_files/HM-H0-10_markilluminaadapters.bam \
-# FASTQ=${output_directory}/GATK_workflow_files/HM-H0-10_samtofastq_interleaved.fq \
-# CLIPPING_ATTRIBUTE=XT \
-# CLIPPING_ACTION=2 \
-# INTERLEAVE=true \
-# NON_PF=true \
-# TMP_DIR=${output_directory}/GATK_workflow_files/TMP
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+I=${output_directory}/GATK_workflow_files/HM-H0-11_markilluminaadapters.bam \
+FASTQ=${output_directory}/GATK_workflow_files/HM-H0-11_samtofastq_interleaved.fq \
+CLIPPING_ATTRIBUTE=XT \
+CLIPPING_ACTION=2 \
+INTERLEAVE=true \
+NON_PF=true \
+TMP_DIR=${output_directory}/GATK_workflow_files/TMP
 #
 #
 #
@@ -309,24 +310,24 @@ module load ${GATK_module}
 #
 #
 #
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-# I=${output_directory}/GATK_workflow_files/HM-H0-10_samtofastq_interleaved.fq \
-# FASTQ=/dev/stdout \
-# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-# TMP_DIR=${output_directory}/GATK_workflow_files/TMP | \
-# bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-# ALIGNED_BAM=/dev/stdin \
-# UNMAPPED_BAM=${output_directory}/GATK_workflow_files/HM-H0-10_fastqtosam.bam \
-# OUTPUT=${output_directory}/GATK_workflow_files/HM-H0-10_pipedNewRef.bam \
-# R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-# TMP_DIR=${output_directory}/GATK_workflow_files/TMP
-#
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+I=${output_directory}/GATK_workflow_files/HM-H0-11_markilluminaadapters.bam \
+FASTQ=/dev/stdout \
+CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+TMP_DIR=${output_directory}/GATK_workflow_files/TMP | \
+bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+ALIGNED_BAM=/dev/stdin \
+UNMAPPED_BAM=${output_directory}/GATK_workflow_files/HM-H0-11_fastqtosam.bam \
+OUTPUT=${output_directory}/GATK_workflow_files/HM-H0-11_pipedNewRef.bam \
+R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+TMP_DIR=${output_directory}/GATK_workflow_files/TMP
+
 # for file in ${output_directory}/GATK_workflow_files/*_markilluminaadapters.bam
 #
 # do
@@ -549,7 +550,7 @@ time gatk CombineGVCFs \
  -O ${output_directory}/GATK_workflow_files/H0_smallCohortNewRef.g.vcf \
  -R ${ref_genome} \
  --variant ${output_directory}/GATK_workflow_files/H0-A_variantsNewRef.g.vcf \
- --variant ${output_directory}/GATK_workflow_files/HM-H0-10_variantsNewRef.g.vcf \
+ --variant ${output_directory}/GATK_workflow_files/HM-H0-10_variants.g.vcf \
  --variant ${output_directory}/GATK_workflow_files/HM-H0-11_variantsNewRef.g.vcf \
  --variant ${output_directory}/GATK_workflow_files/HM-H0-12_variantsNewRef.g.vcf \
  --variant ${output_directory}/GATK_workflow_files/H0-13_variantsNewRef.g.vcf \

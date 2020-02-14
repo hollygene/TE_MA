@@ -35,16 +35,16 @@ deeptools_module="deepTools/3.2.1-foss-2018a-Python-3.6.4"
 #location of data to be analyzed
 # data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
-# ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
+# ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
 #directory reference genome is located in
-ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
+# ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #text file listing the fastq files with their full extensions
 # fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
 #what sample should all other samples be compared to?
 control_sample_name="Ancestor"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Out/D0"
 # mkdir $output_directory
 #location of TRIMMED data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D0"
@@ -587,7 +587,7 @@ for file in ${raw_data}/${BASE}*_pipedNewRef.bam
 #           ###################################################################################################
 #           #
 #           #
-#   module load ${GATK_module}
+  module load ${GATK_module}
 #
 #           time gatk CombineGVCFs \
 #              -R ${ref_genome} \
@@ -744,32 +744,51 @@ for file in ${raw_data}/${BASE}*_pipedNewRef.bam
 #    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
 #    -select 'vc.getGenotype("HM-D0-A").isCalled()'
 #
-#    gatk SelectVariants \
-#    -R ${ref_genome} \
-#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-#    -select-type SNP \
-#    -select-type INDEL \
-#    -select-type MIXED \
-#    -select-type MNP \
-#    -select-type SYMBOLIC
+cd ${output_directory}
+
+   gatk SelectVariants \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+   --max-nocall-fraction 0 \
+   --exclude-non-variants TRUE \
+   -select-type SNP
+
+   gatk SelectVariants \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+      --max-nocall-fraction 0.001 \
+      -select-type INDEL
+
+
+   -select-type INDEL \
+   -select-type MIXED \
+   -select-type MNP \
+   -select-type SYMBOLIC
 #
 # #
 # # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
 # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
 # #
 # # #Variants to table
-# gatk VariantsToTable \
-#      -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-#      -F CHROM -F POS -F REF -F ALT -F QUAL \
-#      -GF AD -GF DP -GF GQ -GF GT \
-#      -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-#
-#      gatk VariantsToTable \
-#           -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-#           -F CHROM -F POS -F REF -F ALT  \
-#           -GF AD -GF GT \
-#           -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_varsGT.txt
+gatk VariantsToTable \
+     -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+     -F CHROM -F POS -F REF -F ALT -F QUAL \
+     -GF AD -GF DP -GF GQ -GF GT \
+     -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
+
+     gatk VariantsToTable \
+          -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+          -F CHROM -F POS -F REF -F ALT  \
+          -GF AD -GF GT \
+          -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
+
+          gatk VariantsToTable \
+               -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+               -F CHROM -F POS -F REF -F ALT  \
+               -GF AD -GF GT \
+               -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
 
 # # ###################################################################################################
 ### This stuff is in Excel
