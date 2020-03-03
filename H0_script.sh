@@ -22,7 +22,7 @@ bedtools_module="BEDTools/2.28.0-foss-2018a"
 #location of python module
 python_module="Python/3.5.2-foss-2016b"
 #location of picard module
-picard_module="picard/2.4.1-Java-1.8.0_144"
+picard_module="picard/2.21.6-Java-11"
 #location of GATK module
 GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
 #deeptools location
@@ -38,6 +38,8 @@ output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/"
 # mkdir $output_directory
 #location of data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
+mcc_bams="/scratch/jc33471/paradoxusHolly/run0217all"
+mcc_bam_indiv="/scratch/jc33471/paradoxusHolly/run0217all/out/Spar"
 
 
 # cd ${raw_data}
@@ -52,7 +54,7 @@ module load ${GATK_module}
 # #######################################################################################
 # # create a uBAM file
 # #######################################################################################
-#
+# #
 # for file in ${raw_data}/*_R1_001.fastq
 #
 # do
@@ -82,7 +84,7 @@ module load ${GATK_module}
 #     LIBRARY_NAME=H0 \
 #     PLATFORM=illumina \
 #     SEQUENCING_CENTER=GGBC
-#
+
 for file in ${raw_data}/*_R1_001.fastq.gz
 
 do
@@ -153,28 +155,73 @@ do
       SEQUENCING_CENTER=GGBC" >> ${OUT}
 	qsub ${OUT}
 done
+
+
+
+for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
+
+do
+
+FBASE=$(basename $file _val.bam)
+BASE=${FBASE%_val.bam}
+OUT="${BASE}_RevertSam.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_RevertSam" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=80gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar RevertSam \
+I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
+O=${output_directory}/mcc_bams_out/${BASE}_Reverted.bam \
+SANITIZE=true \
+MAX_DISCARD_FRACTION=0.005 \
+ATTRIBUTE_TO_CLEAR=XT \
+ATTRIBUTE_TO_CLEAR=XN \
+ATTRIBUTE_TO_CLEAR=AS \
+ATTRIBUTE_TO_CLEAR=OC \
+ATTRIBUTE_TO_CLEAR=OP \
+SORT_ORDER=queryname \
+RESTORE_ORIGINAL_QUALITIES=true \
+REMOVE_DUPLICATE_INFORMATION=true \
+REMOVE_ALIGNMENT_INFORMATION=true" >> ${OUT}
+
+qsub ${OUT}
+
+done
+
+
+
+
+
 # # #######################################################################################
 # # # mark Illumina adapters
 # # #######################################################################################
 # #
-# # mkdir ${raw_data}/TMP
-# #
-# # for file in ${raw_data}/*_fastqtosam.bam
-# #
-# # do
-# #
-# # FBASE=$(basename $file _fastqtosam.bam)
-# # BASE=${FBASE%_fastqtosam.bam}
-# #
-# # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# # /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-# # I=${raw_data}/${BASE}_fastqtosam.bam \
-# # O=${raw_data}/${BASE}_markilluminaadapters.bam \
-# # M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-# # TMP_DIR=${raw_data}/TMP \
-# # USE_JDK_DEFLATER=true USE_JDK_INFLATER=true
-# #
-# # done
+mkdir ${raw_data}/TMP
+
+# for file in ${raw_data}/*_fastqtosam.bam
+#
+# do
+#
+# FBASE=$(basename $file _fastqtosam.bam)
+# BASE=${FBASE%_fastqtosam.bam}
+#
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+# I=${raw_data}/${BASE}_fastqtosam.bam \
+# O=${raw_data}/${BASE}_markilluminaadapters.bam \
+# M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
+# TMP_DIR=${raw_data}/TMP \
+# USE_JDK_DEFLATER=true USE_JDK_INFLATER=true
+#
+# done
 # #
 #
 # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
@@ -187,56 +234,117 @@ done
 #
 #
 #
-for file in ${output_directory}/*__fastqtosam.bam
+for file in ${output_directory}/D0/*_fastqtosam.bam
 
 do
-  FBASE=$(basename $file __fastqtosam.bam)
-  BASE=${FBASE%__fastqtosam.bam}
+  FBASE=$(basename $file _fastqtosam.bam)
+  BASE=${FBASE%_fastqtosam.bam}
 	OUT="${BASE}_MarkIlluminaAdapters.sh"
 	echo "#!/bin/bash" > ${OUT}
 	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
 	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=20gb" >> ${OUT}
+	echo "#PBS -l mem=50gb" >> ${OUT}
 	echo "" >> ${OUT}
-	echo "cd ${output_directory}GATK_workflow_files/" >> ${OUT}
+	echo "cd ${output_directory}/D0/" >> ${OUT}
 	echo "module load ${picard_module}" >> ${OUT}
   echo "module load ${bwa_module}" >> ${OUT}
   echo "module load ${samtools_module}" >> ${OUT}
   echo "module load ${GATK_module}" >> ${OUT}
 	echo "" >> ${OUT}
-  echo "mkdir ${output_directory}/GATK_workflow_files/TMP" >> ${OUT}
+  echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-  I=${output_directory}/${BASE}__fastqtosam.bam \
-  O=${output_directory}/${BASE}_markilluminaadapters.bam \
-  M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-  TMP_DIR=${output_directory}/TMP" >> ${OUT}
+  I=${output_directory}/D0/${BASE}_fastqtosam.bam \
+  O=${output_directory}/D0/${BASE}_markilluminaadapters.bam \
+  M=${output_directory}/D0/${BASE}_markilluminaadapters_metrics.txt \
+  TMP_DIR=${output_directory}/D0/TMP" >> ${OUT}
 	qsub ${OUT}
 done
+
+
+### MCC Bam Files
+# sort the bam files first
+   for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
+
+   do
+
+   FBASE=$(basename $file _val.bam)
+   BASE=${FBASE%_val.bam}
+   OUT="${BASE}_sort.sh"
+   echo "#!/bin/bash" >> ${OUT}
+   echo "#PBS -N ${BASE}_sort" >> ${OUT}
+   echo "#PBS -l walltime=12:00:00" >> ${OUT}
+   echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+   echo "#PBS -q batch" >> ${OUT}
+   echo "#PBS -l mem=20gb" >> ${OUT}
+   echo "" >> ${OUT}
+   echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+   echo "module load ${samtools_module}" >> ${OUT}
+   echo "" >> ${OUT}
+   echo "samtools sort -@ 12 -o ${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+      ${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam" >> ${OUT}
+   qsub ${OUT}
+
+done
+
+### If you have separate samples in separate directories but they have similar names, you can use a loop like this:
+
+for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
+
+do
+
+FBASE=$(basename $file _val.bam)
+BASE=${FBASE%_val.bam}
+OUT="${BASE}_MarkIlluminaAdapters.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=20gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "mkdir ${output_directory}/mcc_bams_out" >> ${OUT}
+echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${bwa_module}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "mkdir ${output_directory}/mcc_bams_out/TMP" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
+O=${output_directory}/mcc_bams/${BASE}_markilluminaadapters.bam \
+M=${output_directory}/mcc_bams/${BASE}_markilluminaadapters_metrics.txt \
+TMP_DIR=${output_directory}/mcc_bams/TMP" >> ${OUT}
+qsub ${OUT}
+
+done
+
 # # #######################################################################################
 # # # convert BAM to FASTQ and discount adapter sequences using SamToFastq
 # # #######################################################################################
 # #
-# # # for file in ${raw_data}/*_markilluminaadapters.bam
-# # #
-# # # do
-# # #
-# # # FBASE=$(basename $file _markilluminaadapters.bam)
-# # # BASE=${FBASE%_markilluminaadapters.bam}
-# # #
-# # # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# # # /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar SamToFastq \
-# # # I=${raw_data}/${BASE}_markilluminaadapters.bam \
-# # # FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
-# # # CLIPPING_ATTRIBUTE=XT \
-# # # CLIPPING_ACTION=2 \
-# # # INTERLEAVE=true \
-# # # NON_PF=true \
-# # # TMP_DIR=${raw_data}/TMP
-# # #
-# # # done
+for file in ${raw_data}/*_markilluminaadapters.bam
+
+do
+
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar SamToFastq \
+I=${raw_data}/${BASE}_markilluminaadapters.bam \
+FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
+CLIPPING_ATTRIBUTE=XT \
+CLIPPING_ACTION=2 \
+INTERLEAVE=true \
+NON_PF=true \
+TMP_DIR=${raw_data}/TMP
+
+done
 # #
 # #######################################################################################
 # # works: aligns samples to reference genome. Output is a .sam file
@@ -245,18 +353,17 @@ done
 #  # index the ref genome
 # bwa index ${ref_genome}
 #
-# # for file in ${raw_data}/*_samtofastq_interleaved.fq
-# #
-# # do
-# #
-# # FBASE=$(basename $file _samtofastq_interleaved.fq)
-# # BASE=${FBASE%_samtofastq_interleaved.fq}
-# #
-# # bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
-# #
-# #
-# #
-# # done
+for file in ${raw_data}/*_samtofastq_interleaved.fq
+
+do
+
+FBASE=$(basename $file _samtofastq_interleaved.fq)
+BASE=${FBASE%_samtofastq_interleaved.fq}
+
+bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
+
+
+done
 #
 # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 # /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
@@ -330,13 +437,16 @@ done
 # PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
 # TMP_DIR=${output_directory}/GATK_workflow_files/TMP
 
-for file in ${output_directory}/D20/*_markilluminaadapters.bam
+#ask unix to stop piped command if any of it fails and report errors
+set -o pipefail
+
+for file in ${output_directory}/D0/*_markilluminaadapters.bam
 
 do
 
 FBASE=$(basename $file _markilluminaadapters.bam)
 BASE=${FBASE%_markilluminaadapters.bam}
-OUT="${BASE}_pipedNewRef2.sh"
+OUT="${BASE}_pipedNewRef.sh"
 echo "#!/bin/bash" >> ${OUT}
 echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
 echo "#PBS -l walltime=12:00:00" >> ${OUT}
@@ -344,7 +454,7 @@ echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
 echo "#PBS -q highmem_q" >> ${OUT}
 echo "#PBS -l mem=150gb" >> ${OUT}
 echo "" >> ${OUT}
-echo "cd ${output_directory}/D20" >> ${OUT}
+echo "cd ${output_directory}/D0" >> ${OUT}
 echo "module load ${picard_module}" >> ${OUT}
 echo "module load ${bwa_module}" >> ${OUT}
 echo "module load ${samtools_module}" >> ${OUT}
@@ -352,21 +462,21 @@ echo "module load ${GATK_module}" >> ${OUT}
 echo "" >> ${OUT}
 echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-  I=${output_directory}/D20/${BASE}_markilluminaadapters.bam \
+  I=${output_directory}/D0/${BASE}_markilluminaadapters.bam \
   FASTQ=/dev/stdout \
   CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-  TMP_DIR=${output_directory}/D20/TMP | \
+  TMP_DIR=${output_directory}/D0/TMP | \
   bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
   ALIGNED_BAM=/dev/stdin \
-  UNMAPPED_BAM=${output_directory}/D20/${BASE}__fastqtosam.bam \
-  OUTPUT=${output_directory}/D20/${BASE}_pipedNewRef.bam \
+  UNMAPPED_BAM=${output_directory}/D0/${BASE}_fastqtosam.bam \
+  OUTPUT=${output_directory}/D0/${BASE}_pipedNewRef.bam \
   R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
   INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
   PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-  TMP_DIR=${output_directory}/D20/TMP" >> ${OUT}
+  TMP_DIR=${output_directory}/D0/TMP" >> ${OUT}
 qsub ${OUT}
 
 done
@@ -378,7 +488,7 @@ done
 #
 # # #index reference genome
 # #
-samtools faidx ${ref_genome}
+# samtools faidx ${ref_genome}
 # # #
 # # # # #convert sam files to bam files
 # # for file in ${output_directory}/*_aln.sam
@@ -452,45 +562,15 @@ samtools faidx ${ref_genome}
 # #
 # # done
 # ##################################################################################################
-# # for file in ${output_directory}/*.sorted.bam
-# #
-# # do
-# #
-# # FBASE=$(basename $file .sorted.bam)
-# # BASE=${FBASE%.sorted.bam}
-# #
-# # time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# # /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# # REMOVE_DUPLICATES=TRUE \
-# # I=${output_directory}/${BASE}.sorted.bam \
-# # O=${output_directory}/${BASE}_removedDuplicates.bam \
-# # M=${output_directory}/${BASE}_removedDupsMetrics.txt
-# #
-# # done
-# #
-# #
-# # java -jar picard.jar BuildBamIndex \
-# #     INPUT=dedup_reads.bam
-# ##################################################################################################
-# ###################################################################################################
-# # Using GATK HaplotypeCaller in GVCF mode
-# # apply appropriate ploidy for each sample
-# # will need to do this separtely for haploid and diploid samples
-# ###################################################################################################
-# # ###################################################################################################
-# # #
-module load ${GATK_module}
-
-# H0 samples
 for file in ${output_directory}/H0/${BASE}*_pipedNewRef.bam
 
 do
 
 FBASE=$(basename $file _pipedNewRef.bam)
 BASE=${FBASE%_pipedNewRef.bam}
-OUT="${BASE}_HC.sh"
+OUT="${BASE}_removeDuplicates.sh"
 echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_HC" >> ${OUT}
+echo "#PBS -N ${BASE}_removeDuplicates" >> ${OUT}
 echo "#PBS -l walltime=72:00:00" >> ${OUT}
 echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
 echo "#PBS -q highmem_q" >> ${OUT}
@@ -498,44 +578,18 @@ echo "#PBS -l mem=200gb" >> ${OUT}
 echo "" >> ${OUT}
 echo "cd ${output_directory}/H0" >> ${OUT}
 echo "module load ${GATK_module}" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
 echo "" >> ${OUT}
-echo "time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I /${output_directory}/H0/${BASE}_pipedNewRef.bam \
-     -ploidy 1 \
-     -O ${output_directory}/H0/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+echo "time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/H0/${BASE}_pipedNewRef.bam \
+O=${output_directory}/H0/${BASE}_removedDuplicates.bam \
+M=${output_directory}/H0/${BASE}_removedDupsMetrics.txt" >> ${OUT}
 qsub ${OUT}
 
-done
-
-
-# for file in ${output_directory}/D20/${BASE}*_pipedNewRef.bam
-#
-# do
-#
-# FBASE=$(basename $file _pipedNewRef.bam)
-# BASE=${FBASE%_pipedNewRef.bam}
-# OUT="${BASE}_HC.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_HC" >> ${OUT}
-# echo "#PBS -l walltime=72:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# echo "#PBS -q highmem_q" >> ${OUT}
-# echo "#PBS -l mem=200gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${output_directory}/D20" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I /${output_directory}/D20/${BASE}_pipedNewRef.bam \
-#      -ploidy 2 \
-#      -O ${output_directory}/D20/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
-# qsub ${OUT}
-#
 # done
+
 
 # for file in ${output_directory}/D0/${BASE}*_pipedNewRef.bam
 #
@@ -553,16 +607,18 @@ done
 # echo "" >> ${OUT}
 # echo "cd ${output_directory}/D0" >> ${OUT}
 # echo "module load ${GATK_module}" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
 # echo "" >> ${OUT}
-# echo "time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I /${output_directory}/D0/${BASE}_pipedNewRef.bam \
-#      -ploidy 2 \
-#      -O ${output_directory}/D0/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+# echo "time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/D0/${BASE}_pipedNewRef.bam \
+# O=${output_directory}/D0/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/D0/${BASE}_removedDupsMetrics.txt" >> ${OUT}
 # qsub ${OUT}
 #
 # done
+
 
 # for file in ${output_directory}/D1/${BASE}*_pipedNewRef.bam
 #
@@ -570,9 +626,9 @@ done
 #
 # FBASE=$(basename $file _pipedNewRef.bam)
 # BASE=${FBASE%_pipedNewRef.bam}
-# OUT="${BASE}_HC.sh"
+# OUT="${BASE}_removeDuplicates.sh"
 # echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -N ${BASE}_removeDuplicates" >> ${OUT}
 # echo "#PBS -l walltime=72:00:00" >> ${OUT}
 # echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
 # echo "#PBS -q highmem_q" >> ${OUT}
@@ -580,23 +636,179 @@ done
 # echo "" >> ${OUT}
 # echo "cd ${output_directory}/D1" >> ${OUT}
 # echo "module load ${GATK_module}" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
 # echo "" >> ${OUT}
-# echo "time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I /${output_directory}/D1/${BASE}_pipedNewRef.bam \
-#      -ploidy 2 \
-#      -O ${output_directory}/D1/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+# echo "time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/D1/${BASE}_pipedNewRef.bam \
+# O=${output_directory}/D1/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/D1/${BASE}_removedDupsMetrics.txt" >> ${OUT}
 # qsub ${OUT}
 #
 # done
 
-for file in ${output_directory}/H0/${BASE}*_pipedNewRef.bam
+
+# for file in ${output_directory}/D20/${BASE}*_pipedNewRef.bam
+#
+# do
+#
+# FBASE=$(basename $file _pipedNewRef.bam)
+# BASE=${FBASE%_pipedNewRef.bam}
+# OUT="${BASE}_removedDuplicates.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_removeDuplicates" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}/D20" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/D20/${BASE}_pipedNewRef.bam \
+# O=${output_directory}/D20/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/D20/${BASE}_removedDupsMetrics.txt" >> ${OUT}
+# qsub ${OUT}
+#
+# done
+# #
+# #
+# # java -jar picard.jar BuildBamIndex \
+# #     INPUT=dedup_reads.bam
+# ##################################################################################################
+# ###################################################################################################
+# # Using GATK HaplotypeCaller in GVCF mode
+# # apply appropriate ploidy for each sample
+# # will need to do this separtely for haploid and diploid samples
+# ###################################################################################################
+# # ###################################################################################################
+# # #
+module load ${GATK_module}
+
+
+for file in ${output_directory}/D20/${BASE}*_removedDuplicates.bam
 
 do
 
-FBASE=$(basename $file _pipedNewRef.bam)
-BASE=${FBASE%_pipedNewRef.bam}
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
+OUT="${BASE}_HC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_HC" >> ${OUT}
+echo "#PBS -l walltime=72:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=200gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/D20" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I /${output_directory}/D20/${BASE}_removedDuplicates.bam \
+     -ploidy 2 \
+     -O ${output_directory}/D20/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
+
+
+
+
+for file in ${output_directory}/D0/${BASE}*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
+OUT="${BASE}_samToolsIndex.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_samToolsIndex" >> ${OUT}
+echo "#PBS -l walltime=24:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=50gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/D0" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "samtools index -@ 12 ${output_directory}/D0/${BASE}*_removedDuplicates.bam" >> ${OUT}
+qsub ${OUT}
+
+done
+
+
+
+for file in ${output_directory}/D0/${BASE}*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
+OUT="${BASE}_Hap.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_Hap" >> ${OUT}
+echo "#PBS -l walltime=72:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=200gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/D0" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I /${output_directory}/D0/${BASE}_removedDuplicates.bam \
+     -ploidy 2 \
+     -O ${output_directory}/D0/${BASE}_variants.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
+
+
+
+
+
+for file in ${output_directory}/D1/${BASE}*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
+OUT="${BASE}_HC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_HC" >> ${OUT}
+echo "#PBS -l walltime=72:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=200gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/D1" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I /${output_directory}/D1/${BASE}_removedDuplicates.bam \
+     -ploidy 2 \
+     -O ${output_directory}/D1/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
+
+for file in ${output_directory}/H0/${BASE}*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
 OUT="${BASE}_HC.sh"
 echo "#!/bin/bash" >> ${OUT}
 echo "#PBS -N ${BASE}_HC" >> ${OUT}
@@ -611,7 +823,7 @@ echo "" >> ${OUT}
 echo "time gatk HaplotypeCaller \
      -R ${ref_genome} \
      -ERC GVCF \
-     -I /${output_directory}/H0/${BASE}_pipedNewRef.bam \
+     -I /${output_directory}/H0/${BASE}_removedDuplicates.bam \
      -ploidy 1 \
      -O ${output_directory}/H0/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
 qsub ${OUT}
@@ -620,13 +832,13 @@ done
 
 
 
-# time gatk HaplotypeCaller \
-#      -R ${ref_genome} \
-#      -ERC GVCF \
-#      -I ${output_directory}/GATK_workflow_files/HM-H0-10_pipedNewRef.bam \
-#      -ploidy 1 \
-#      -O ${output_directory}/GATK_workflow_files/HM-H0-10_variants.g.vcf
-#
+time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${output_directory}/H0/HM-H0-10_pipedNewRef.bam \
+     -ploidy 1 \
+     -O ${output_directory}/H0/HM-H0-10_variants.g.vcf
+
 # # # time gatk HaplotypeCaller \
 # #           -R ${ref_genome} \
 # #           -ERC GVCF \
