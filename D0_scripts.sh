@@ -55,144 +55,147 @@ module load ${GATK_module}
 
 ## first sequencing run
 
-for file in ${raw_data}/*_R1_001.fastq.gz
-
-do
-  FBASE=$(basename $file _R1_001.fastq.gz)
-  BASE=${FBASE%_R1_001.fastq.gz}
-	OUT="${BASE}_FastqToSam.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=40gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${raw_data}" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-      FASTQ=${raw_data}/${BASE}_R1_001.fastq.gz \
-      FASTQ2=${raw_data}/${BASE}_R2_001.fastq.gz  \
-      OUTPUT=${raw_data}/${BASE}_unmapped.bam \
-      READ_GROUP_NAME=${BASE} \
-      SAMPLE_NAME=${BASE} \
-      PLATFORM=illumina \
-      SEQUENCING_CENTER=GGBC" >> ${OUT}
-	qsub ${OUT}
-done
-
-#second sequencing run
-
-for file in ${raw_data}/*R1.fq.gz
-
-do
-  FBASE=$(basename $file R1.fq.gz)
-  BASE=${FBASE%R1.fq.gz}
-	OUT="${BASE}_FastqToSam.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=40gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${raw_data}" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-      FASTQ=${raw_data}/${BASE}R1.fq.gz \
-      FASTQ2=${raw_data}/${BASE}R2.fq.gz \
-      OUTPUT=${output_directory}/${BASE}_unmapped.bam \
-      READ_GROUP_NAME=${BASE} \
-      SAMPLE_NAME=${BASE} \
-      PLATFORM=illumina \
-      SEQUENCING_CENTER=GGBC" >> ${OUT}
-	qsub ${OUT}
-done
-
-
-
-# mcclintock bams
-
-for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
-
-do
-
-FBASE=$(basename $file _val.bam)
-BASE=${FBASE%_val.bam}
-OUT="${BASE}_RevertSam.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_RevertSam" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-echo "#PBS -q batch" >> ${OUT}
-echo "#PBS -l mem=80gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
-echo "module load ${picard_module}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar RevertSam \
-I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
-O=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
-SANITIZE=true \
-MAX_DISCARD_FRACTION=0.005 \
-ATTRIBUTE_TO_CLEAR=XT \
-ATTRIBUTE_TO_CLEAR=XN \
-ATTRIBUTE_TO_CLEAR=AS \
-ATTRIBUTE_TO_CLEAR=OC \
-ATTRIBUTE_TO_CLEAR=OP \
-SORT_ORDER=queryname \
-RESTORE_ORIGINAL_QUALITIES=true \
-REMOVE_DUPLICATE_INFORMATION=true \
-REMOVE_ALIGNMENT_INFORMATION=true" >> ${OUT}
-
-qsub ${OUT}
-
-done
-
-#######################################################################################
-# mark Illumina adapters
-#######################################################################################
-
-# for file in ${output_directory}/*_fastqtosam.bam
+# for file in ${raw_data}/*_R1_001.fastq.gz
 #
 # do
-#   FBASE=$(basename $file _fastqtosam.bam)
-#   BASE=${FBASE%_fastqtosam.bam}
-# 	OUT="${BASE}_MarkIlluminaAdapters.sh"
+#   FBASE=$(basename $file _R1_001.fastq.gz)
+#   BASE=${FBASE%_R1_001.fastq.gz}
+# 	OUT="${BASE}_FastqToSam.sh"
 # 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
 # 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
 # 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
 # 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=50gb" >> ${OUT}
+# 	echo "#PBS -l mem=40gb" >> ${OUT}
 # 	echo "" >> ${OUT}
-# 	echo "cd ${output_directory}" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
 # 	echo "module load ${picard_module}" >> ${OUT}
 #   echo "module load ${bwa_module}" >> ${OUT}
 #   echo "module load ${samtools_module}" >> ${OUT}
 #   echo "module load ${GATK_module}" >> ${OUT}
 # 	echo "" >> ${OUT}
-#   echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-#   I=${output_directory}/${BASE}_fastqtosam.bam \
-#   O=${output_directory}/${BASE}_markilluminaadapters.bam \
-#   M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-#   TMP_DIR=${output_directory}/TMP" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#       FASTQ=${raw_data}/${BASE}_R1_001.fastq.gz \
+#       FASTQ2=${raw_data}/${BASE}_R2_001.fastq.gz  \
+#       OUTPUT=${raw_data}/${BASE}_unmapped.bam \
+#       READ_GROUP_NAME=${BASE} \
+#       SAMPLE_NAME=${BASE} \
+#       PLATFORM=illumina \
+#       SEQUENCING_CENTER=GGBC" >> ${OUT}
 # 	qsub ${OUT}
 # done
+
+#second sequencing run
+
+# for file in ${raw_data}/*R1.fq.gz
+#
+# do
+#   FBASE=$(basename $file R1.fq.gz)
+#   BASE=${FBASE%R1.fq.gz}
+# 	OUT="${BASE}_FastqToSam.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=40gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
+# 	echo "module load ${picard_module}" >> ${OUT}
+#   echo "module load ${bwa_module}" >> ${OUT}
+#   echo "module load ${samtools_module}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#       FASTQ=${raw_data}/${BASE}R1.fq.gz \
+#       FASTQ2=${raw_data}/${BASE}R2.fq.gz \
+#       OUTPUT=${output_directory}/${BASE}_unmapped.bam \
+#       READ_GROUP_NAME=${BASE} \
+#       SAMPLE_NAME=${BASE} \
+#       PLATFORM=illumina \
+#       SEQUENCING_CENTER=GGBC" >> ${OUT}
+# 	qsub ${OUT}
+# done
+
+
+
+# mcclintock bams
+
+# for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
+#
+# do
+#
+# FBASE=$(basename $file _val.bam)
+# BASE=${FBASE%_val.bam}
+# OUT="${BASE}_RevertSam.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_RevertSam" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=80gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+# /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar RevertSam \
+# I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
+# O=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
+# SANITIZE=true \
+# MAX_DISCARD_FRACTION=0.005 \
+# ATTRIBUTE_TO_CLEAR=XT \
+# ATTRIBUTE_TO_CLEAR=XN \
+# ATTRIBUTE_TO_CLEAR=AS \
+# ATTRIBUTE_TO_CLEAR=OC \
+# ATTRIBUTE_TO_CLEAR=OP \
+# SORT_ORDER=queryname \
+# RESTORE_ORIGINAL_QUALITIES=true \
+# REMOVE_DUPLICATE_INFORMATION=true \
+# REMOVE_ALIGNMENT_INFORMATION=true" >> ${OUT}
+#
+# qsub ${OUT}
+#
+# done
+
+#######################################################################################
+# mark Illumina adapters
+#######################################################################################
+
+mv ${raw_data}/*_unmapped.bam ${output_directory}
+
+
+for file in ${output_directory}/*_unmapped.bam
+
+do
+  FBASE=$(basename $file _unmapped.bam)
+  BASE=${FBASE%_unmapped.bam}
+	OUT="${BASE}_MarkIlluminaAdapters.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=50gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${output_directory}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+  I=${output_directory}/${BASE}_unmapped.bam \
+  O=${output_directory}/${BASE}_markilluminaadapters.bam \
+  M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
+  TMP_DIR=${output_directory}/TMP" >> ${OUT}
+	qsub ${OUT}
+done
 
 
 
