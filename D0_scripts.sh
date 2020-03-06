@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -q batch
-#PBS -N piped_command
+#PBS -N test
 #PBS -l nodes=1:ppn=1:AMD
 #PBS -l walltime=48:00:00
 #PBS -l mem=5gb
@@ -40,6 +40,8 @@ output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/"
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
 mcc_bams="/scratch/jc33471/paradoxusHolly/run0217all"
 mcc_bam_indiv="/scratch/jc33471/paradoxusHolly/run0217all/out/Spar"
+test_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/Test"
+
 
 # cd ${output_directory}
 # rm *
@@ -165,235 +167,218 @@ module load ${GATK_module}
 # mark Illumina adapters
 #######################################################################################
 
-mv ${raw_data}/*_unmapped.bam ${output_directory}
+# mv ${raw_data}/*_unmapped.bam ${output_directory}
 
 
-for file in ${output_directory}/*_unmapped.bam
+for file in ${output_directory}/test/*_unmapped.bam
 
 do
   FBASE=$(basename $file _unmapped.bam)
   BASE=${FBASE%_unmapped.bam}
-	OUT="${BASE}_MarkIlluminaAdapters.sh"
+	OUT="${BASE}_Test.sh"
 	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+	echo "#PBS -N ${BASE}_Test" >> ${OUT}
 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
 	echo "#PBS -q batch" >> ${OUT}
 	echo "#PBS -l mem=50gb" >> ${OUT}
 	echo "" >> ${OUT}
-	echo "cd ${output_directory}" >> ${OUT}
+	echo "cd ${output_directory}/test" >> ${OUT}
 	echo "module load ${picard_module}" >> ${OUT}
   echo "module load ${bwa_module}" >> ${OUT}
   echo "module load ${samtools_module}" >> ${OUT}
   echo "module load ${GATK_module}" >> ${OUT}
 	echo "" >> ${OUT}
-  echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
+  echo "mkdir ${output_directory}/test/TMP" >> ${OUT}
   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-  I=${output_directory}/${BASE}_unmapped.bam \
-  O=${output_directory}/${BASE}_markilluminaadapters.bam \
-  M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-  TMP_DIR=${output_directory}/TMP" >> ${OUT}
+  I=${output_directory}/test/${BASE}_unmapped.bam \
+  O=${output_directory}/test/${BASE}_markilluminaadapters.bam \
+  M=${output_directory}/test/${BASE}_markilluminaadapters_metrics.txt \
+  TMP_DIR=${output_directory}/test/TMP
+
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+  I=${output_directory}/test/${BASE}_markilluminaadapters.bam \
+  FASTQ=/dev/stdout \
+  CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+  TMP_DIR=${output_directory}/test/TMP | \
+  bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+  ALIGNED_BAM=/dev/stdin \
+  UNMAPPED_BAM=${output_directory}/test/${BASE}_fastqtosam.bam \
+  OUTPUT=${output_directory}/test/${BASE}_pipedNewRef.bam \
+  R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+  CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+  INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+  PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+  TMP_DIR=${output_directory}/test/TMP
+
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+  INPUT=${output_directory}/test/${BASE}_pipedNewRef.bam \
+  OUTPUT=${output_directory}/test/${BASE}_sorted.bam \
+  SORT_ORDER=coordinate" >> ${OUT}
 	qsub ${OUT}
 done
 
+# #######################################################################################
+# # Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
+## #######################################################################################
+#
+# # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# # /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
+# #       R=${ref_genome} \
+# #       O=${ref_genome_dir}/genome.337.dict
+#
 
 
-#######################################################################################
-# convert BAM to FASTQ and discount adapter sequences using SamToFastq
-#######################################################################################
-
-# for file in ${raw_data}/*_markilluminaadapters.bam
+#ask unix to stop piped command if any of it fails and report errors
+# set -o pipefail
+#
+# for file in ${output_directory}/*_markilluminaadapters.bam
 #
 # do
 #
 # FBASE=$(basename $file _markilluminaadapters.bam)
 # BASE=${FBASE%_markilluminaadapters.bam}
-#
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-# I=${raw_data}/${BASE}_markilluminaadapters.bam \
-# FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
-# CLIPPING_ATTRIBUTE=XT \
-# CLIPPING_ACTION=2 \
-# INTERLEAVE=true \
-# NON_PF=true \
-# TMP_DIR=${raw_data}/TMP
-#
-# done
-
-# for file in ${raw_data}/*_markilluminaadapters.bam
-#
-# do
-#   FBASE=$(basename $file _markilluminaadapters.bam)
-#   BASE=${FBASE%_markilluminaadapters.bam}
-# 	OUT="${BASE}_SamToFastq.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_SamToFastq" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=10gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-#   I=${raw_data}/${BASE}_markilluminaadapters.bam \
-#   FASTQ=${raw_data}/${BASE}_samtofastq_interleaved.fq \
-#   CLIPPING_ATTRIBUTE=XT \
-#   CLIPPING_ACTION=2 \
-#   INTERLEAVE=true \
-#   NON_PF=true \
-#   TMP_DIR=${raw_data}/TMP" >> ${OUT}
-# 	qsub ${OUT}
-# done
-
-#######################################################################################
-# works: aligns samples to reference genome. Output is a .sam file
-#######################################################################################
-
- #index the ref genome
-# bwa index ${ref_genome}
-# #
-# for file in ${raw_data}/*_samtofastq_interleaved.fq
-#
-# do
-#
-# FBASE=$(basename $file _samtofastq_interleaved.fq)
-# BASE=${FBASE%_samtofastq_interleaved.fq}
-#
-# bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam
-#
-#
-#
-# done
-
-# for file in ${raw_data}/*_samtofastq_interleaved.fq
-#
-# do
-#   FBASE=$(basename $file _samtofastq_interleaved.fq)
-#   BASE=${FBASE%_samtofastq_interleaved.fq}
-# 	OUT="${BASE}_bwa_mem.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_bwa_mem" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=10gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "bwa mem -M -p -t 12 ${ref_genome} ${raw_data}/${BASE}_samtofastq_interleaved.fq > ${output_directory}/${BASE}_bwa_mem.sam" >> ${OUT}
-# 	qsub ${OUT}
-# done
-
-# Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
-# for file in ${raw_data}/*_markilluminaadapters.bam
-#
-# do
-#
-# FBASE=$(basename $file _markilluminaadapters.bam)
-# BASE=${FBASE%_markilluminaadapters.bam}
-# OUT="${BASE}_piped.sh"
-# echo "#!/bin/bash" > ${OUT}
-# echo "#PBS -N ${BASE}_piped" >> ${OUT}
+# OUT="${BASE}_pipedNewRef.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
 # echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=30gb" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=150gb" >> ${OUT}
 # echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
 # echo "module load ${picard_module}" >> ${OUT}
 # echo "module load ${bwa_module}" >> ${OUT}
 # echo "module load ${samtools_module}" >> ${OUT}
 # echo "module load ${GATK_module}" >> ${OUT}
 # echo "" >> ${OUT}
 # echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-# I=${raw_data}/${BASE}_markilluminaadapters.bam \
-# FASTQ=/dev/stdout \
-# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-# TMP_DIR=${raw_data}/TMP | \
-# bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-# ALIGNED_BAM=/dev/stdin \
-# UNMAPPED_BAM=${raw_data}/${BASE}_fastqtosam.bam \
-# OUTPUT=${raw_data}/${BASE}_pipedNewRef.bam \
-# R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-# TMP_DIR=${raw_data}/TMP" >> ${OUT}
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+#   I=${output_directory}/${BASE}_markilluminaadapters.bam \
+#   FASTQ=/dev/stdout \
+#   CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+#   TMP_DIR=${output_directory}/TMP | \
+#   bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+#   ALIGNED_BAM=/dev/stdin \
+#   UNMAPPED_BAM=${output_directory}/${BASE}_fastqtosam.bam \
+#   OUTPUT=${output_directory}/${BASE}_pipedNewRef.bam \
+#   R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+#   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+#   INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+#   PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+#   TMP_DIR=${output_directory}/TMP" >> ${OUT}
+# qsub ${OUT}
+#
+# done
+## #######################################################################################
+
+# Sort the piped command output
+## #######################################################################################
+
+# for file in ${output_directory}/*_pipedNewRef.bam
+#
+# do
+#
+# FBASE=$(basename $file _pipedNewRef.bam)
+# BASE=${FBASE%_pipedNewRef.bam}
+# OUT="${BASE}_sortSam.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_sortSam" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=50gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
+# echo "module load ${bwa_module}" >> ${OUT}
+# echo "module load ${samtools_module}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#    /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+#     INPUT=${output_directory}/${BASE}_pipedNewRef.bam \
+#     OUTPUT=${output_directory}/${BASE}_sorted.bam \
+#     SORT_ORDER=coordinate" >> ${OUT}
+#
+# qsub ${OUT}
+#
+# done
+
+###################################################################################################
+## Picard to mark and remove duplicates
+###################################################################################################
+
+# for file in ${output_directory}/${BASE}*_sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file _sorted.bam)
+# BASE=${FBASE%_sorted.bam}
+# OUT="${BASE}_sorted.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_sorted" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+# /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
+# REMOVE_DUPLICATES=TRUE \
+# I=${output_directory}/${BASE}_sorted.bam \
+# O=${output_directory}/${BASE}_removedDuplicates.bam \
+# M=${output_directory}/${BASE}_removedDupsMetrics.txt" >> ${OUT}
+# qsub ${OUT}
+#
+# done
+
+##############################################################################################
+############## ** Picard to BuildBamIndex              #################################
+#################################################################################################
+
+# for file in ${output_directory}/*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# OUT="${BASE}_index.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_index" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=50gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
+# echo "module load ${bwa_module}" >> ${OUT}
+# echo "module load ${samtools_module}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar" -jar  \
+#    /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar BuildBamIndex \
+#     INPUT=${output_directory}/${BASE}_removedDuplicates.bam " >> ${OUT}
+#
 # qsub ${OUT}
 #
 # done
 
 
-###################################################################################################
-## Picard to mark duplicates
-###################################################################################################
-
-# module load ${picard_module}
-#
-#
-# for file in ${output_directory}/*.sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file .sorted.bam)
-# BASE=${FBASE%.sorted.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar ValidateSamFile \
-#       I=${output_directory}/${BASE}.sorted.bam \
-#       MODE=VERBOSE
-#
-# done
-
-###################################################################################################
-# for file in ${output_directory}/*.sam
-#
-# do
-#
-# FBASE=$(basename $file .sam)
-# BASE=${FBASE%.sam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/${BASE}.sam \
-# O=${output_directory}/${BASE}_removedDuplicates.sam \
-# M=${output_directory}/${BASE}_removedDupsMetrics.txt
-#
-# done
-#
-#
-# module load ${samtools_module}
 
 
-#convert sam files to bam files
-# for file in ${output_directory}/*_removedDuplicates.sam
-#
-# do
-#
-# FBASE=$(basename $file _removedDuplicates.sam)
-# BASE=${FBASE%_removedDuplicates.sam}
-#
-# samtools view -bt ${ref_genome_dir}/*.fai \
-# ${output_directory}/${BASE}_removedDuplicates.sam \
-#   > ${output_directory}/${BASE}_removedDuplicates.bam
-#
-# done
 ###################################################################################################
 # Using GATK HaplotypeCaller in GVCF mode
 # apply appropriate ploidy for each sample
