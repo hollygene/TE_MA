@@ -9,12 +9,10 @@
 
 #S paradoxus TE MA Quality Control and Mutation Calling pipeline
 
-#location of current update of muver
-# muver_module="muver/0.1.0-foss-2016b-Python-2.7.14-20190318"
 #location of trimgalore moedule
-# trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
+trimgalore_module="Trim_Galore/0.4.5-foss-2016b"
 #location of fastqc module
-# fastqc_module="FastQC/0.11.8-Java-1.8.0_144"
+fastqc_module="FastQC/0.11.8-Java-1.8.0_144"
 #location of BWA module
 bwa_module="BWA/0.7.15-foss-2016b"
 #location of samtools module
@@ -24,34 +22,24 @@ bedtools_module="BEDTools/2.28.0-foss-2018a"
 #location of python module
 python_module="Python/3.5.2-foss-2016b"
 #location of picard module
-picard_module="picard/2.4.1-Java-1.8.0_144"
+picard_module="picard/2.21.6-Java-11"
 #location of GATK module
 GATK_module="GATK/4.0.3.0-Java-1.8.0_144"
+#deeptools location
 deeptools_module="deepTools/3.2.1-foss-2018a-Python-3.6.4"
-#location of bamtoBigWig script and accessories
-# script_location="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts"
 #location of bam to bigwig script
-# bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
-#location of data to be analyzed
-# data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
+bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/bedGraphToBigWigScript/file_to_bigwig_pe.py"
 #location of reference genome to be used
-# ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
-ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa"
+ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
 #directory reference genome is located in
-# ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
-#text file listing the fastq files with their full extensions
-# fastq_list="/home/hcm14449/Github/TE_MA/FASTQ_LIST.txt"
-#what sample should all other samples be compared to?
-control_sample_name="Ancestor"
+ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Out/D0"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/"
 # mkdir $output_directory
-#location of TRIMMED data to be used in the analysis
-raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D0"
-trimmed_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/trimmed/D0"
-genomicsdb_workspace_path="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB"
-sample_name_map="/home/hcm14449/Github/TE_MA/D0_sample_map.txt"
-# tmp_DIR="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/GenDB/tmp"
+#location of data to be used in the analysis
+raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
+mcc_bams="/scratch/jc33471/paradoxusHolly/run0217all"
+mcc_bam_indiv="/scratch/jc33471/paradoxusHolly/run0217all/out/Spar"
 
 # cd ${output_directory}
 # rm *
@@ -65,80 +53,119 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-# for file in /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/*_R1.fq
-#
-# do
-#
-# FBASE=$(basename $file _R1.q)
-# BASE=${FBASE%_R1.fq}
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#     FASTQ=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_R1.fq \
-#     FASTQ2=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_R2.fq  \
-#     OUTPUT=/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/Redone/${BASE}_fastqtosam.bam \
-#     READ_GROUP_NAME=${BASE} \
-#     SAMPLE_NAME=${BASE} \
-#     LIBRARY_NAME=D0 \
-#     PLATFORM=illumina \
-#     SEQUENCING_CENTER=GGBC
-#
-# done
+## first sequencing run
 
-# for file in ${raw_data}/*_R1_001.fastq
-#
-# do
-#   FBASE=$(basename $file _R1_001.fastq)
-#   BASE=${FBASE%_R1_001.fastq}
-# 	OUT="${BASE}_FastqToSam.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=10gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#       FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-#       FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-#       OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#       READ_GROUP_NAME=${BASE} \
-#       SAMPLE_NAME=${BASE} \
-#       LIBRARY_NAME=D0 \
-#       PLATFORM=illumina \
-#       SEQUENCING_CENTER=GGBC" >> ${OUT}
-# 	qsub ${OUT}
-# done
+for file in ${raw_data}/*_R1_001.fastq.gz
+
+do
+  FBASE=$(basename $file _R1_001.fastq.gz)
+  BASE=${FBASE%_R1_001.fastq.gz}
+	OUT="${BASE}_FastqToSam.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=40gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+      FASTQ=${raw_data}/${BASE}_R1_001.fastq.gz \
+      FASTQ2=${raw_data}/${BASE}_R2_001.fastq.gz  \
+      OUTPUT=${raw_data}/${BASE}_unmapped.bam \
+      READ_GROUP_NAME=${BASE} \
+      SAMPLE_NAME=${BASE} \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC" >> ${OUT}
+	qsub ${OUT}
+done
+
+#second sequencing run
+
+for file in ${raw_data}/*R1.fq.gz
+
+do
+  FBASE=$(basename $file R1.fq.gz)
+  BASE=${FBASE%R1.fq.gz}
+	OUT="${BASE}_FastqToSam.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=40gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+      FASTQ=${raw_data}/${BASE}R1.fq.gz \
+      FASTQ2=${raw_data}/${BASE}R2.fq.gz \
+      OUTPUT=${output_directory}/${BASE}_unmapped.bam \
+      READ_GROUP_NAME=${BASE} \
+      SAMPLE_NAME=${BASE} \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC" >> ${OUT}
+	qsub ${OUT}
+done
+
+
+
+# mcclintock bams
+
+for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
+
+do
+
+FBASE=$(basename $file _val.bam)
+BASE=${FBASE%_val.bam}
+OUT="${BASE}_RevertSam.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_RevertSam" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=80gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar RevertSam \
+I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
+O=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
+SANITIZE=true \
+MAX_DISCARD_FRACTION=0.005 \
+ATTRIBUTE_TO_CLEAR=XT \
+ATTRIBUTE_TO_CLEAR=XN \
+ATTRIBUTE_TO_CLEAR=AS \
+ATTRIBUTE_TO_CLEAR=OC \
+ATTRIBUTE_TO_CLEAR=OP \
+SORT_ORDER=queryname \
+RESTORE_ORIGINAL_QUALITIES=true \
+REMOVE_DUPLICATE_INFORMATION=true \
+REMOVE_ALIGNMENT_INFORMATION=true" >> ${OUT}
+
+qsub ${OUT}
+
+done
 
 #######################################################################################
 # mark Illumina adapters
 #######################################################################################
 
-# mkdir ${raw_data}/TMP
-#
-# for file in ${raw_data}/*_fastqtosam.bam
-#
-# do
-#
-# FBASE=$(basename $file _fastqtosam.bam)
-# BASE=${FBASE%_fastqtosam.bam}
-#
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-# I=${raw_data}/${BASE}_fastqtosam.bam \
-# O=${raw_data}/${BASE}_markilluminaadapters.bam \
-# M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-# TMP_DIR=${raw_data}/TMP
-#
-# done
-
-# for file in ${raw_data}/*_fastqtosam.bam
+# for file in ${output_directory}/*_fastqtosam.bam
 #
 # do
 #   FBASE=$(basename $file _fastqtosam.bam)
@@ -149,21 +176,21 @@ module load ${GATK_module}
 # 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
 # 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
 # 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=20gb" >> ${OUT}
+# 	echo "#PBS -l mem=50gb" >> ${OUT}
 # 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
+# 	echo "cd ${output_directory}" >> ${OUT}
 # 	echo "module load ${picard_module}" >> ${OUT}
 #   echo "module load ${bwa_module}" >> ${OUT}
 #   echo "module load ${samtools_module}" >> ${OUT}
 #   echo "module load ${GATK_module}" >> ${OUT}
 # 	echo "" >> ${OUT}
-#   echo "mkdir ${raw_data}/TMP" >> ${OUT}
+#   echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
 #   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 #   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-#   I=${raw_data}/${BASE}_fastqtosam.bam \
-#   O=${raw_data}/${BASE}_markilluminaadapters.bam \
-#   M=${raw_data}/${BASE}_markilluminaadapters_metrics.txt \
-#   TMP_DIR=${raw_data}/TMP" >> ${OUT}
+#   I=${output_directory}/${BASE}_fastqtosam.bam \
+#   O=${output_directory}/${BASE}_markilluminaadapters.bam \
+#   M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
+#   TMP_DIR=${output_directory}/TMP" >> ${OUT}
 # 	qsub ${OUT}
 # done
 
@@ -517,20 +544,20 @@ module load ${GATK_module}
   # ## Apply BQSR to bam files
   # ###################################################################################################
 #
-for file in ${raw_data}/${BASE}*_pipedNewRef.bam
-
-      do
-        FBASE=$(basename $file _pipedNewRef.bam)
-        BASE=${FBASE%_pipedNewRef.bam}
-
-
-        gatk ApplyBQSR \
-           -R ${ref_genome} \
-           -I ${raw_data}/${BASE}_pipedNewRef.bam \
-           -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
-           -O ${output_directory}/${BASE}_recalibratedNewRef.bam
-
-        done
+# for file in ${raw_data}/${BASE}*_pipedNewRef.bam
+#
+#       do
+#         FBASE=$(basename $file _pipedNewRef.bam)
+#         BASE=${FBASE%_pipedNewRef.bam}
+#
+#
+#         gatk ApplyBQSR \
+#            -R ${ref_genome} \
+#            -I ${raw_data}/${BASE}_pipedNewRef.bam \
+#            -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
+#            -O ${output_directory}/${BASE}_recalibratedNewRef.bam
+#
+#         done
 
   # ###################################################################################################
   ### Run HaplotypeCaller again on recalibrated samples
@@ -555,30 +582,30 @@ for file in ${raw_data}/${BASE}*_pipedNewRef.bam
         # -O ${output_directory}/do_again/${BASE}_variants.Recal.g.vcf
         # done
         #
-        for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
-
-        do
-          FBASE=$(basename $file _recalibratedNewRef.bam)
-          BASE=${FBASE%_recalibratedNewRef.bam}
-        	OUT="${BASE}_HaplotypeCaller.sh"
-        	echo "#!/bin/bash" > ${OUT}
-        	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
-        	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-        	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-        	echo "#PBS -q batch" >> ${OUT}
-        	echo "#PBS -l mem=10gb" >> ${OUT}
-        	echo "" >> ${OUT}
-        	echo "cd ${raw_data}" >> ${OUT}
-          echo "module load ${GATK_module}" >> ${OUT}
-        	echo "" >> ${OUT}
-          echo "time gatk HaplotypeCaller \
-          -R ${ref_genome} \
-          -ERC GVCF \
-          -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
-          -ploidy 2 \
-          -O ${output_directory}/${BASE}_variants.RecalNewRef.g.vcf" >> ${OUT}
-        	qsub ${OUT}
-        done
+        # for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+        #
+        # do
+        #   FBASE=$(basename $file _recalibratedNewRef.bam)
+        #   BASE=${FBASE%_recalibratedNewRef.bam}
+        # 	OUT="${BASE}_HaplotypeCaller.sh"
+        # 	echo "#!/bin/bash" > ${OUT}
+        # 	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
+        # 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+        # 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+        # 	echo "#PBS -q batch" >> ${OUT}
+        # 	echo "#PBS -l mem=10gb" >> ${OUT}
+        # 	echo "" >> ${OUT}
+        # 	echo "cd ${raw_data}" >> ${OUT}
+        #   echo "module load ${GATK_module}" >> ${OUT}
+        # 	echo "" >> ${OUT}
+        #   echo "time gatk HaplotypeCaller \
+        #   -R ${ref_genome} \
+        #   -ERC GVCF \
+        #   -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+        #   -ploidy 2 \
+        #   -O ${output_directory}/${BASE}_variants.RecalNewRef.g.vcf" >> ${OUT}
+        # 	qsub ${OUT}
+        # done
 
 #
 #           ###################################################################################################
@@ -587,7 +614,7 @@ for file in ${raw_data}/${BASE}*_pipedNewRef.bam
 #           ###################################################################################################
 #           #
 #           #
-  module load ${GATK_module}
+  # module load ${GATK_module}
 #
 #           time gatk CombineGVCFs \
 #              -R ${ref_genome} \
@@ -744,51 +771,51 @@ for file in ${raw_data}/${BASE}*_pipedNewRef.bam
 #    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
 #    -select 'vc.getGenotype("HM-D0-A").isCalled()'
 #
-cd ${output_directory}
-
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-   --max-nocall-fraction 0 \
-   --exclude-non-variants TRUE \
-   -select-type SNP
-
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-      --max-nocall-fraction 0.001 \
-      -select-type INDEL
-
-
-   -select-type INDEL \
-   -select-type MIXED \
-   -select-type MNP \
-   -select-type SYMBOLIC
+# cd ${output_directory}
+#
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+#    --max-nocall-fraction 0 \
+#    --exclude-non-variants TRUE \
+#    -select-type SNP
+#
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+#       --max-nocall-fraction 0.001 \
+#       -select-type INDEL
+#
+#
+#    -select-type INDEL \
+#    -select-type MIXED \
+#    -select-type MNP \
+#    -select-type SYMBOLIC
 #
 # #
 # # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
 # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
 # #
 # # #Variants to table
-gatk VariantsToTable \
-     -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
-     -F CHROM -F POS -F REF -F ALT -F QUAL \
-     -GF AD -GF DP -GF GQ -GF GT \
-     -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-
-     gatk VariantsToTable \
-          -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-          -F CHROM -F POS -F REF -F ALT  \
-          -GF AD -GF GT \
-          -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
-
-          gatk VariantsToTable \
-               -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-               -F CHROM -F POS -F REF -F ALT  \
-               -GF AD -GF GT \
-               -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
+# gatk VariantsToTable \
+#      -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+#      -F CHROM -F POS -F REF -F ALT -F QUAL \
+#      -GF AD -GF DP -GF GQ -GF GT \
+#      -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
+#
+#      gatk VariantsToTable \
+#           -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+#           -F CHROM -F POS -F REF -F ALT  \
+#           -GF AD -GF GT \
+#           -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
+#
+#           gatk VariantsToTable \
+#                -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+#                -F CHROM -F POS -F REF -F ALT  \
+#                -GF AD -GF GT \
+#                -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
 
 # # ###################################################################################################
 ### This stuff is in Excel
