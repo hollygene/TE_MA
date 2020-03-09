@@ -126,7 +126,7 @@ do
   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
   FASTQ=${raw_data}/${BASE}_R1_001.fastq.gz \
   FASTQ2=${raw_data}/${BASE}_R2_001.fastq.gz  \
-  OUTPUT=${raw_data}/${BASE}_unmapped.bam \
+  OUTPUT=${output_directory}/${BASE}_unmapped.bam \
   READ_GROUP_NAME=${BASE} \
   SAMPLE_NAME=${BASE} \
   PLATFORM=illumina \
