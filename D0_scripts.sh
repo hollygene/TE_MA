@@ -207,7 +207,7 @@ do
   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
   ALIGNED_BAM=/dev/stdin \
-  UNMAPPED_BAM=${output_directory}/test/${BASE}_fastqtosam.bam \
+  UNMAPPED_BAM=${output_directory}/test/${BASE}_unmapped.bam \
   OUTPUT=${output_directory}/test/${BASE}_pipedNewRef.bam \
   R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
