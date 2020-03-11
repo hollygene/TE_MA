@@ -34,7 +34,7 @@ ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome
 #directory reference genome is located in
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out"
 # mkdir $output_directory
 #location of data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
@@ -463,6 +463,8 @@ BASE=${FBASE%_removedDuplicates.bam}
        -O ${output_directory}/D0/${BASE}_variants.g.vcf" >> ${OUT}
 	qsub ${OUT}
 done
+
+
 ###################################################################################################
 #
 
@@ -584,17 +586,17 @@ done
 # ###################################################################################################
 
 
-time gatk CombineGVCFs \
- -O ${output_directory}/D0_cohortNewRef.g.vcf \
- -R ${ref_genome} \
- --variant ${output_directory}/HM-D0-A_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D0-10_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D0-11_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D0-12_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D0-13_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D0-14_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D0-15_variantsNewRef.g.vcf \
- --variant ${output_directory}/HM-D0-16_variantsNewRef.g.vcf
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/D0_cohortNewRef.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/HM-D0-A_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D0-10_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D0-11_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D0-12_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D0-13_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D0-14_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D0-15_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-D0-16_variantsNewRef.g.vcf
 
 
 ###################################################################################################
