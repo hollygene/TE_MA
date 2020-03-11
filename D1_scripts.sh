@@ -426,21 +426,53 @@ done
 # # ###################################################################################################
 #
 #
-# for file in ${output_directory}/*.sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file .sorted.bam)
-# BASE=${FBASE%.sorted.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/${BASE}.sorted.bam \
-# O=${output_directory}/${BASE}_removedDuplicates.bam \
-# M=${output_directory}/${BASE}_removedDupsMetrics.txt
-#
-# done
+for file in ${output_directory}/D0/*_pipedNewRef.bam
+
+do
+  FBASE=$(basename $file _pipedNewRef.bam)
+  BASE=${FBASE%_pipedNewRef.bam}
+	OUT="${BASE}_removeDuplicates.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_removeDuplicates" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=20gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${output_directory}/D0" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
+  echo "time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+  REMOVE_DUPLICATES=TRUE \
+  I=${output_directory}/D0/${BASE}_pipedNewRef.bam \
+  O=${output_directory}/D0/${BASE}_removedDuplicates.bam \
+  M=${output_directory}/D0/${BASE}_removedDupsMetrics.txt" >> ${OUT}
+
+	qsub ${OUT}
+done
+
+
+
+for file in ${output_directory}/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/${BASE}.sorted.bam \
+O=${output_directory}/${BASE}_removedDuplicates.bam \
+M=${output_directory}/${BASE}_removedDupsMetrics.txt
+
+done
 #
 # ###################################################################################################
 # # Using GATK HaplotypeCaller in GVCF mode
