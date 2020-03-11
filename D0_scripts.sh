@@ -471,31 +471,31 @@ module load ${GATK_module}
 #
 
 
-for file in ${output_directory}/D1/${BASE}*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-	OUT="${BASE}_HaplotypeCaller.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
-	echo "#PBS -l walltime=72:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-	echo "#PBS -q highmem_q" >> ${OUT}
-	echo "#PBS -l mem=200gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${output_directory}/D1" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "time gatk HaplotypeCaller \
-       -R ${ref_genome} \
-       -ERC GVCF \
-       -I ${output_directory}/D1/${BASE}_removedDuplicates.bam \
-       -ploidy 2 \
-       -O ${output_directory}/D1/${BASE}_variants.g.vcf" >> ${OUT}
-	qsub ${OUT}
-done
+# for file in ${output_directory}/D1/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# 	OUT="${BASE}_HaplotypeCaller.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
+# 	echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# 	echo "#PBS -q highmem_q" >> ${OUT}
+# 	echo "#PBS -l mem=200gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${output_directory}/D1" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "time gatk HaplotypeCaller \
+#        -R ${ref_genome} \
+#        -ERC GVCF \
+#        -I ${output_directory}/D1/${BASE}_removedDuplicates.bam \
+#        -ploidy 2 \
+#        -O ${output_directory}/D1/${BASE}_variants.g.vcf" >> ${OUT}
+# 	qsub ${OUT}
+# done
 
 ###################################################################################################
 #
