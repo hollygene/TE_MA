@@ -626,7 +626,7 @@ BASE=${FBASE%_removedDuplicates.bam}
 
 time gatk BaseRecalibrator \
 -I ${output_directory}/${BASE}_removedDuplicates.bam \
---known-sites ${output_directory}/D0_variants_8Samples.vcf \
+--known-sites ${output_directory}/D0_variants_8SamplesNewRef.vcf \
 -O ${output_directory}/${BASE}_recal_data.table \
 -R ${ref_genome}
 
