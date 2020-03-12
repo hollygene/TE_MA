@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q batch
+#PBS -q highmem_q
 #PBS -N genotype
-#PBS -l nodes=1:ppn=1:AMD
+#PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l walltime=72:00:00
-#PBS -l mem=50gb
+#PBS -l mem=200gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -223,34 +223,34 @@ mkdir ${raw_data}/TMP
 #
 #
 
-for file in ${output_directory}/*_fastqtosam.bam
-
-do
-  FBASE=$(basename $file _fastqtosam.bam)
-  BASE=${FBASE%_fastqtosam.bam}
-	OUT="${BASE}_MarkIlluminaAdapters.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
-	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=50gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${output_directory}/D0/" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-  I=${output_directory}/${BASE}_fastqtosam.bam \
-  O=${output_directory}/${BASE}_markilluminaadapters.bam \
-  M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-  TMP_DIR=${output_directory}/TMP" >> ${OUT}
-	qsub ${OUT}
-done
+# for file in ${output_directory}/*_fastqtosam.bam
+#
+# do
+#   FBASE=$(basename $file _fastqtosam.bam)
+#   BASE=${FBASE%_fastqtosam.bam}
+# 	OUT="${BASE}_MarkIlluminaAdapters.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_MarkIlluminaAdapters" >> ${OUT}
+# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=50gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${output_directory}/D0/" >> ${OUT}
+# 	echo "module load ${picard_module}" >> ${OUT}
+#   echo "module load ${bwa_module}" >> ${OUT}
+#   echo "module load ${samtools_module}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+#   I=${output_directory}/${BASE}_fastqtosam.bam \
+#   O=${output_directory}/${BASE}_markilluminaadapters.bam \
+#   M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
+#   TMP_DIR=${output_directory}/TMP" >> ${OUT}
+# 	qsub ${OUT}
+# done
 
 ############################################################
 
@@ -372,48 +372,48 @@ done
 
 
 #ask unix to stop piped command if any of it fails and report errors
-set -o pipefail
-
-for file in ${output_directory}/D0/*_markilluminaadapters.bam
-
-do
-
-FBASE=$(basename $file _markilluminaadapters.bam)
-BASE=${FBASE%_markilluminaadapters.bam}
-OUT="${BASE}_pipedNewRef.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=150gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}/D0" >> ${OUT}
-echo "module load ${picard_module}" >> ${OUT}
-echo "module load ${bwa_module}" >> ${OUT}
-echo "module load ${samtools_module}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-  I=${output_directory}/D0/${BASE}_markilluminaadapters.bam \
-  FASTQ=/dev/stdout \
-  CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-  TMP_DIR=${output_directory}/D0/TMP | \
-  bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-  ALIGNED_BAM=/dev/stdin \
-  UNMAPPED_BAM=${output_directory}/D0/${BASE}_fastqtosam.bam \
-  OUTPUT=${output_directory}/D0/${BASE}_pipedNewRef.bam \
-  R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-  CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-  INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-  PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-  TMP_DIR=${output_directory}/D0/TMP" >> ${OUT}
-qsub ${OUT}
-
-done
+# set -o pipefail
+#
+# for file in ${output_directory}/D0/*_markilluminaadapters.bam
+#
+# do
+#
+# FBASE=$(basename $file _markilluminaadapters.bam)
+# BASE=${FBASE%_markilluminaadapters.bam}
+# OUT="${BASE}_pipedNewRef.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=150gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}/D0" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
+# echo "module load ${bwa_module}" >> ${OUT}
+# echo "module load ${samtools_module}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+#   I=${output_directory}/D0/${BASE}_markilluminaadapters.bam \
+#   FASTQ=/dev/stdout \
+#   CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+#   TMP_DIR=${output_directory}/D0/TMP | \
+#   bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+#   ALIGNED_BAM=/dev/stdin \
+#   UNMAPPED_BAM=${output_directory}/D0/${BASE}_fastqtosam.bam \
+#   OUTPUT=${output_directory}/D0/${BASE}_pipedNewRef.bam \
+#   R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+#   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+#   INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+#   PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+#   TMP_DIR=${output_directory}/D0/TMP" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 ######################################################################################
 # for file in ${output_directory}/mcc_bams_out/*_markilluminaadapters.bam
@@ -1121,32 +1121,32 @@ module load ${GATK_module}
 
 
 
-for file in ${output_directory}/D20/${BASE}*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-OUT="${BASE}_HC.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_HC" >> ${OUT}
-echo "#PBS -l walltime=72:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=200gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}/D20" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I /${output_directory}/D20/${BASE}_removedDuplicates.bam \
-     -ploidy 2 \
-     -O ${output_directory}/D20/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
-qsub ${OUT}
-
-done
+# for file in ${output_directory}/D20/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# OUT="${BASE}_HC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}/D20" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I /${output_directory}/D20/${BASE}_removedDuplicates.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/D20/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 
@@ -1175,90 +1175,90 @@ done
 
 
 
-for file in ${output_directory}/D0/${BASE}*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-OUT="${BASE}_Hap.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_Hap" >> ${OUT}
-echo "#PBS -l walltime=72:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=200gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}/D0" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I /${output_directory}/D0/${BASE}_removedDuplicates.bam \
-     -ploidy 2 \
-     -O ${output_directory}/D0/${BASE}_variants.g.vcf" >> ${OUT}
-qsub ${OUT}
-
-done
-
-
+# for file in ${output_directory}/D0/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# OUT="${BASE}_Hap.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_Hap" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}/D0" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I /${output_directory}/D0/${BASE}_removedDuplicates.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/D0/${BASE}_variants.g.vcf" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 
-for file in ${output_directory}/D1/${BASE}*_removedDuplicates.bam
 
-do
 
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-OUT="${BASE}_HC.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_HC" >> ${OUT}
-echo "#PBS -l walltime=72:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=200gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}/D1" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I /${output_directory}/D1/${BASE}_removedDuplicates.bam \
-     -ploidy 2 \
-     -O ${output_directory}/D1/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
-qsub ${OUT}
+# for file in ${output_directory}/D1/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# OUT="${BASE}_HC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}/D1" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I /${output_directory}/D1/${BASE}_removedDuplicates.bam \
+#      -ploidy 2 \
+#      -O ${output_directory}/D1/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
-done
-
-for file in ${output_directory}/H0/${BASE}*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-OUT="${BASE}_HC.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_HC" >> ${OUT}
-echo "#PBS -l walltime=72:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=200gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}/H0" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk HaplotypeCaller \
-     -R ${ref_genome} \
-     -ERC GVCF \
-     -I /${output_directory}/H0/${BASE}_removedDuplicates.bam \
-     -ploidy 1 \
-     -O ${output_directory}/H0/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
-qsub ${OUT}
-
-done
+# for file in ${output_directory}/H0/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# OUT="${BASE}_HC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}/H0" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk HaplotypeCaller \
+#      -R ${ref_genome} \
+#      -ERC GVCF \
+#      -I /${output_directory}/H0/${BASE}_removedDuplicates.bam \
+#      -ploidy 1 \
+#      -O ${output_directory}/H0/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 
