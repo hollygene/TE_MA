@@ -1316,17 +1316,17 @@ module load ${GATK_module}
 # ###################################################################################################
 
 
-time gatk CombineGVCFs \
- -O ${output_directory}/H0_variants_8SamplesNewRef.g.vcf \
- -R ${ref_genome} \
- --variant ${output_directory}/H0-A__variants.g.vcf \
- --variant ${output_directory}/HM-H0-10_variants.g.vcf \
- --variant ${output_directory}/HM-H0-11_variants.g.vcf \
- --variant ${output_directory}/HM-H0-12_variants.g.vcf \
- --variant ${output_directory}/H0-13__variants.g.vcf \
- --variant ${output_directory}/H0-14__variants.g.vcf \
- --variant ${output_directory}/HM-H0-15_variants.g.vcf \
- --variant ${output_directory}/HM-H0-16_variants.g.vcf
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/H0_variants_8SamplesNewRef.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/H0-A__variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-10_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-11_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-12_variants.g.vcf \
+#  --variant ${output_directory}/H0-13__variants.g.vcf \
+#  --variant ${output_directory}/H0-14__variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-15_variants.g.vcf \
+#  --variant ${output_directory}/HM-H0-16_variants.g.vcf
 
 
 
