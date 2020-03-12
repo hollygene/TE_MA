@@ -544,17 +544,17 @@ module load ${GATK_module}
 # ###################################################################################################
 
 
-time gatk CombineGVCFs \
- -O ${output_directory}/D1_cohortNewRef.g.vcf \
- -R ${ref_genome} \
- --variant ${output_directory}/D1-A__variants.g.vcf \
- --variant ${output_directory}/HM-D1-10_variants.g.vcf \
- --variant ${output_directory}/HM-D1-11_variants.g.vcf \
- --variant ${output_directory}/HM-D1-12_variants.g.vcf \
- --variant ${output_directory}/HM-D1-13_variants.g.vcf \
- --variant ${output_directory}/HM-D1-14_variants.g.vcf \
- --variant ${output_directory}/HM-D1-15_variants.g.vcf \
- --variant ${output_directory}/HM-D1-16_variants.g.vcf
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/D1_cohortNewRef.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/D1-A__variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-10_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-11_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-12_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-13_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-14_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-15_variants.g.vcf \
+#  --variant ${output_directory}/HM-D1-16_variants.g.vcf
 
 
 
@@ -563,10 +563,10 @@ time gatk CombineGVCFs \
 ### Jointly genotype 8 random samples to identify consensus sequences
 ###################################################################################################
 
-time gatk GenotypeGVCFs \
-        -R ${ref_genome} \
-        --variant ${output_directory}/D1_cohortNewRef.g.vcf \
-        -O ${output_directory}/D1_variants_8SamplesNewRef.vcf
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         --variant ${output_directory}/D1_cohortNewRef.g.vcf \
+#         -O ${output_directory}/D1_variants_8SamplesNewRef.vcf
 
 
 # ###################################################################################################
@@ -582,7 +582,7 @@ BASE=${FBASE%_removedDuplicates.bam}
 
 time gatk BaseRecalibrator \
 -I ${output_directory}/${BASE}_removedDuplicates.bam \
---known-sites ${output_directory}/D1_variants_8Samples.vcf \
+--known-sites ${output_directory}/D1_variants_8SamplesNewRef.vcf \
 -O ${output_directory}/${BASE}_recal_data.table \
 -R ${ref_genome}
 
