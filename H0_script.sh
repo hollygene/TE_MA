@@ -1323,8 +1323,8 @@ time gatk CombineGVCFs \
  --variant ${output_directory}/HM-H0-10_variants.g.vcf \
  --variant ${output_directory}/HM-H0-11_variants.g.vcf \
  --variant ${output_directory}/HM-H0-12_variants.g.vcf \
- --variant ${output_directory}/H0-13_variants.g.vcf \
- --variant ${output_directory}/H0-14_variants.g.vcf \
+ --variant ${output_directory}/H0-13__variants.g.vcf \
+ --variant ${output_directory}/H0-14__variants.g.vcf \
  --variant ${output_directory}/HM-H0-15_variants.g.vcf \
  --variant ${output_directory}/HM-H0-16_variants.g.vcf
 
