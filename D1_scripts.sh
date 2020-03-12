@@ -544,17 +544,17 @@ module load ${GATK_module}
 # ###################################################################################################
 
 
-# time gatk CombineGVCFs \
-#  -O ${output_directory}/D1_cohortNewRef.g.vcf \
-#  -R ${ref_genome} \
-#  --variant ${output_directory}/D1-A__variants.g.vcf \
-#  --variant ${output_directory}/HM-D1-10_variants.g.vcf \
-#  --variant ${output_directory}/HM-D1-11_variants.g.vcf \
-#  --variant ${output_directory}/HM-D1-12_variants.g.vcf \
-#  --variant ${output_directory}/HM-D1-13_variants.g.vcf \
-#  --variant ${output_directory}/HM-D1-14_variants.g.vcf \
-#  --variant ${output_directory}/HM-D1-15_variants.g.vcf \
-#  --variant ${output_directory}/HM-D1-16_variants.g.vcf
+time gatk CombineGVCFs \
+ -O ${output_directory}/D1_cohortNewRef.g.vcf \
+ -R ${ref_genome} \
+ --variant ${output_directory}/D1-A__variants.g.vcf \
+ --variant ${output_directory}/HM-D1-10_variants.g.vcf \
+ --variant ${output_directory}/HM-D1-11_variants.g.vcf \
+ --variant ${output_directory}/HM-D1-12_variants.g.vcf \
+ --variant ${output_directory}/HM-D1-13_variants.g.vcf \
+ --variant ${output_directory}/HM-D1-14_variants.g.vcf \
+ --variant ${output_directory}/HM-D1-15_variants.g.vcf \
+ --variant ${output_directory}/HM-D1-16_variants.g.vcf
 
 
 
@@ -563,10 +563,10 @@ module load ${GATK_module}
 ### Jointly genotype 8 random samples to identify consensus sequences
 ###################################################################################################
 
-# time gatk GenotypeGVCFs \
-#         -R ${ref_genome} \
-#         --variant ${output_directory}/D1_cohortNewRef.g.vcf \
-#         -O ${output_directory}/D1_variants_8SamplesNewRef.vcf
+time gatk GenotypeGVCFs \
+        -R ${ref_genome} \
+        --variant ${output_directory}/D1_cohortNewRef.g.vcf \
+        -O ${output_directory}/D1_variants_8SamplesNewRef.vcf
 
 
 # ###################################################################################################
@@ -690,9 +690,8 @@ for file in ${output_directory}/${BASE}*_removedDuplicates.bam
              -V ${output_directory}/D1-43__variants.Recal.g.vcf \
 						 -V ${output_directory}/HM-D1-44_variants.Recal.g.vcf \
 						 -V ${output_directory}/HM-D1-45_variants.Recal.g.vcf \
-						 -V ${output_directory}/HM-D0-46_variants.Recal.g.vcf \
-						 -V ${output_directory}/HM-D0-47_variants.Recal.g.vcf \
-						 -V ${output_directory}/D0-48__variants.Recal.g.vcf
+						 -V ${output_directory}/HM-D1-46_variants.Recal.g.vcf \
+						 -V ${output_directory}/D1-48__variants.Recal.g.vcf
 #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)

@@ -1422,36 +1422,36 @@ done
              -V ${output_directory}/HM-H0-1_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-2_variants.Recal.g.vcf \
              -V ${output_directory}/H0-3__variants.Recal.g.vcf \
-             -V ${output_directory}/H0-4_variants.Recal.g.vcf \
+             -V ${output_directory}/H0-4__variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-5_variants.Recal.g.vcf \
-             -V ${output_directory}/H0-7_variants.Recal.g.vcf \
+             -V ${output_directory}/H0-7__variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-8_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-9_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-10_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-11_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-12_variants.Recal.g.vcf \
-             -V ${output_directory}/H0-13_variants.Recal.g.vcf \
-             -V ${output_directory}/H0-14_variants.Recal.g.vcf \
+             -V ${output_directory}/H0-13__variants.Recal.g.vcf \
+             -V ${output_directory}/H0-14__variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-15_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-16_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-17_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-18_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-19_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-H0-20__variants.Recal.g.vcf \
-             -V ${output_directory}/HM-H0-21__variants.Recal.g.vcf \
+             -V ${output_directory}/HM-H0-20_variants.Recal.g.vcf \
+             -V ${output_directory}/HM-H0-21_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-22_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-23_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-24_variants.Recal.g.vcf \
-             -V ${output_directory}/H0-25_variants.Recal.g.vcf \
+             -V ${output_directory}/H0-25__variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-26_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-27_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-H0-28__variants.Recal.g.vcf \
-             -V ${output_directory}/HM-H0-29__variants.Recal.g.vcf \
+             -V ${output_directory}/HM-H0-28_variants.Recal.g.vcf \
+             -V ${output_directory}/HM-H0-29_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-30_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-31_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-32_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-33_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-H0-34__variants.Recal.g.vcf \
+             -V ${output_directory}/HM-H0-34_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-35_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-36_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-37_variants.Recal.g.vcf \
@@ -1462,7 +1462,7 @@ done
              -V ${output_directory}/HM-H0-42_variants.Recal.g.vcf \
              -V ${output_directory}/HM-H0-43_variants.Recal.g.vcf \
 						 -V ${output_directory}/HM-H0-44_variants.Recal.g.vcf \
-						 -V ${output_directory}/HM-H0-45__variants.Recal.g.vcf \
+						 -V ${output_directory}/HM-H0-45_variants.Recal.g.vcf \
 						 -V ${output_directory}/HM-H0-46_variants.Recal.g.vcf \
 						 -V ${output_directory}/HM-H0-47_variants.Recal.g.vcf \
 						 -V ${output_directory}/HM-H0-48_variants.Recal.g.vcf \
