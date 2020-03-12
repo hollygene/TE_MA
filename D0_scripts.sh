@@ -639,20 +639,20 @@ module load ${GATK_module}
 #
 module load ${GATK_module}
 
-for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-
-do
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-
-
-gatk ApplyBQSR \
--R ${ref_genome} \
--I ${output_directory}/${BASE}_removedDuplicates.bam \
--bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
--O ${output_directory}/${BASE}_recalibratedNewRef.bam
-
-done
+# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
+#
+# do
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+#
+#
+# gatk ApplyBQSR \
+# -R ${ref_genome} \
+# -I ${output_directory}/${BASE}_removedDuplicates.bam \
+# -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
+# -O ${output_directory}/${BASE}_recalibratedNewRef.bam
+#
+# done
 
 
   # ###################################################################################################
@@ -662,21 +662,21 @@ done
   # #
 
         # D1 samples
-        for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
-
-        do
-
-        FBASE=$(basename $file _recalibratedNewRef.bam)
-        BASE=${FBASE%_recalibratedNewRef.bam}
-
-        time gatk HaplotypeCaller \
-        -R ${ref_genome} \
-        -ERC GVCF \
-        -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
-        -ploidy 2 \
-        -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-        done
-
+        # for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+				#
+        # do
+				#
+        # FBASE=$(basename $file _recalibratedNewRef.bam)
+        # BASE=${FBASE%_recalibratedNewRef.bam}
+				#
+        # time gatk HaplotypeCaller \
+        # -R ${ref_genome} \
+        # -ERC GVCF \
+        # -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+        # -ploidy 2 \
+        # -O ${output_directory}/${BASE}_variants.Recal.g.vcf
+        # done
+				#
 
 #
 #           ###################################################################################################
@@ -714,7 +714,7 @@ done
              -V ${output_directory}/HM-D0-22_variants.Recal.g.vcf \
              -V ${output_directory}/HM-D0-23_variants.Recal.g.vcf \
              -V ${output_directory}/HM-D0-24_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D0-35_variants.Recal.g.vcf \
+             -V ${output_directory}/HM-D0-25_variants.Recal.g.vcf \
              -V ${output_directory}/HM-D0-26_variants.Recal.g.vcf \
              -V ${output_directory}/HM-D0-27_variants.Recal.g.vcf \
              -V ${output_directory}/D0-28__variants.Recal.g.vcf \
