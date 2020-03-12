@@ -1337,7 +1337,7 @@ time gatk CombineGVCFs \
 
 time gatk GenotypeGVCFs \
         -R ${ref_genome} \
-        --variant ${output_directory}/H0_cohortNewRef.g.vcf \
+        --variant ${output_directory}/H0_variants_8SamplesNewRef.g.vcf \
         -O ${output_directory}/H0_variants_8SamplesNewRef.vcf
 
 
