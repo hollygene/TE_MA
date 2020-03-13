@@ -639,20 +639,20 @@ module load ${GATK_module}
 #
 module load ${GATK_module}
 
-# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-#
-# do
-# FBASE=$(basename $file _removedDuplicates.bam)
-# BASE=${FBASE%_removedDuplicates.bam}
-#
-#
-# gatk ApplyBQSR \
-# -R ${ref_genome} \
-# -I ${output_directory}/${BASE}_removedDuplicates.bam \
-# -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
-# -O ${output_directory}/${BASE}_recalibratedNewRef.bam
-#
-# done
+for file in ${output_directory}/${BASE}*_removedDuplicates.bam
+
+do
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
+
+
+gatk ApplyBQSR \
+-R ${ref_genome} \
+-I ${output_directory}/${BASE}_removedDuplicates.bam \
+-bqsr ${output_directory}/${BASE}_recal_data.table \
+-O ${output_directory}/${BASE}_recalibratedNewRef.bam
+
+done
 
 
   # ###################################################################################################
@@ -661,22 +661,23 @@ module load ${GATK_module}
   # ###################################################################################################
   # #
 
-        # D1 samples
-        # for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
-				#
-        # do
-				#
-        # FBASE=$(basename $file _recalibratedNewRef.bam)
-        # BASE=${FBASE%_recalibratedNewRef.bam}
-				#
-        # time gatk HaplotypeCaller \
-        # -R ${ref_genome} \
-        # -ERC GVCF \
-        # -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
-        # -ploidy 2 \
-        # -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-        # done
-				#
+
+for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+
+do
+
+FBASE=$(basename $file _recalibratedNewRef.bam)
+BASE=${FBASE%_recalibratedNewRef.bam}
+
+time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+-ploidy 2 \
+-O ${output_directory}/${BASE}_variants.Recal.g.vcf
+
+done
+
 
 #
 #           ###################################################################################################
@@ -685,7 +686,7 @@ module load ${GATK_module}
 #           ###################################################################################################
 #           #
 #           #
-  module load ${GATK_module}
+module load ${GATK_module}
 #
           time gatk CombineGVCFs \
              -R ${ref_genome} \
