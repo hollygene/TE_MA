@@ -460,17 +460,17 @@ module load ${GATK_module}
 # ###################################################################################################
 
 
-time gatk CombineGVCFs \
- -O ${output_directory}/D20_cohortNewRef.g.vcf \
- -R ${ref_genome} \
- --variant ${output_directory}/D20-A__variants.g.vcf \
- --variant ${output_directory}/HM-D20-10_variants.g.vcf \
- --variant ${output_directory}/HM-D20-11_variants.g.vcf \
- --variant ${output_directory}/HM-D20-12_variants.g.vcf \
- --variant ${output_directory}/HM-D20-13_variants.g.vcf \
- --variant ${output_directory}/HM-D20-14_variants.g.vcf \
- --variant ${output_directory}/HM-D20-15_variants.g.vcf \
- --variant ${output_directory}/HM-D20-16_variants.g.vcf
+# time gatk CombineGVCFs \
+#  -O ${output_directory}/D20_cohortNewRef.g.vcf \
+#  -R ${ref_genome} \
+#  --variant ${output_directory}/D20-A__variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-10_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-11_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-12_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-13_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-14_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-15_variants.g.vcf \
+#  --variant ${output_directory}/HM-D20-16_variants.g.vcf
 
 
 
@@ -479,10 +479,10 @@ time gatk CombineGVCFs \
 ### Jointly genotype 8 random samples to identify consensus sequences
 ###################################################################################################
 
-time gatk GenotypeGVCFs \
-        -R ${ref_genome} \
-        --variant ${output_directory}/D20_cohortNewRef.g.vcf \
-        -O ${output_directory}/D20_variants_8SamplesNewRef.vcf
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         --variant ${output_directory}/D20_cohortNewRef.g.vcf \
+#         -O ${output_directory}/D20_variants_8SamplesNewRef.vcf
 
 
 # ###################################################################################################
@@ -519,8 +519,8 @@ for file in ${output_directory}/${BASE}*_removedDuplicates.bam
         gatk ApplyBQSR \
            -R ${ref_genome} \
            -I ${output_directory}/${BASE}_removedDuplicates.bam \
-           -bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
-           -O ${output_directory}/${BASE}_recalibratedNewRef.bam
+           -bqsr ${output_directory}/${BASE}_recal_data.table \
+           -O ${output_directory}/${BASE}_recalibrated.bam
 
         done
 
@@ -533,17 +533,17 @@ for file in ${output_directory}/${BASE}*_removedDuplicates.bam
         module load ${GATK_module}
 
         # D1 samples
-        for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+        for file in ${output_directory}/${BASE}*_recalibrated.bam
 
         do
 
-        FBASE=$(basename $file _recalibratedNewRef.bam)
-        BASE=${FBASE%_recalibratedNewRef.bam}
+        FBASE=$(basename $file _recalibrated.bam)
+        BASE=${FBASE%_recalibrated.bam}
 
         time gatk HaplotypeCaller \
         -R ${ref_genome} \
         -ERC GVCF \
-        -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+        -I ${output_directory}/${BASE}_recalibrated.bam \
         -ploidy 2 \
         -O ${output_directory}/${BASE}_variants.Recal.g.vcf
         done
