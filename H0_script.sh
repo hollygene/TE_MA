@@ -1335,30 +1335,30 @@ module load ${GATK_module}
 ### Jointly genotype 8 random samples to identify consensus sequences
 ###################################################################################################
 
-time gatk GenotypeGVCFs \
-        -R ${ref_genome} \
-        --variant ${output_directory}/H0_variants_8SamplesNewRef.g.vcf \
-        -O ${output_directory}/H0_variants_8SamplesNewRef.vcf
+# time gatk GenotypeGVCFs \
+#         -R ${ref_genome} \
+#         --variant ${output_directory}/H0_variants_8SamplesNewRef.g.vcf \
+#         -O ${output_directory}/H0_variants_8SamplesNewRef.vcf
 
 
 # ###################################################################################################
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # ###################################################################################################
 #
-for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-
-time gatk BaseRecalibrator \
--I ${output_directory}/${BASE}_removedDuplicates.bam \
---known-sites ${output_directory}/H0_variants_8SamplesNewRef.vcf \
--O ${output_directory}/${BASE}_recal_data.table \
--R ${ref_genome}
-
-done
+# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+#
+# time gatk BaseRecalibrator \
+# -I ${output_directory}/${BASE}_removedDuplicates.bam \
+# --known-sites ${output_directory}/H0_variants_8SamplesNewRef.vcf \
+# -O ${output_directory}/${BASE}_recal_data.table \
+# -R ${ref_genome}
+#
+# done
 
 
 # ###################################################################################################
@@ -1377,7 +1377,7 @@ BASE=${FBASE%_removedDuplicates.bam}
 gatk ApplyBQSR \
 -R ${ref_genome} \
 -I ${output_directory}/${BASE}_removedDuplicates.bam \
--bqsr ${output_directory}/${BASE}_recal_dataNewRef.table \
+-bqsr ${output_directory}/${BASE}_recal_data.table \
 -O ${output_directory}/${BASE}_recalibratedNewRef.bam
 
 done
