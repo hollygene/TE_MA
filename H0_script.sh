@@ -596,35 +596,35 @@ mkdir ${raw_data}/TMP
 # # ############################
 
 
-# for file in ${output_directory}/mcc_bams_out/*_pipedNewRef.bam
-#
-# do
-#
-# FBASE=$(basename $file _pipedNewRef.bam)
-# BASE=${FBASE%_pipedNewRef.bam}
-# OUT="${BASE}_sortSam.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_sortSam" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=50gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
-# echo "module load ${picard_module}" >> ${OUT}
-# echo "module load ${bwa_module}" >> ${OUT}
-# echo "module load ${samtools_module}" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#    /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
-#     INPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
-#     OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
-#     SORT_ORDER=coordinate" >> ${OUT}
-#
-# qsub ${OUT}
-#
-# done
+for file in ${output_directory}/mcc_bams_out/*_pipedNewRef.bam
+
+do
+
+FBASE=$(basename $file _pipedNewRef.bam)
+BASE=${FBASE%_pipedNewRef.bam}
+OUT="${BASE}_sortSam.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_sortSam" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=50gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${bwa_module}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+    INPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
+    OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+    SORT_ORDER=coordinate" >> ${OUT}
+
+qsub ${OUT}
+
+done
 # # ############################
 # # ### index the bam files
 # # ############################
@@ -1233,7 +1233,7 @@ module load ${GATK_module}
 #
 # done
 
-# for file in ${output_directory}/H0/${BASE}*_removedDuplicates.bam
+# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
 #
 # do
 #
@@ -1247,15 +1247,15 @@ module load ${GATK_module}
 # echo "#PBS -q highmem_q" >> ${OUT}
 # echo "#PBS -l mem=200gb" >> ${OUT}
 # echo "" >> ${OUT}
-# echo "cd ${output_directory}/H0" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
 # echo "module load ${GATK_module}" >> ${OUT}
 # echo "" >> ${OUT}
 # echo "time gatk HaplotypeCaller \
 #      -R ${ref_genome} \
 #      -ERC GVCF \
-#      -I /${output_directory}/H0/${BASE}_removedDuplicates.bam \
+#      -I ${output_directory}/${BASE}_removedDuplicates.bam \
 #      -ploidy 1 \
-#      -O ${output_directory}/H0/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
+#      -O ${output_directory}/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
 # qsub ${OUT}
 #
 # done
@@ -1319,14 +1319,14 @@ module load ${GATK_module}
 # time gatk CombineGVCFs \
 #  -O ${output_directory}/H0_variants_8SamplesNewRef.g.vcf \
 #  -R ${ref_genome} \
-#  --variant ${output_directory}/H0-A__variants.g.vcf \
-#  --variant ${output_directory}/HM-H0-10_variants.g.vcf \
-#  --variant ${output_directory}/HM-H0-11_variants.g.vcf \
-#  --variant ${output_directory}/HM-H0-12_variants.g.vcf \
-#  --variant ${output_directory}/H0-13__variants.g.vcf \
-#  --variant ${output_directory}/H0-14__variants.g.vcf \
-#  --variant ${output_directory}/HM-H0-15_variants.g.vcf \
-#  --variant ${output_directory}/HM-H0-16_variants.g.vcf
+#  --variant ${output_directory}/H0-A__variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-10_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-11_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-12_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/H0-13__variantsNewRef.g.vcf \
+#  --variant ${output_directory}/H0-14__variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-15_variantsNewRef.g.vcf \
+#  --variant ${output_directory}/HM-H0-16_variantsNewRef.g.vcf
 
 
 
@@ -1339,7 +1339,7 @@ module load ${GATK_module}
 #         -R ${ref_genome} \
 #         --variant ${output_directory}/H0_variants_8SamplesNewRef.g.vcf \
 #         -O ${output_directory}/H0_variants_8SamplesNewRef.vcf
-
+#
 
 # ###################################################################################################
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
@@ -1370,17 +1370,29 @@ module load ${GATK_module}
 for file in ${output_directory}/${BASE}*_removedDuplicates.bam
 
 do
+
 FBASE=$(basename $file _removedDuplicates.bam)
 BASE=${FBASE%_removedDuplicates.bam}
-
-
-gatk ApplyBQSR \
+OUT="${BASE}_HC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_HC" >> ${OUT}
+echo "#PBS -l walltime=72:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=200gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "gatk ApplyBQSR \
 -R ${ref_genome} \
 -I ${output_directory}/${BASE}_removedDuplicates.bam \
 -bqsr ${output_directory}/${BASE}_recal_data.table \
--O ${output_directory}/${BASE}_recalibratedNewRef.bam
+-O ${output_directory}/${BASE}_recalibratedNewRef.bam" >> ${OUT}
+qsub ${OUT}
 
 done
+
 
 
   # ###################################################################################################
@@ -1389,21 +1401,47 @@ done
   # ###################################################################################################
   # #
 
-        # D1 samples
-        for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+        # # D1 samples
+        # for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+        #
+        # do
+        #
+        # FBASE=$(basename $file _recalibratedNewRef.bam)
+        # BASE=${FBASE%_recalibratedNewRef.bam}
+        #
+        # time gatk HaplotypeCaller \
+        # -R ${ref_genome} \
+        # -ERC GVCF \
+        # -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+        # -ploidy 1 \
+        # -O ${output_directory}/${BASE}_variants.Recal.g.vcf
+        # done
+for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
 
-        do
+do
 
-        FBASE=$(basename $file _recalibratedNewRef.bam)
-        BASE=${FBASE%_recalibratedNewRef.bam}
+FBASE=$(basename $file _recalibratedNewRef.bam)
+BASE=${FBASE%_recalibratedNewRef.bam}
+OUT="${BASE}_HaplotypeCaller.sh"
+echo "#!/bin/bash" > ${OUT}
+echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
+echo "#PBS -l walltime=72:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=200gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+-R ${ref_genome} \
+-ERC GVCF \
+-I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+-ploidy 1 \
+-O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
+qsub ${OUT}
 
-        time gatk HaplotypeCaller \
-        -R ${ref_genome} \
-        -ERC GVCF \
-        -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
-        -ploidy 1 \
-        -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-        done
+done
 
 
 #
@@ -1475,7 +1513,7 @@ done
 #
              time gatk GenotypeGVCFs \
                   -R ${ref_genome} \
-                  -ploidy 2 \
+                  -ploidy 1 \
                   --variant ${output_directory}/H0_FullCohort.g.vcf \
                   -O ${output_directory}/H0_FullCohort.vcf
 

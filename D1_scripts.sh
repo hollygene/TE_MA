@@ -593,20 +593,20 @@ module load ${GATK_module}
 # ## Apply BQSR to bam files
 # ###################################################################################################
 #
-for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-
-      do
-        FBASE=$(basename $file _removedDuplicates.bam)
-        BASE=${FBASE%_removedDuplicates.bam}
-
-
-        gatk ApplyBQSR \
-           -R ${ref_genome} \
-           -I ${output_directory}/${BASE}_removedDuplicates.bam \
-           -bqsr ${output_directory}/${BASE}_recal_data.table \
-           -O ${output_directory}/${BASE}_recalibratedNewRef.bam
-
-        done
+# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
+#
+#       do
+#         FBASE=$(basename $file _removedDuplicates.bam)
+#         BASE=${FBASE%_removedDuplicates.bam}
+#
+#
+#         gatk ApplyBQSR \
+#            -R ${ref_genome} \
+#            -I ${output_directory}/${BASE}_removedDuplicates.bam \
+#            -bqsr ${output_directory}/${BASE}_recal_data.table \
+#            -O ${output_directory}/${BASE}_recalibratedNewRef.bam
+#
+#         done
 
 
   # ###################################################################################################
@@ -617,20 +617,34 @@ for file in ${output_directory}/${BASE}*_removedDuplicates.bam
         module load ${GATK_module}
 
         # D1 samples
-        for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
 
-        do
-
-        FBASE=$(basename $file _recalibratedNewRef.bam)
-        BASE=${FBASE%_recalibratedNewRef.bam}
-
-        time gatk HaplotypeCaller \
-        -R ${ref_genome} \
-        -ERC GVCF \
-        -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
-        -ploidy 2 \
-        -O ${output_directory}/${BASE}_variants.Recal.g.vcf
-        done
+# for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+#
+# do
+#
+# FBASE=$(basename $file _recalibratedNewRef.bam)
+# BASE=${FBASE%_recalibratedNewRef.bam}
+# OUT="${BASE}_HC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk HaplotypeCaller \
+# -R ${ref_genome} \
+# -ERC GVCF \
+# -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+# -ploidy 2 \
+# -O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
+#
+# qsub ${OUT}
+#
+# done
 
 
 #
@@ -642,56 +656,56 @@ for file in ${output_directory}/${BASE}*_removedDuplicates.bam
 #           #
   module load ${GATK_module}
 #
-          time gatk CombineGVCFs \
-             -R ${ref_genome} \
-             -O ${output_directory}/D1_FullCohort.g.vcf \
-             -V ${output_directory}/D1-A__variants.Recal.g.vcf \
-             -V ${output_directory}/D1-1__variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-2_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-3_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-4_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-5_variants.Recal.g.vcf \
-             -V ${output_directory}/D1-6__variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-7_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-8_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-9_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-10_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-11_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-12_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-13_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-14_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-15_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-16_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-17_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-18_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-19_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-20_variants.Recal.g.vcf \
-             -V ${output_directory}/D1-21__variants.Recal.g.vcf \
-             -V ${output_directory}/D1-22__variants.Recal.g.vcf \
-             -V ${output_directory}/D1-23__variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-24_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-25_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-26_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-27_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-28__variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-29_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-30_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-31_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-32_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-33_variants.Recal.g.vcf \
-             -V ${output_directory}/D1-34__variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-35_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-36_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-37_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-38_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1_39_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-40_variants.Recal.g.vcf \
-             -V ${output_directory}/HM-D1-42_variants.Recal.g.vcf \
-             -V ${output_directory}/D1-43__variants.Recal.g.vcf \
-						 -V ${output_directory}/HM-D1-44_variants.Recal.g.vcf \
-						 -V ${output_directory}/HM-D1-45_variants.Recal.g.vcf \
-						 -V ${output_directory}/HM-D1-46_variants.Recal.g.vcf \
-						 -V ${output_directory}/D1-48__variants.Recal.g.vcf
+time gatk CombineGVCFs \
+-R ${ref_genome} \
+-O ${output_directory}/D1_FullCohort.g.vcf \
+-V ${output_directory}/D1-A__variants.Recal.g.vcf \
+-V ${output_directory}/D1-1__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-2_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-3_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-4_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-5_variants.Recal.g.vcf \
+-V ${output_directory}/D1-6__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-7_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-8_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-9_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-10_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-11_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-12_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-13_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-14_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-15_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-16_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-17_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-18_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-19_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-20_variants.Recal.g.vcf \
+-V ${output_directory}/D1-21__variants.Recal.g.vcf \
+-V ${output_directory}/D1-22__variants.Recal.g.vcf \
+-V ${output_directory}/D1-23__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-24_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-25_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-26_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-27_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-28_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-29_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-30_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-31_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-32_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-33_variants.Recal.g.vcf \
+-V ${output_directory}/D1-34__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-35_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-36_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-37_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-38_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-39_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-40_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-42_variants.Recal.g.vcf \
+-V ${output_directory}/D1-43__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-44_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-45_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D1-46_variants.Recal.g.vcf \
+-V ${output_directory}/D1-48__variants.Recal.g.vcf
 #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)
@@ -699,11 +713,11 @@ for file in ${output_directory}/${BASE}*_removedDuplicates.bam
 #              ###################################################################################################
 #
 #
-             time gatk GenotypeGVCFs \
-                  -R ${ref_genome} \
-                  -ploidy 2 \
-                  --variant ${output_directory}/D1_FullCohort.g.vcf \
-                  -O ${output_directory}/D1_FullCohort.vcf
+time gatk GenotypeGVCFs \
+-R ${ref_genome} \
+-ploidy 2 \
+--variant ${output_directory}/D1_FullCohort.g.vcf \
+-O ${output_directory}/D1_FullCohort.vcf
 
 # ###################################################################################################
 # ### Find coverage and put into 10k chunks
@@ -765,7 +779,7 @@ gatk SelectVariants \
 -R ${ref_genome} \
 -V ${output_directory}/D1_FullCohort.vcf \
 -O ${output_directory}/D1_FullCohort_AncCalls.vcf \
--select 'vc.getGenotype("D1-A").isCalled()'
+-select 'vc.getGenotype("D1-A_").isCalled()'
 
 #
 # remove all lines in the ancestor that have a heterozygous genotype
@@ -773,7 +787,7 @@ gatk SelectVariants \
 -R ${ref_genome} \
 -V ${output_directory}/D1_FullCohort_AncCalls.vcf \
 -O ${output_directory}/D1_FullCohort_AncCalls_NoHets.vcf \
--select '!vc.getGenotype("D1-A").isHet()'
+-select '!vc.getGenotype("D1-A_").isHet()'
 
 # filter out sites with low read depth
 gatk VariantFiltration \
@@ -797,7 +811,7 @@ gatk VariantFiltration \
    -R ${ref_genome} \
    -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
    -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -select 'vc.getGenotype("D1-A").isCalled()'
+   -select 'vc.getGenotype("D1-A_").isCalled()'
 
 # cd ${output_directory}
 #
@@ -828,21 +842,21 @@ gatk VariantFiltration \
 # #
 # # #Variants to table
 gatk VariantsToTable \
-     -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.vcf \
+     -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
      -F CHROM -F POS -F REF -F ALT -F QUAL \
      -GF AD -GF DP -GF GQ -GF GT \
      -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
 
      gatk VariantsToTable \
           -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-          -F CHROM -F POS -F REF -F ALT  \
-          -GF AD -GF GT \
+          -F CHROM -F POS -F REF -F ALT -F QUAL \
+          -GF AD -GF DP -GF GQ -GF GT \
           -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
 
           gatk VariantsToTable \
                -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-               -F CHROM -F POS -F REF -F ALT  \
-               -GF AD -GF GT \
+               -F CHROM -F POS -F REF -F ALT -F QUAL \
+               -GF AD -GF DP -GF GQ -GF GT \
                -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
 
 # # time gatk SelectVariants \

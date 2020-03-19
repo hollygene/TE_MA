@@ -256,6 +256,94 @@ module load ${GATK_module}
 # 	qsub ${OUT}
 #
 # done
+
+
+
+####################################################
+## MCC Bams
+
+for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
+
+do
+
+FBASE=$(basename $file _val.bam)
+BASE=${FBASE%_val.bam}
+	OUT="${BASE}_fqToIndexed.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_fqToIndexed" >> ${OUT}
+	echo "#PBS -l walltime=72:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+	echo "#PBS -q highmem_q" >> ${OUT}
+	echo "#PBS -l mem=300gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${output_directory}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "mkdir ${output_directory}/TMP" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar RevertSam \
+  I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
+  O=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
+  SANITIZE=true \
+  MAX_DISCARD_FRACTION=0.005 \
+  ATTRIBUTE_TO_CLEAR=XT \
+  ATTRIBUTE_TO_CLEAR=XN \
+  ATTRIBUTE_TO_CLEAR=AS \
+  ATTRIBUTE_TO_CLEAR=OC \
+  ATTRIBUTE_TO_CLEAR=OP \
+  SORT_ORDER=queryname \
+  RESTORE_ORIGINAL_QUALITIES=true \
+  REMOVE_DUPLICATE_INFORMATION=true \
+  REMOVE_ALIGNMENT_INFORMATION=true
+
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+  I=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
+  O=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
+  M=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters_metrics.txt \
+  TMP_DIR=${output_directory}/mcc_bams_out/TMP
+
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+  I=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
+  FASTQ=/dev/stdout \
+  CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+  TMP_DIR=${output_directory}/mcc_bams_out/TMP | \
+  bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+  ALIGNED_BAM=/dev/stdin \
+  UNMAPPED_BAM=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
+  OUTPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
+  R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+  CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+  INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+  PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+  TMP_DIR=${output_directory}/mcc_bams_out/TMP
+
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+  INPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
+  OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+  SORT_ORDER=coordinate
+
+  time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
+  REMOVE_DUPLICATES=TRUE \
+  I=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+  O=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam \
+  M=${output_directory}/mcc_bams_out/${BASE}_removedDupsMetrics.txt
+
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar" -jar  \
+  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar BuildBamIndex \
+  INPUT=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam" >> ${OUT}
+
+	qsub ${OUT}
+
+done
 # #######################################################################################
 # # Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 ## #######################################################################################
@@ -901,23 +989,23 @@ time gatk GenotypeGVCFs \
 # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
 # #
 # # #Variants to table
-# gatk VariantsToTable \
-#      -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-#      -F CHROM -F POS -F REF -F ALT -F QUAL \
-#      -GF AD -GF DP -GF GQ -GF GT \
-#      -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-#
-#      gatk VariantsToTable \
-#           -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-#           -F CHROM -F POS -F REF -F ALT  \
-#           -GF AD -GF GT \
-#           -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
-#
-#           gatk VariantsToTable \
-#                -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-#                -F CHROM -F POS -F REF -F ALT  \
-#                -GF AD -GF GT \
-#                -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
+gatk VariantsToTable \
+     -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+     -F CHROM -F POS -F REF -F ALT -F QUAL \
+     -GF AD -GF DP -GF GQ -GF GT \
+     -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
+
+     gatk VariantsToTable \
+          -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+          -F CHROM -F POS -F REF -F ALT -F QUAL \
+          -GF AD -GF DP -GF GQ -GF GT \
+          -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
+
+          gatk VariantsToTable \
+               -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+               -F CHROM -F POS -F REF -F ALT -F QUAL \
+               -GF AD -GF DP -GF GQ -GF GT \
+               -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
 
 # # ###################################################################################################
 ### This stuff is in Excel
