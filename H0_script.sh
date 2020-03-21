@@ -1367,31 +1367,31 @@ module load ${GATK_module}
 #
 module load ${GATK_module}
 
-for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-OUT="${BASE}_HC.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_HC" >> ${OUT}
-echo "#PBS -l walltime=72:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=200gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "gatk ApplyBQSR \
--R ${ref_genome} \
--I ${output_directory}/${BASE}_removedDuplicates.bam \
--bqsr ${output_directory}/${BASE}_recal_data.table \
--O ${output_directory}/${BASE}_recalibratedNewRef.bam" >> ${OUT}
-qsub ${OUT}
-
-done
+# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# OUT="${BASE}_HC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "gatk ApplyBQSR \
+# -R ${ref_genome} \
+# -I ${output_directory}/${BASE}_removedDuplicates.bam \
+# -bqsr ${output_directory}/${BASE}_recal_data.table \
+# -O ${output_directory}/${BASE}_recalibratedNewRef.bam" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 
@@ -1516,6 +1516,22 @@ done
                   -ploidy 1 \
                   --variant ${output_directory}/H0_FullCohort.g.vcf \
                   -O ${output_directory}/H0_FullCohort.vcf
+
+
+
+
+#### Remove sites with mappability < 0.9
+low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
+module load ${bedtools_module}
+
+bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
+bedtools intersect -v -a ${output_directory}/D0_FullCohort.vcf -b ${low_mappability} -header > ${output_directory}/reducedTest.vcf
+
+#count number of lines between original vcf and reduced vcf
+wc -l ${output_directory}/D0_FullCohort.vcf
+#1595
+wc -l ${output_directory}/reducedTest.vcf 
+#675
 
 # ###################################################################################################
 # ### Find coverage and put into 10k chunks
