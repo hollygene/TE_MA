@@ -774,6 +774,14 @@ time gatk GenotypeGVCFs \
 # # Can easily run these interactively
 # # ###################################################################################################
 #
+
+#### Remove sites with mappability < 0.9 
+low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
+module load ${bedtools_module}
+
+# bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
+bedtools intersect -v -a ${output_directory}/D1_FullCohort.vcf -b ${low_mappability} -header > ${output_directory}/D1_reducedGEM.vcf
+
 # Get only those lines where there is actually a genotype call in the ancestor
 gatk SelectVariants \
 -R ${ref_genome} \

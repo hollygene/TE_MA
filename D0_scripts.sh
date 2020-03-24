@@ -34,7 +34,7 @@ ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome
 #directory reference genome is located in
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/"
 # mkdir $output_directory
 #location of data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
@@ -262,51 +262,111 @@ module load ${GATK_module}
 ####################################################
 ## MCC Bams
 
-for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
+# for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
+#
+# do
+#
+# FBASE=$(basename $file _val.bam)
+# BASE=${FBASE%_val.bam}
+# 	OUT="${BASE}_fqToIndexed.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_fqToIndexed" >> ${OUT}
+# 	echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# 	echo "#PBS -q highmem_q" >> ${OUT}
+# 	echo "#PBS -l mem=300gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${output_directory}" >> ${OUT}
+# 	echo "module load ${picard_module}" >> ${OUT}
+#   echo "module load ${bwa_module}" >> ${OUT}
+#   echo "module load ${samtools_module}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "mkdir ${output_directory}/TMP" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar RevertSam \
+#   I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
+#   O=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
+#   SANITIZE=true \
+#   MAX_DISCARD_FRACTION=0.005 \
+#   ATTRIBUTE_TO_CLEAR=XT \
+#   ATTRIBUTE_TO_CLEAR=XN \
+#   ATTRIBUTE_TO_CLEAR=AS \
+#   ATTRIBUTE_TO_CLEAR=OC \
+#   ATTRIBUTE_TO_CLEAR=OP \
+#   SORT_ORDER=queryname \
+#   RESTORE_ORIGINAL_QUALITIES=true \
+#   REMOVE_DUPLICATE_INFORMATION=true \
+#   REMOVE_ALIGNMENT_INFORMATION=true
+#
+#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+#   I=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
+#   O=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
+#   M=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters_metrics.txt \
+#   TMP_DIR=${output_directory}/mcc_bams_out/TMP
+#
+#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+#   I=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
+#   FASTQ=/dev/stdout \
+#   CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+#   TMP_DIR=${output_directory}/mcc_bams_out/TMP | \
+#   bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
+#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+#   ALIGNED_BAM=/dev/stdin \
+#   UNMAPPED_BAM=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
+#   OUTPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
+#   R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
+#   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+#   INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+#   PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+#   TMP_DIR=${output_directory}/mcc_bams_out/TMP
+#
+#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+#   INPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
+#   OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+#   SORT_ORDER=coordinate
+#
+#   time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
+#   REMOVE_DUPLICATES=TRUE \
+#   I=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+#   O=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam \
+#   M=${output_directory}/mcc_bams_out/${BASE}_removedDupsMetrics.txt
+#
+#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar" -jar  \
+#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar BuildBamIndex \
+#   INPUT=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam" >> ${OUT}
+#
+# 	qsub ${OUT}
+#
+# done
+
+
+for file in ${output_directory}/mcc_bams_out/*_markilluminaadapters.bam
 
 do
 
-FBASE=$(basename $file _val.bam)
-BASE=${FBASE%_val.bam}
-	OUT="${BASE}_fqToIndexed.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_fqToIndexed" >> ${OUT}
-	echo "#PBS -l walltime=72:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-	echo "#PBS -q highmem_q" >> ${OUT}
-	echo "#PBS -l mem=300gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${output_directory}" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "mkdir ${output_directory}/TMP" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar RevertSam \
-  I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
-  O=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
-  SANITIZE=true \
-  MAX_DISCARD_FRACTION=0.005 \
-  ATTRIBUTE_TO_CLEAR=XT \
-  ATTRIBUTE_TO_CLEAR=XN \
-  ATTRIBUTE_TO_CLEAR=AS \
-  ATTRIBUTE_TO_CLEAR=OC \
-  ATTRIBUTE_TO_CLEAR=OP \
-  SORT_ORDER=queryname \
-  RESTORE_ORIGINAL_QUALITIES=true \
-  REMOVE_DUPLICATE_INFORMATION=true \
-  REMOVE_ALIGNMENT_INFORMATION=true
-
-  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-  I=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
-  O=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
-  M=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters_metrics.txt \
-  TMP_DIR=${output_directory}/mcc_bams_out/TMP
-
-  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+FBASE=$(basename $file _markilluminaadapters.bam)
+BASE=${FBASE%_markilluminaadapters.bam}
+OUT="${BASE}_pipedNewRef.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=150gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${bwa_module}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
   I=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
   FASTQ=/dev/stdout \
@@ -322,26 +382,8 @@ BASE=${FBASE%_val.bam}
   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
   INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
   PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-  TMP_DIR=${output_directory}/mcc_bams_out/TMP
-
-  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
-  INPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
-  OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
-  SORT_ORDER=coordinate
-
-  time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
-  REMOVE_DUPLICATES=TRUE \
-  I=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
-  O=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam \
-  M=${output_directory}/mcc_bams_out/${BASE}_removedDupsMetrics.txt
-
-  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar" -jar  \
-  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar BuildBamIndex \
-  INPUT=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam" >> ${OUT}
-
-	qsub ${OUT}
+  TMP_DIR=${output_directory}/mcc_bams_out/TMP" >> ${OUT}
+qsub ${OUT}
 
 done
 # #######################################################################################
@@ -403,67 +445,67 @@ done
 # Sort the piped command output
 ## #######################################################################################
 
-# for file in ${output_directory}/*_pipedNewRef.bam
-#
-# do
-#
-# FBASE=$(basename $file _pipedNewRef.bam)
-# BASE=${FBASE%_pipedNewRef.bam}
-# OUT="${BASE}_sortSam.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_sortSam" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=50gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${output_directory}" >> ${OUT}
-# echo "module load ${picard_module}" >> ${OUT}
-# echo "module load ${bwa_module}" >> ${OUT}
-# echo "module load ${samtools_module}" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#    /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
-#     INPUT=${output_directory}/${BASE}_pipedNewRef.bam \
-#     OUTPUT=${output_directory}/${BASE}_sorted.bam \
-#     SORT_ORDER=coordinate" >> ${OUT}
-#
-# qsub ${OUT}
-#
-# done
+for file in ${output_directory}/mcc_bams_out/*_pipedNewRef.bam
+
+do
+
+FBASE=$(basename $file _pipedNewRef.bam)
+BASE=${FBASE%_pipedNewRef.bam}
+OUT="${BASE}_sortSam.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_sortSam" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=50gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "module load ${bwa_module}" >> ${OUT}
+echo "module load ${samtools_module}" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+    INPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
+    OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+    SORT_ORDER=coordinate" >> ${OUT}
+
+qsub ${OUT}
+
+done
 
 ###################################################################################################
 ## Picard to mark and remove duplicates
 ###################################################################################################
 
-# for file in ${output_directory}/${BASE}*_sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file _sorted.bam)
-# BASE=${FBASE%_sorted.bam}
-# OUT="${BASE}_sorted.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_sorted" >> ${OUT}
-# echo "#PBS -l walltime=72:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# echo "#PBS -q highmem_q" >> ${OUT}
-# echo "#PBS -l mem=200gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${output_directory}" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "module load ${picard_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-# /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/${BASE}_sorted.bam \
-# O=${output_directory}/${BASE}_removedDuplicates.bam \
-# M=${output_directory}/${BASE}_removedDupsMetrics.txt" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+for file in ${output_directory}/mcc_bams_out/${BASE}*_sorted.bam
+
+do
+
+FBASE=$(basename $file _sorted.bam)
+BASE=${FBASE%_sorted.bam}
+OUT="${BASE}_sorted.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_sorted" >> ${OUT}
+echo "#PBS -l walltime=72:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=200gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "module load ${picard_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+O=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam \
+M=${output_directory}/mcc_bams_out/${BASE}_removedDupsMetrics.txt" >> ${OUT}
+qsub ${OUT}
+
+done
 
 ##############################################################################################
 ############## ** Picard to BuildBamIndex              #################################
@@ -922,61 +964,85 @@ time gatk GenotypeGVCFs \
 # # Can easily run these interactively
 # # ###################################################################################################
 #
+
+#### Remove sites with mappability < 0.9
+low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
+module load ${bedtools_module}
+
+# bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
+bedtools intersect -v -a ${output_directory}/D0_FullCohort.vcf -b ${low_mappability} -header > ${output_directory}/D0_reducedGEM.vcf
+
 # Get only those lines where there is actually a genotype call in the ancestor
-# gatk SelectVariants \
-# -R ${ref_genome} \
-# -V ${output_directory}/D0_FullCohort.vcf \
-# -O ${output_directory}/D0_FullCohort_AncCalls.vcf \
-# -select 'vc.getGenotype("D0-A_").isCalled()'
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0_FullCohort.vcf \
+-O ${output_directory}/D0_FullCohort_AncCalls.vcf \
+-select 'vc.getGenotype("D0-A_").isCalled()'
 #
 # #
-# # remove all lines in the ancestor that have a heterozygous genotype
-# gatk SelectVariants \
-# -R ${ref_genome} \
-# -V ${output_directory}/D0_FullCohort_AncCalls.vcf \
-# -O ${output_directory}/D0_FullCohort_AncCalls_NoHets.vcf \
-# -select '!vc.getGenotype("D0-A_").isHet()'
+# remove all lines in the ancestor that have a heterozygous genotype
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0_FullCohort_AncCalls.vcf \
+-O ${output_directory}/D0_FullCohort_AncCalls_NoHets.vcf \
+-select '!vc.getGenotype("D0-A_").isHet()'
+
+### Find how many sites are variable in the ancestor
+## Heterozygous sites
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/reducedTest.vcf \
+-O ${output_directory}/D0/reducedTestAncHets.vcf \
+-select 'vc.getGenotype("D0-A_").isHet()'
+
+## Homozygous variant sites
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/reducedTest.vcf \
+-O ${output_directory}/D0/reducedTestAncHomVars.vcf \
+-select 'vc.getGenotype("D0-A_").isHomVar()'
+
 #
-# # filter out sites with low read depth
-# gatk VariantFiltration \
-#    -R ${ref_genome} \
-#    -V ${output_directory}/D0_FullCohort.vcf \
-#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-#    --set-filtered-genotype-to-no-call TRUE \
-#    -G-filter "DP < 10"  -G-filter-name "depthGr10" \
-#    -filter "MQ < 50.0" -filter-name "MQ50" \
-#    -filter "SOR < 0.01" -filter-name "strandBias"
+# filter out sites with low read depth
+gatk VariantFiltration \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0_FullCohort.vcf \
+   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+   --set-filtered-genotype-to-no-call TRUE \
+   -G-filter "DP < 10"  -G-filter-name "depthGr10" \
+   -filter "MQ < 50.0" -filter-name "MQ50" \
+   -filter "SOR < 0.01" -filter-name "strandBias"
 #
 # #
-#   # remove filtered sites (these were set to no calls ./.)
-#    gatk SelectVariants \
-#    -R ${ref_genome} \
-#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-#    --exclude-filtered TRUE
+  # remove filtered sites (these were set to no calls ./.)
+gatk SelectVariants \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+   --exclude-filtered TRUE
 #
-#    gatk SelectVariants \
-#    -R ${ref_genome} \
-#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-#    -select 'vc.getGenotype("D0-A_").isCalled()'
+gatk SelectVariants \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+   -select 'vc.getGenotype("D0-A_").isCalled()'
 #
 # # cd ${output_directory}
 # #
-#    gatk SelectVariants \
-#    -R ${ref_genome} \
-#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-#    --max-nocall-fraction 0 \
-#    --exclude-non-variants TRUE \
-#    -select-type SNP
+gatk SelectVariants \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+   --max-nocall-fraction 0 \
+   --exclude-non-variants TRUE \
+   -select-type SNP
 #
-#    gatk SelectVariants \
-#    -R ${ref_genome} \
-#    -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-#    -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-#       --max-nocall-fraction 0.001 \
-#       -select-type INDEL
+gatk SelectVariants \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+      --max-nocall-fraction 0.001 \
+      -select-type INDEL
 
 #
 #    -select-type INDEL \
@@ -995,17 +1061,151 @@ gatk VariantsToTable \
      -GF AD -GF DP -GF GQ -GF GT \
      -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
 
-     gatk VariantsToTable \
+gatk VariantsToTable \
           -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
           -F CHROM -F POS -F REF -F ALT -F QUAL \
           -GF AD -GF DP -GF GQ -GF GT \
           -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
 
-          gatk VariantsToTable \
+gatk VariantsToTable \
                -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
                -F CHROM -F POS -F REF -F ALT -F QUAL \
                -GF AD -GF DP -GF GQ -GF GT \
                -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
+
+
+
+							 # # ###################################################################################################
+						#same with the reducedTest file
+							 # # ###################################################################################################
+							 #
+							 # Get only those lines where there is actually a genotype call in the ancestor
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/reducedTest.vcf  \
+-O ${output_directory}/reducedTest_AncCalls.vcf \
+-select 'vc.getGenotype("D0-A_").isCalled()'
+
+wc -l reducedTest_AncCalls.vcf
+#1001 (-41 sites)
+							 # #
+							 # remove all lines in the ancestor that have a heterozygous genotype
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/reducedTest_AncCalls.vcf \
+-O ${output_directory}/reducedTest_AncCalls_NoHets.vcf \
+-select '!vc.getGenotype("D0-A_").isHet()'
+wc -l reducedTest_AncCalls_NoHets.vcf
+#770 (-231 sites)
+							 #
+							 # filter out sites with low read depth
+gatk VariantFiltration \
+-R ${ref_genome} \
+-V ${output_directory}/reducedTest_AncCalls_NoHets.vcf \
+-O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+--set-filtered-genotype-to-no-call TRUE \
+-G-filter "DP < 10"  -G-filter-name "depthGr10" \
+-filter "MQ < 50.0" -filter-name "MQ50" \
+-filter "SOR < 0.01" -filter-name "strandBias"
+
+wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBias.vcf
+# 776 sites ???????
+
+							 #
+							 # #
+							   # remove filtered sites (these were set to no calls ./.)
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+-O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+--exclude-filtered TRUE
+
+wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf
+#618
+							 #
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+-O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+-select 'vc.getGenotype("D0-A_").isCalled()'
+wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf
+# 610
+							 #
+							 # # cd ${output_directory}
+							 # #
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+-O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+--max-nocall-fraction 0.001 \
+--exclude-non-variants TRUE \
+-select-type SNP
+
+wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf
+# 300
+							 #
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+-O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+--max-nocall-fraction 0.001 \
+--exclude-non-variants TRUE \
+-select-type INDEL
+
+wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf
+							 #
+							 #    -select-type INDEL \
+							 #    -select-type MIXED \
+							 #    -select-type MNP \
+							 #    -select-type SYMBOLIC
+							 #
+							 # #
+							 # # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
+							 # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
+							 # #
+							 # # #Variants to table
+gatk VariantsToTable \
+-V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+-F CHROM -F POS -F REF -F ALT -F QUAL \
+-GF AD -GF DP -GF GQ -GF GT \
+-O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
+
+
+gatk VariantsToTable \
+-V ${output_directory}/D0/reducedTest.vcf \
+-F CHROM -F POS -F REF -F ALT -F QUAL \
+-GF AD -GF DP -GF GQ -GF GT -GF PL \
+-O ${output_directory}/D0/reducedTest.txt
+
+
+
+
+gatk VariantsToTable \
+-V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+-F CHROM -F POS -F REF -F ALT -F QUAL \
+-GF AD -GF DP -GF GQ -GF GT \
+-O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
+
+gatk VariantsToTable \
+-V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+-F CHROM -F POS -F REF -F ALT -F QUAL \
+-GF AD -GF DP -GF GQ -GF GT \
+-O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
+
+# first two fields from the first file are stored in the c array - then it skips to the next line (c[$1$2]++;next)
+# c[$1$2]>0: the else block will only be executed if this is the second file so we check whether fields 1 and 2 of this file have already been seen (c[$1$2]>0) and if they have been, we print the line
+
+# in awk the default action is to print so if c[$1$2]>0 is true, the line will be printed
+# lines that are in D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf and are in reducedtest.vcf
+
+awk 'NR==FNR{c[$1$2]++;next};c[$1$2] > 0' reducedTest.vcf D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf > common.txt
+
+#prints rows of file2 that are not in file1
+awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' file1 file2
+
+awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' reducedTest.vcf D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf > uniqueMine.txt
+
+awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf reducedTest.vcf > uniqueToGem.txt
 
 # # ###################################################################################################
 ### This stuff is in Excel
