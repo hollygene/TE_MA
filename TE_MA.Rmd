@@ -98,7 +98,7 @@ chromoqc(chrom, dp.alpha=20)
 # MY DATA
 ########################################
 
-vcfD0 <- read.vcfR("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D0/D0_FullCohort_AncCalls.vcf")
+vcfD0 <- read.vcfR("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D0/reducedTest.vcf")
 head(vcfD0)
 
 # Parse DP from the gt region.

@@ -970,62 +970,106 @@ low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
 module load ${bedtools_module}
 
 # bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
-bedtools intersect -v -a ${output_directory}/D0_FullCohort.vcf -b ${low_mappability} -header > ${output_directory}/D0_reducedGEM.vcf
+bedtools intersect -v -a ${output_directory}/D0/D0_FullCohort_DpGr10_MQGr50_AncCalls_NoHets_Fil.vcf -b ${low_mappability} -header > ${output_directory}/D0/D0_reducedGEM.vcf
 
 # Get only those lines where there is actually a genotype call in the ancestor
+# filter out sites with low read depth
+gatk VariantFiltration \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0/D0_FullCohort.vcf \
+   -O ${output_directory}/D0/D0_FullCohort_DpGr10.vcf \
+	 --set-filtered-genotype-to-no-call TRUE \
+   -G-filter "DP < 10"  -G-filter-name "depthGr10"
+
+
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/D0_FullCohort.vcf \
--O ${output_directory}/D0_FullCohort_AncCalls.vcf \
+-V ${output_directory}/D0/D0_FullCohort_DpGr10.vcf \
+-O ${output_directory}/D0/D0_FullCohort_DpGr10_Fil.vcf --max-filtered-genotypes 0 --exclude-filtered TRUE
+
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/D0_FullCohort_DpGr10_Fil.vcf \
+-O ${output_directory}/D0/D0_FullCohort_DpGr10_Fil_AncCalls.vcf \
 -select 'vc.getGenotype("D0-A_").isCalled()'
 #
 # #
 # remove all lines in the ancestor that have a heterozygous genotype
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/D0_FullCohort_AncCalls.vcf \
--O ${output_directory}/D0_FullCohort_AncCalls_NoHets.vcf \
+-V ${output_directory}/D0/D0_FullCohort_DpGr10_Fil_AncCalls.vcf \
+-O ${output_directory}/D0/D0_FullCohort_DpGr10_Fil_AncCalls_NoHets.vcf \
 -select '!vc.getGenotype("D0-A_").isHet()'
+
+#merge filtered with GEM
+bedtools intersect -v -a ${output_directory}/D0/D0_FullCohort_DpGr10_Fil_AncCalls_NoHets.vcf -b ${low_mappability} -header > ${output_directory}/D0/D0_FullCohort_DpGr10_Fil_AncCalls_NoHets_GEM.vcf
+
+
+## Make sure you get the same dataset when you filter the sites from the reduced Gem dataset with my filters and when you combine my filtered datsset with the Gem one
+# First remove the low mappability sites from the D0_FullCohort using bedtools intersect
+bedtools intersect -v -a ${output_directory}/D0/D0_FullCohort.vcf -b ${low_mappability} -header > ${output_directory}/D0/D0_reducedGEM.vcf
+
+
+gatk VariantFiltration \
+   -R ${ref_genome} \
+   -V ${output_directory}/D0/D0_reducedGEM.vcf \
+   -O ${output_directory}/D0/D0_reducedGEM_DpGr10.vcf \
+   --set-filtered-genotype-to-no-call TRUE \
+   -G-filter "DP < 10"  -G-filter-name "depthGr10"
+
+gatk SelectVariants \
+	    -R ${ref_genome} \
+	    -V ${output_directory}/D0/D0_reducedGEM_DpGr10.vcf \
+	    -O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil.vcf --max-filtered-genotypes 0 \
+	    --exclude-filtered TRUE
+
+#prints rows of file2 that are not in file1
+awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil.vcf ${output_directory}/D0/D0_reducedGEM.vcf > ${output_directory}/D0/filteredOut.vcf
+
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil.vcf \
+-O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls.vcf \
+-select 'vc.getGenotype("D0-A_").isCalled()'
+#
+# #
+# remove all lines in the ancestor that have a heterozygous genotype
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls.vcf \
+-O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets.vcf \
+-select '!vc.getGenotype("D0-A_").isHet()'
+
+bedtools intersect -v -a ${output_directory}/D0/D0_FullCohort_DpGr10_MQGr50_AncCalls_NoHets_Fil.vcf -b ${low_mappability} -header > ${output_directory}/D0/D0_reducedGEM.vcf
+
+
+
+## Find any differences between D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets.vcf and D0_FullCohort_DpGr10_MQGr50_StrBiasFil_AncCalls_NoHets_GEM.vcf
+awk 'NR==FNR{c[$1$2]++;next};c[$1$2] > 0' D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets.vcf D0_FullCohort_DpGr10_Fil_AncCalls_NoHets_GEM.vcf > common.txt
+
+
 
 ### Find how many sites are variable in the ancestor
 ## Heterozygous sites
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D0/reducedTest.vcf \
--O ${output_directory}/D0/reducedTestAncHets.vcf \
--select 'vc.getGenotype("D0-A_").isHet()'
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D0/reducedTest.vcf \
+# -O ${output_directory}/D0/reducedTestAncHets.vcf \
+# -select 'vc.getGenotype("D0-A_").isHet()'
 
 ## Homozygous variant sites
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D0/reducedTest.vcf \
--O ${output_directory}/D0/reducedTestAncHomVars.vcf \
--select 'vc.getGenotype("D0-A_").isHomVar()'
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D0/reducedTest.vcf \
+# -O ${output_directory}/D0/reducedTestAncHomVars.vcf \
+# -select 'vc.getGenotype("D0-A_").isHomVar()'
 
 #
-# filter out sites with low read depth
-gatk VariantFiltration \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   --set-filtered-genotype-to-no-call TRUE \
-   -G-filter "DP < 10"  -G-filter-name "depthGr10" \
-   -filter "MQ < 50.0" -filter-name "MQ50" \
-   -filter "SOR < 0.01" -filter-name "strandBias"
+
 #
 # #
-  # remove filtered sites (these were set to no calls ./.)
-gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   --exclude-filtered TRUE
-#
-gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   -O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -select 'vc.getGenotype("D0-A_").isCalled()'
 #
 # # cd ${output_directory}
 # #
@@ -1044,12 +1088,6 @@ gatk SelectVariants \
       --max-nocall-fraction 0.001 \
       -select-type INDEL
 
-#
-#    -select-type INDEL \
-#    -select-type MIXED \
-#    -select-type MNP \
-#    -select-type SYMBOLIC
-#
 # #
 # # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
 # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
@@ -1075,137 +1113,14 @@ gatk VariantsToTable \
 
 
 
-							 # # ###################################################################################################
-						#same with the reducedTest file
-							 # # ###################################################################################################
-							 #
-							 # Get only those lines where there is actually a genotype call in the ancestor
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/reducedTest.vcf  \
--O ${output_directory}/reducedTest_AncCalls.vcf \
--select 'vc.getGenotype("D0-A_").isCalled()'
-
-wc -l reducedTest_AncCalls.vcf
-#1001 (-41 sites)
-							 # #
-							 # remove all lines in the ancestor that have a heterozygous genotype
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/reducedTest_AncCalls.vcf \
--O ${output_directory}/reducedTest_AncCalls_NoHets.vcf \
--select '!vc.getGenotype("D0-A_").isHet()'
-wc -l reducedTest_AncCalls_NoHets.vcf
-#770 (-231 sites)
-							 #
-							 # filter out sites with low read depth
-gatk VariantFiltration \
--R ${ref_genome} \
--V ${output_directory}/reducedTest_AncCalls_NoHets.vcf \
--O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
---set-filtered-genotype-to-no-call TRUE \
--G-filter "DP < 10"  -G-filter-name "depthGr10" \
--filter "MQ < 50.0" -filter-name "MQ50" \
--filter "SOR < 0.01" -filter-name "strandBias"
-
-wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBias.vcf
-# 776 sites ???????
-
-							 #
-							 # #
-							   # remove filtered sites (these were set to no calls ./.)
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
--O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
---exclude-filtered TRUE
-
-wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf
-#618
-							 #
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
--O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
--select 'vc.getGenotype("D0-A_").isCalled()'
-wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf
-# 610
-							 #
-							 # # cd ${output_directory}
-							 # #
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
--O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
---max-nocall-fraction 0.001 \
---exclude-non-variants TRUE \
--select-type SNP
-
-wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf
-# 300
-							 #
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
--O ${output_directory}/reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
---max-nocall-fraction 0.001 \
---exclude-non-variants TRUE \
--select-type INDEL
-
-wc -l reducedTest_AncCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf
-							 #
-							 #    -select-type INDEL \
-							 #    -select-type MIXED \
-							 #    -select-type MNP \
-							 #    -select-type SYMBOLIC
-							 #
-							 # #
-							 # # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
-							 # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
-							 # #
-							 # # #Variants to table
-gatk VariantsToTable \
--V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
--F CHROM -F POS -F REF -F ALT -F QUAL \
--GF AD -GF DP -GF GQ -GF GT \
--O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-
-
-gatk VariantsToTable \
--V ${output_directory}/D0/reducedTest.vcf \
--F CHROM -F POS -F REF -F ALT -F QUAL \
--GF AD -GF DP -GF GQ -GF GT -GF PL \
--O ${output_directory}/D0/reducedTest.txt
-
-
-
-
-gatk VariantsToTable \
--V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
--F CHROM -F POS -F REF -F ALT -F QUAL \
--GF AD -GF DP -GF GQ -GF GT \
--O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
-
-gatk VariantsToTable \
--V ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
--F CHROM -F POS -F REF -F ALT -F QUAL \
--GF AD -GF DP -GF GQ -GF GT \
--O ${output_directory}/D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
-
-# first two fields from the first file are stored in the c array - then it skips to the next line (c[$1$2]++;next)
-# c[$1$2]>0: the else block will only be executed if this is the second file so we check whether fields 1 and 2 of this file have already been seen (c[$1$2]>0) and if they have been, we print the line
-
-# in awk the default action is to print so if c[$1$2]>0 is true, the line will be printed
-# lines that are in D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf and are in reducedtest.vcf
-
-awk 'NR==FNR{c[$1$2]++;next};c[$1$2] > 0' reducedTest.vcf D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf > common.txt
+awk 'NR==FNR{c[$1$2]++;next};c[$1$2] > 0' reducedTest.vcf D0_FullCohort_DpGr10_MQGr50_StrBiasFil_AncCalls_NoHets.vcf > common.txt
 
 #prints rows of file2 that are not in file1
 awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' file1 file2
 
-awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' reducedTest.vcf D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf > uniqueMine.txt
+awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' reducedTest.vcf D0_FullCohort_DpGr10_MQGr50_AncCalls_NoHets_Fil.vcf > uniqueMine.txt
 
-awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' D0_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf reducedTest.vcf > uniqueToGem.txt
+awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' D0_FullCohort_DpGr10_MQGr50_AncCalls_NoHets_Fil.vcf reducedTest.vcf > uniqueToGem.txt
 
 # # ###################################################################################################
 ### This stuff is in Excel
