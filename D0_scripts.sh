@@ -34,7 +34,7 @@ ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome
 #directory reference genome is located in
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out"
 # mkdir $output_directory
 #location of data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
@@ -102,290 +102,151 @@ module load ${GATK_module}
 # mv ${raw_data}/*_unmapped.bam ${output_directory}
 
 
-# for file in ${raw_data}/*_R1_001.fastq.gz
-#
-# do
-#   FBASE=$(basename $file _R1_001.fastq.gz)
-#   BASE=${FBASE%_R1_001.fastq.gz}
-# 	OUT="${BASE}_fqToBam.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_fqToBam" >> ${OUT}
-# 	echo "#PBS -l walltime=72:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# 	echo "#PBS -q highmem_q" >> ${OUT}
-# 	echo "#PBS -l mem=300gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${output_directory}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "mkdir ${output_directory}/TMP" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#   FASTQ=${raw_data}/${BASE}_R1_001.fastq.gz \
-#   FASTQ2=${raw_data}/${BASE}_R2_001.fastq.gz  \
-#   OUTPUT=${output_directory}/${BASE}_unmapped.bam \
-#   READ_GROUP_NAME=${BASE} \
-#   SAMPLE_NAME=${BASE} \
-#   PLATFORM=illumina \
-#   SEQUENCING_CENTER=GGBC
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-#   I=${output_directory}/${BASE}_unmapped.bam \
-#   O=${output_directory}/${BASE}_markilluminaadapters.bam \
-#   M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-#   TMP_DIR=${output_directory}/TMP
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-#   I=${output_directory}/${BASE}_markilluminaadapters.bam \
-#   FASTQ=/dev/stdout \
-#   CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-#   TMP_DIR=${output_directory}/TMP | \
-#   bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-#   ALIGNED_BAM=/dev/stdin \
-#   UNMAPPED_BAM=${output_directory}/${BASE}_unmapped.bam \
-#   OUTPUT=${output_directory}/${BASE}_pipedNewRef.bam \
-#   R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-#   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-#   INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-#   PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-#   TMP_DIR=${output_directory}/TMP
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
-#   INPUT=${output_directory}/${BASE}_pipedNewRef.bam \
-#   OUTPUT=${output_directory}/${BASE}_sorted.bam \
-#   SORT_ORDER=coordinate
-#
-#   time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
-#   REMOVE_DUPLICATES=TRUE \
-#   I=${output_directory}/${BASE}_sorted.bam \
-#   O=${output_directory}/${BASE}_removedDuplicates.bam \
-#   M=${output_directory}/${BASE}_removedDupsMetrics.txt
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar" -jar  \
-#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar BuildBamIndex \
-#   INPUT=${output_directory}/${BASE}_removedDuplicates.bam" >> ${OUT}
-#
-# 	qsub ${OUT}
-#
-# done
+for file in ${raw_data}/*_R1_001.fastq.gz
+
+do
+  FBASE=$(basename $file _R1_001.fastq.gz)
+  BASE=${FBASE%_R1_001.fastq.gz}
+	OUT="${BASE}_BWA.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_BWA" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=30gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${output_directory}/D0" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
+	echo "mkdir ${output_directory}/D0/fromFASTQ" >> ${OUT}
+	echo "cd ${output_directory}/D0/fromFASTQ" >> ${OUT}
+  echo "bwa mem -M -t 7 -p ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq.gz > ${output_directory}/D0/fromFASTQ/${BASE}.sam" >> ${OUT}
+	qsub ${OUT}
+
+done
 
 #####################################################
 # seq run 2
 
-# for file in ${raw_data}/*R1.fq.gz
-#
-# do
-#   FBASE=$(basename $file R1.fq.gz)
-#   BASE=${FBASE%R1.fq.gz}
-# 	OUT="${BASE}_fqToBam.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_fqToBam" >> ${OUT}
-# 	echo "#PBS -l walltime=72:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# 	echo "#PBS -q highmem_q" >> ${OUT}
-# 	echo "#PBS -l mem=300gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${output_directory}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "mkdir ${output_directory}/TMP" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#   FASTQ=${raw_data}/${BASE}R1.fq.gz \
-#   FASTQ2=${raw_data}/${BASE}R2.fq.gz \
-#   OUTPUT=${output_directory}/${BASE}_unmapped.bam \
-#   READ_GROUP_NAME=${BASE} \
-#   SAMPLE_NAME=${BASE} \
-#   PLATFORM=illumina \
-#   SEQUENCING_CENTER=GGBC
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-#   I=${output_directory}/${BASE}_unmapped.bam \
-#   O=${output_directory}/${BASE}_markilluminaadapters.bam \
-#   M=${output_directory}/${BASE}_markilluminaadapters_metrics.txt \
-#   TMP_DIR=${output_directory}/TMP
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-#   I=${output_directory}/${BASE}_markilluminaadapters.bam \
-#   FASTQ=/dev/stdout \
-#   CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-#   TMP_DIR=${output_directory}/TMP | \
-#   bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-#   ALIGNED_BAM=/dev/stdin \
-#   UNMAPPED_BAM=${output_directory}/${BASE}_unmapped.bam \
-#   OUTPUT=${output_directory}/${BASE}_pipedNewRef.bam \
-#   R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-#   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-#   INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-#   PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-#   TMP_DIR=${output_directory}/TMP
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
-#   INPUT=${output_directory}/${BASE}_pipedNewRef.bam \
-#   OUTPUT=${output_directory}/${BASE}_sorted.bam \
-#   SORT_ORDER=coordinate
-#
-#   time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
-#   REMOVE_DUPLICATES=TRUE \
-#   I=${output_directory}/${BASE}_sorted.bam \
-#   O=${output_directory}/${BASE}_removedDuplicates.bam \
-#   M=${output_directory}/${BASE}_removedDupsMetrics.txt
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar" -jar  \
-#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar BuildBamIndex \
-#   INPUT=${output_directory}/${BASE}_removedDuplicates.bam" >> ${OUT}
-#
-# 	qsub ${OUT}
-#
-# done
+for file in ${raw_data}/*R1.fq.gz
+
+do
+  FBASE=$(basename $file R1.fq.gz)
+  BASE=${FBASE%R1.fq.gz}
+	OUT="${BASE}_BWA.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_BWA" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=30gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${output_directory}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "mkdir ${output_directory}/D0/TMP" >> ${OUT}
+	echo "mkdir ${output_directory}/D0/fromFASTQ" >> ${OUT}
+	echo "cd ${output_directory}/D0/fromFASTQ" >> ${OUT}
+  echo "bwa mem -M -t 7 -p ${ref_genome} ${raw_data}/${BASE}R1.fq.gz > ${output_directory}/D0/fromFASTQ/${BASE}.sam" >> ${OUT}
+
+	qsub ${OUT}
+
+done
 
 
 
 ####################################################
 ## MCC Bams
 
-# for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
-#
-# do
-#
-# FBASE=$(basename $file _val.bam)
-# BASE=${FBASE%_val.bam}
-# 	OUT="${BASE}_fqToIndexed.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_fqToIndexed" >> ${OUT}
-# 	echo "#PBS -l walltime=72:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# 	echo "#PBS -q highmem_q" >> ${OUT}
-# 	echo "#PBS -l mem=300gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${output_directory}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "mkdir ${output_directory}/TMP" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar RevertSam \
-#   I=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
-#   O=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
-#   SANITIZE=true \
-#   MAX_DISCARD_FRACTION=0.005 \
-#   ATTRIBUTE_TO_CLEAR=XT \
-#   ATTRIBUTE_TO_CLEAR=XN \
-#   ATTRIBUTE_TO_CLEAR=AS \
-#   ATTRIBUTE_TO_CLEAR=OC \
-#   ATTRIBUTE_TO_CLEAR=OP \
-#   SORT_ORDER=queryname \
-#   RESTORE_ORIGINAL_QUALITIES=true \
-#   REMOVE_DUPLICATE_INFORMATION=true \
-#   REMOVE_ALIGNMENT_INFORMATION=true
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
-#   I=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
-#   O=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
-#   M=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters_metrics.txt \
-#   TMP_DIR=${output_directory}/mcc_bams_out/TMP
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-#   I=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
-#   FASTQ=/dev/stdout \
-#   CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-#   TMP_DIR=${output_directory}/mcc_bams_out/TMP | \
-#   bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-#   ALIGNED_BAM=/dev/stdin \
-#   UNMAPPED_BAM=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
-#   OUTPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
-#   R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-#   CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-#   INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-#   PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-#   TMP_DIR=${output_directory}/mcc_bams_out/TMP
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
-#   INPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
-#   OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
-#   SORT_ORDER=coordinate
-#
-#   time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
-#   REMOVE_DUPLICATES=TRUE \
-#   I=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
-#   O=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam \
-#   M=${output_directory}/mcc_bams_out/${BASE}_removedDupsMetrics.txt
-#
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar" -jar  \
-#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar BuildBamIndex \
-#   INPUT=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam" >> ${OUT}
-#
-# 	qsub ${OUT}
-#
-# done
-
-
-for file in ${output_directory}/mcc_bams_out/*_markilluminaadapters.bam
+for file in ${mcc_bam_indiv}/*_val/bam/*_val.bam;
 
 do
 
-FBASE=$(basename $file _markilluminaadapters.bam)
-BASE=${FBASE%_markilluminaadapters.bam}
-OUT="${BASE}_pipedNewRef.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=150gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}/mcc_bams_out" >> ${OUT}
-echo "module load ${picard_module}" >> ${OUT}
-echo "module load ${bwa_module}" >> ${OUT}
-echo "module load ${samtools_module}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-  I=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
-  FASTQ=/dev/stdout \
-  CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-  TMP_DIR=${output_directory}/mcc_bams_out/TMP | \
-  bwa mem -M -t 7 -p ${ref_genome} /dev/stdin| \
-  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-  ALIGNED_BAM=/dev/stdin \
-  UNMAPPED_BAM=${output_directory}/mcc_bams_out/${BASE}_unmapped.bam \
-  OUTPUT=${output_directory}/mcc_bams_out/${BASE}_pipedNewRef.bam \
-  R=${ref_genome} CREATE_INDEX=true ADD_MATE_CIGAR=true \
-  CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-  INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-  PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-  TMP_DIR=${output_directory}/mcc_bams_out/TMP" >> ${OUT}
-qsub ${OUT}
+FBASE=$(basename $file _val.bam)
+BASE=${FBASE%_val.bam}
+	OUT="${BASE}_fqToIndexed.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_fqToIndexed" >> ${OUT}
+	echo "#PBS -l walltime=72:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+	echo "#PBS -q highmem_q" >> ${OUT}
+	echo "#PBS -l mem=300gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${output_directory}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "mkdir ${output_directory}/mcc_bams" >> ${OUT}
+  echo "mkdir ${output_directory}/mcc_bams/TMP" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+	/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+	INPUT=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
+	OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+	SORT_ORDER=queryname
 
+	java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+  I=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+  O=${output_directory}/mcc_bams/${BASE}_markilluminaadapters.bam \
+  M=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters_metrics.txt \
+  TMP_DIR=${output_directory}/mcc_bams_out/TMP
+
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+  INPUT=${output_directory}/mcc_bams_out/${BASE}_markilluminaadapters.bam \
+  OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted2.bam \
+  SORT_ORDER=coordinate
+
+  time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar MarkDuplicates \
+  REMOVE_DUPLICATES=TRUE \
+  I=${output_directory}/mcc_bams_out/${BASE}_sorted2.bam \
+  O=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam \
+  M=${output_directory}/mcc_bams_out/${BASE}_removedDupsMetrics.txt
+
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar" -jar  \
+  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar BuildBamIndex \
+  INPUT=${output_directory}/mcc_bams_out/${BASE}_removedDuplicates.bam" >> ${OUT}
+	qsub ${OUT}
 done
+
+
+
+
+
+## Running some things interactively
+${output_directory}/mcc_bams
+
+module load ${picard_module}
+module load ${bwa_module}
+module load ${samtools_module}
+module load ${GATK_module}
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SortSam \
+INPUT=${mcc_bam_indiv}/${BASE}_val/bam/${BASE}_val.bam \
+OUTPUT=${output_directory}/mcc_bams_out/${BASE}_sorted.bam \
+SORT_ORDER=queryname
+
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar FixMateInformation \
+# I=${output_directory}/mcc_bams_out/HM-H0-A_R1_001_sorted.bam \
+# O=${output_directory}/mcc_bams_out/HM-H0-A_R1_001_sortedFixedMate.bam \
+# ADD_MATE_CIGAR=TRUE
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MarkIlluminaAdapters \
+I=${output_directory}/mcc_bams_out/HM-H0-10_R1_001_sorted.bam \
+O=${output_directory}/mcc_bams_out/HM-H0-10_R1_001_markilluminaadapters.bam \
+M=${output_directory}/mcc_bams_out/HM-H0-10_R1_001_markilluminaadapters_metrics.txt \
+TMP_DIR=${output_directory}/mcc_bams_out/TMP
+
 # #######################################################################################
 # # Piped command: SamToFastq, then bwa mem, then MergeBamAlignment
 ## #######################################################################################
@@ -965,6 +826,12 @@ time gatk GenotypeGVCFs \
 # # ###################################################################################################
 #
 
+module load MultiQC/1.5-foss-2016b-Python-2.7.14
+multiqc ${output_directory}/D0
+
+module load ${samtools_module}
+samtools view -c -F 260 D0-A__pipedNewRef.bam
+
 #### Remove sites with mappability < 0.9
 low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
 module load ${bedtools_module}
@@ -1033,6 +900,27 @@ gatk SelectVariants \
 -V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil.vcf \
 -O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls.vcf \
 -select 'vc.getGenotype("D0-A_").isCalled()'
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil.vcf \
+-O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncDpTest.vcf \
+-select 'vc.getGenotype("D0-A_").getDP() > 114'
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncDpTest.vcf \
+-O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncDpTest2.vcf \
+-select 'vc.getGenotype("D0-A_").getDP() < 254'
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncDpTest2.vcf \
+-O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncDpTest2_NoHets.vcf \
+-select '!vc.getGenotype("D0-A_").isHet()'
+
+awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncDpTest2_NoHets.vcf ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets.vcf > ${output_directory}/D0/filtered_out.vcf
+
 #
 # #
 # remove all lines in the ancestor that have a heterozygous genotype
@@ -1041,6 +929,19 @@ gatk SelectVariants \
 -V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls.vcf \
 -O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets.vcf \
 -select '!vc.getGenotype("D0-A_").isHet()'
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets.vcf \
+-O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets_AncLowDepthFilt.vcf \
+-select 'vc.getGenotype("D0-A_").getDP() > 114'
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets_AncLowDepthFilt.vcf \
+-O ${output_directory}/D0/D0_reducedGEM_DpGr10_Fil_AncCalls_NoHets_AncLowDepthFilt_HighDepthFilt.vcf \
+-select 'vc.getGenotype("D0-A_").getDP() < 254'
+
 
 bedtools intersect -v -a ${output_directory}/D0/D0_FullCohort_DpGr10_MQGr50_AncCalls_NoHets_Fil.vcf -b ${low_mappability} -header > ${output_directory}/D0/D0_reducedGEM.vcf
 
