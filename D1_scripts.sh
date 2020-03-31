@@ -364,7 +364,7 @@ do
   FBASE=$(basename $file _R1_001.fastq.gz)
   BASE=${FBASE%_R1_001.fastq.gz}
 
-bwa mem -p -M -t 12 ${ref_genome} ${raw_data}/*_R1_001.fastq.gz ${raw_data}/*_R2_001.fastq.gz > ${output_directory}/${BASE}_aln.sam
+bwa mem -M ${ref_genome} ${raw_data}/*_R1_001.fastq.gz ${raw_data}/*_R2_001.fastq.gz > ${output_directory}/${BASE}_aln.sam
 
 done
 
@@ -375,7 +375,7 @@ do
   FBASE=$(basename $file R1.fq.gz)
   BASE=${FBASE%R1.fq.gz}
 
-bwa mem -p -M -t 12 ${ref_genome} ${raw_data}/*R1.fq.gz ${raw_data}/*R2.fq.gz > ${output_directory}/${BASE}_aln.sam
+bwa mem -M ${ref_genome} ${raw_data}/*R1.fq.gz ${raw_data}/*R2.fq.gz > ${output_directory}/${BASE}_aln.sam
 
 done
 
