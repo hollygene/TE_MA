@@ -36,10 +36,11 @@ bamToBigWig="/scratch/hcm14449/TE_MA_Paradoxus/jbscripts/file_to_bigwig_pe.py"
 data_dir="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq"
 #location of reference genome to be used
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
+# ref_genome_base="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337"
 #directory reference genome is located in
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1/fromFASTQ"
 # mkdir $output_directory
 #location of data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
@@ -47,6 +48,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
 
 # cd ${output_directory}
 # rm *
+mkdir ${output_directory}
 
 module load ${picard_module}
 module load ${bwa_module}
@@ -355,7 +357,7 @@ module load ${GATK_module}
 module load ${bwa_module}
 #
 #  #index the ref genome
-bwa index ${ref_genome}
+# bwa index ${ref_genome}
 #
 
 for file in ${raw_data}/*_R1_001.fastq.gz
@@ -364,9 +366,14 @@ do
   FBASE=$(basename $file _R1_001.fastq.gz)
   BASE=${FBASE%_R1_001.fastq.gz}
 
-bwa mem -M ${ref_genome} ${raw_data}/*_R1_001.fastq.gz ${raw_data}/*_R2_001.fastq.gz > ${output_directory}/${BASE}_aln.sam
+bwa mem -M ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq.gz ${raw_data}/${BASE}_R2_001.fastq.gz > ${output_directory}/${BASE}_aln.sam
 
 done
+
+
+
+
+
 
 
 for file in ${raw_data}/*R1.fq.gz
@@ -375,7 +382,7 @@ do
   FBASE=$(basename $file R1.fq.gz)
   BASE=${FBASE%R1.fq.gz}
 
-bwa mem -M ${ref_genome} ${raw_data}/*R1.fq.gz ${raw_data}/*R2.fq.gz > ${output_directory}/${BASE}_aln.sam
+bwa mem -M ${ref_genome} ${raw_data}/${BASE}R1.fq.gz ${raw_data}/${BASE}R2.fq.gz > ${output_directory}/${BASE}_aln.sam
 
 done
 
