@@ -48,7 +48,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
 
 # cd ${output_directory}
 # rm *
-mkdir ${output_directory}
+# mkdir ${output_directory}
 
 module load ${picard_module}
 module load ${bwa_module}
