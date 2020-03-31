@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
 #PBS -q highmem_q
 #PBS -N D1_samples
-#PBS -l nodes=1:ppn=1:HIGHMEM
+#PBS -l nodes=1:ppn=12:HIGHMEM
 #PBS -l walltime=72:00:00
 #PBS -l mem=200gb
 #PBS -M hcm14449@uga.edu
@@ -42,7 +42,7 @@ ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D1"
 # mkdir $output_directory
 #location of data to be used in the analysis
-# raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D1"
+raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
 
 
 # cd ${output_directory}
@@ -352,72 +352,84 @@ module load ${GATK_module}
 # works: aligns samples to reference genome. Output is a .sam file
 #######################################################################################
 
-# module load ${bwa_module}
-# #
-# #  #index the ref genome
-# bwa index ${ref_genome}
-# #
-# for file in ${trimmed_data}/*_R1_001_trimmed.fq
+module load ${bwa_module}
 #
-# do
+#  #index the ref genome
+bwa index ${ref_genome}
 #
-# FBASE=$(basename $file _R1_001_trimmed.fq)
-# BASE=${FBASE%_R1_001_trimmed.fq}
-#
-# bwa mem -p -M -t 12 ${ref_genome} ${trimmed_data}/${BASE}_R1_001_trimmed.fq ${trimmed_data}/${BASE}_R2_001_trimmed.fq > ${output_directory}/${BASE}_aln.sam
-#
-# done
+
+for file in ${raw_data}/*_R1_001.fastq.gz
+
+do
+  FBASE=$(basename $file _R1_001.fastq.gz)
+  BASE=${FBASE%_R1_001.fastq.gz}
+
+bwa mem -p -M -t 12 ${ref_genome} ${raw_data}/*_R1_001.fastq.gz ${raw_data}/*_R2_001.fastq.gz > ${output_directory}/${BASE}_aln.sam
+
+done
+
+
+for file in ${raw_data}/*R1.fq.gz
+
+do
+  FBASE=$(basename $file R1.fq.gz)
+  BASE=${FBASE%R1.fq.gz}
+
+bwa mem -p -M -t 12 ${ref_genome} ${raw_data}/*R1.fq.gz ${raw_data}/*R2.fq.gz > ${output_directory}/${BASE}_aln.sam
+
+done
+
 #
 # # #########################################################################################
 # # #samtools: converts sam files to bam files and sorts them
 # # #########################################################################################
 # #
-# # #convert sam files to bam files
-# module load ${samtools_module}
-#
-# for file in ${output_directory}/*_aln.sam
-#
-# do
-#
-# FBASE=$(basename $file _aln.sam)
-# BASE=${FBASE%_aln.sam}
-#
-# samtools view -bt ${ref_genome_dir}/*.fai \
-# ${output_directory}/${BASE}_aln.sam \
-#   > ${output_directory}/${BASE}.bam
-#
-# done
+# #convert sam files to bam files
+module load ${samtools_module}
+
+for file in ${output_directory}/*_aln.sam
+
+do
+
+FBASE=$(basename $file _aln.sam)
+BASE=${FBASE%_aln.sam}
+
+samtools view -bt ${ref_genome_dir}/*.fai \
+${output_directory}/${BASE}_aln.sam \
+  > ${output_directory}/${BASE}.bam
+
+done
 #
 # # ############################
 # # ### sort the bam files
 # # ############################
 # #
-# for file in ${output_directory}/*.bam
-#
-# do
-#
-# FBASE=$(basename $file .bam)
-# BASE=${FBASE%.bam}
-#
-# samtools sort -@ 12 -o ${output_directory}/${BASE}.sorted.bam \
-#    ${output_directory}/${BASE}.bam
-#
-# done
+for file in ${output_directory}/*.bam
+
+do
+
+FBASE=$(basename $file .bam)
+BASE=${FBASE%.bam}
+
+samtools sort -@ 12 -o ${output_directory}/${BASE}.sorted.bam \
+   ${output_directory}/${BASE}.bam
+
+done
 #
 # # ############################
 # # ### index the bam files
 # # ############################
 #
-# for file in ${output_directory}/*.sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file .sorted.bam)
-# BASE=${FBASE%.sorted.bam}
-#
-# samtools index -@ 12 -o ${output_directory}/${BASE}.sorted.bam
-#
-# done
+for file in ${output_directory}/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+samtools index -@ 12 -o ${output_directory}/${BASE}.sorted.bam
+
+done
 # # ###################################################################################################
 # # ## Picard to mark duplicates
 # # ###################################################################################################
@@ -458,21 +470,23 @@ module load ${GATK_module}
 
 
 
-# for file in ${output_directory}/*.sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file .sorted.bam)
-# BASE=${FBASE%.sorted.bam}
-#
-# time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
-# REMOVE_DUPLICATES=TRUE \
-# I=${output_directory}/${BASE}.sorted.bam \
-# O=${output_directory}/${BASE}_removedDuplicates.bam \
-# M=${output_directory}/${BASE}_removedDupsMetrics.txt
-#
-# done
+for file in ${output_directory}/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+time java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar MarkDuplicates \
+REMOVE_DUPLICATES=TRUE \
+I=${output_directory}/${BASE}.sorted.bam \
+O=${output_directory}/${BASE}_removedDuplicates.bam \
+M=${output_directory}/${BASE}_removedDupsMetrics.txt
+
+done
+
+
 #
 # ###################################################################################################
 # # Using GATK HaplotypeCaller in GVCF mode
@@ -481,51 +495,51 @@ module load ${GATK_module}
 # ###################################################################################################
 # ###################################################################################################
 # #
-module load ${GATK_module}
+# module load ${GATK_module}
 
-## D1 samples
-# for file in ${raw_data}/${BASE}*_piped.bam
+# D1 samples
+# for file in ${raw_data}/${BASE}*_removedDuplicates.bam
 #
 # do
 #
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
 #
 # time gatk HaplotypeCaller \
 #      -R ${ref_genome} \
 #      -ERC GVCF \
-#      -I ${raw_data}/${BASE}_piped.bam \
+#      -I ${raw_data}/${BASE}_removedDuplicates.bam \
 #      -ploidy 2 \
-#      -O ${output_directory}/${BASE}_variants.g.i.vcf
+#      -O ${output_directory}/${BASE}_variants.g.vcf
 #
 # done
 
 ### D1 samples
-# for file in ${raw_data}/${BASE}*_pipedNewRef.bam
-#
-# do
-#
-# FBASE=$(basename $file _pipedNewRef.bam)
-# BASE=${FBASE%_pipedNewRef.bam}
-# OUT="${BASE}_HC.sh"
-# echo "#!/bin/bash" >> ${OUT}
-# echo "#PBS -N ${BASE}_HC" >> ${OUT}
-# echo "#PBS -l walltime=72:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-# echo "#PBS -q highmem_q" >> ${OUT}
-# echo "#PBS -l mem=200gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "module load ${GATK_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "time gatk HaplotypeCaller \
-# -R ${ref_genome} \
-# -ERC GVCF \
-# -I ${raw_data}/${BASE}_pipedNewRef.bam \
-# -ploidy 2 \
-# -O ${output_directory}/${BASE}_variantsNewRef.g.vcf" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+for file in ${raw_data}/${BASE}*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
+OUT="${BASE}_HC.sh"
+echo "#!/bin/bash" >> ${OUT}
+echo "#PBS -N ${BASE}_HC" >> ${OUT}
+echo "#PBS -l walltime=72:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+echo "#PBS -q highmem_q" >> ${OUT}
+echo "#PBS -l mem=200gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "module load ${GATK_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "time gatk HaplotypeCaller \
+     -R ${ref_genome} \
+     -ERC GVCF \
+     -I ${raw_data}/${BASE}_removedDuplicates.bam \
+     -ploidy 2 \
+     -O ${output_directory}/${BASE}_variants.g.vcf" >> ${OUT}
+qsub ${OUT}
+
+done
 
 
 
@@ -614,7 +628,7 @@ module load ${GATK_module}
   # ###################################################################################################
   # ###################################################################################################
   # #
-        module load ${GATK_module}
+        # module load ${GATK_module}
 
         # D1 samples
 
@@ -654,58 +668,58 @@ module load ${GATK_module}
 #           ###################################################################################################
 #           #
 #           #
-  module load ${GATK_module}
+  # module load ${GATK_module}
 #
-time gatk CombineGVCFs \
--R ${ref_genome} \
--O ${output_directory}/D1_FullCohort.g.vcf \
--V ${output_directory}/D1-A__variants.Recal.g.vcf \
--V ${output_directory}/D1-1__variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-2_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-3_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-4_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-5_variants.Recal.g.vcf \
--V ${output_directory}/D1-6__variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-7_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-8_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-9_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-10_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-11_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-12_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-13_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-14_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-15_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-16_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-17_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-18_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-19_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-20_variants.Recal.g.vcf \
--V ${output_directory}/D1-21__variants.Recal.g.vcf \
--V ${output_directory}/D1-22__variants.Recal.g.vcf \
--V ${output_directory}/D1-23__variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-24_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-25_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-26_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-27_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-28_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-29_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-30_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-31_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-32_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-33_variants.Recal.g.vcf \
--V ${output_directory}/D1-34__variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-35_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-36_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-37_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-38_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-39_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-40_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-42_variants.Recal.g.vcf \
--V ${output_directory}/D1-43__variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-44_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-45_variants.Recal.g.vcf \
--V ${output_directory}/HM-D1-46_variants.Recal.g.vcf \
--V ${output_directory}/D1-48__variants.Recal.g.vcf
+# time gatk CombineGVCFs \
+# -R ${ref_genome} \
+# -O ${output_directory}/D1_FullCohort.g.vcf \
+# -V ${output_directory}/D1-A__variants.Recal.g.vcf \
+# -V ${output_directory}/D1-1__variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-2_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-3_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-4_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-5_variants.Recal.g.vcf \
+# -V ${output_directory}/D1-6__variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-7_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-8_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-9_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-10_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-11_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-12_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-13_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-14_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-15_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-16_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-17_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-18_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-19_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-20_variants.Recal.g.vcf \
+# -V ${output_directory}/D1-21__variants.Recal.g.vcf \
+# -V ${output_directory}/D1-22__variants.Recal.g.vcf \
+# -V ${output_directory}/D1-23__variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-24_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-25_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-26_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-27_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-28_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-29_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-30_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-31_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-32_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-33_variants.Recal.g.vcf \
+# -V ${output_directory}/D1-34__variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-35_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-36_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-37_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-38_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-39_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-40_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-42_variants.Recal.g.vcf \
+# -V ${output_directory}/D1-43__variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-44_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-45_variants.Recal.g.vcf \
+# -V ${output_directory}/HM-D1-46_variants.Recal.g.vcf \
+# -V ${output_directory}/D1-48__variants.Recal.g.vcf
 #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)
@@ -713,11 +727,11 @@ time gatk CombineGVCFs \
 #              ###################################################################################################
 #
 #
-time gatk GenotypeGVCFs \
--R ${ref_genome} \
--ploidy 2 \
---variant ${output_directory}/D1_FullCohort.g.vcf \
--O ${output_directory}/D1_FullCohort.vcf
+# time gatk GenotypeGVCFs \
+# -R ${ref_genome} \
+# -ploidy 2 \
+# --variant ${output_directory}/D1_FullCohort.g.vcf \
+# -O ${output_directory}/D1_FullCohort.vcf
 
 # ###################################################################################################
 # ### Find coverage and put into 10k chunks
@@ -775,145 +789,145 @@ time gatk GenotypeGVCFs \
 # # ###################################################################################################
 #
 
-#### Remove sites with mappability < 0.9 
-low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
-module load ${bedtools_module}
-
-# bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
-bedtools intersect -v -a ${output_directory}/D1_FullCohort.vcf -b ${low_mappability} -header > ${output_directory}/D1_reducedGEM.vcf
-
-# Get only those lines where there is actually a genotype call in the ancestor
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D1_FullCohort.vcf \
--O ${output_directory}/D1_FullCohort_AncCalls.vcf \
--select 'vc.getGenotype("D1-A_").isCalled()'
-
+#### Remove sites with mappability < 0.9
+# low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
+# module load ${bedtools_module}
 #
-# remove all lines in the ancestor that have a heterozygous genotype
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D1_FullCohort_AncCalls.vcf \
--O ${output_directory}/D1_FullCohort_AncCalls_NoHets.vcf \
--select '!vc.getGenotype("D1-A_").isHet()'
-
-# filter out sites with low read depth
-gatk VariantFiltration \
-   -R ${ref_genome} \
-   -V ${output_directory}/D1_FullCohort_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   --set-filtered-genotype-to-no-call TRUE \
-   -G-filter "DP < 10"  -G-filter-name "depthGr10" \
-   -filter "MQ < 50.0" -filter-name "MQ50" \
-   -filter "SOR < 0.01" -filter-name "strandBias"
-
+# # bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
+# bedtools intersect -v -a ${output_directory}/D1_FullCohort.vcf -b ${low_mappability} -header > ${output_directory}/D1_reducedGEM.vcf
 #
-  # remove filtered sites (these were set to no calls ./.)
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   --exclude-filtered TRUE
-
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -select 'vc.getGenotype("D1-A_").isCalled()'
-
-# cd ${output_directory}
-#
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-   --max-nocall-fraction 0 \
-   --exclude-non-variants TRUE \
-   -select-type SNP
-
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-      --max-nocall-fraction 0.001 \
-      -select-type INDEL
-
-#
-#    -select-type INDEL \
-#    -select-type MIXED \
-#    -select-type MNP \
-#    -select-type SYMBOLIC
+# # Get only those lines where there is actually a genotype call in the ancestor
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D1_FullCohort.vcf \
+# -O ${output_directory}/D1_FullCohort_AncCalls.vcf \
+# -select 'vc.getGenotype("D1-A_").isCalled()'
 #
 # #
-# # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
-# # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
+# # remove all lines in the ancestor that have a heterozygous genotype
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D1_FullCohort_AncCalls.vcf \
+# -O ${output_directory}/D1_FullCohort_AncCalls_NoHets.vcf \
+# -select '!vc.getGenotype("D1-A_").isHet()'
+#
+# # filter out sites with low read depth
+# gatk VariantFiltration \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D1_FullCohort_AncCalls_NoHets.vcf \
+#    -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+#    --set-filtered-genotype-to-no-call TRUE \
+#    -G-filter "DP < 10"  -G-filter-name "depthGr10" \
+#    -filter "MQ < 50.0" -filter-name "MQ50" \
+#    -filter "SOR < 0.01" -filter-name "strandBias"
+#
 # #
-# # #Variants to table
-gatk VariantsToTable \
-     -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-     -F CHROM -F POS -F REF -F ALT -F QUAL \
-     -GF AD -GF DP -GF GQ -GF GT \
-     -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-
-     gatk VariantsToTable \
-          -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-          -F CHROM -F POS -F REF -F ALT -F QUAL \
-          -GF AD -GF DP -GF GQ -GF GT \
-          -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
-
-          gatk VariantsToTable \
-               -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-               -F CHROM -F POS -F REF -F ALT -F QUAL \
-               -GF AD -GF DP -GF GQ -GF GT \
-               -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
-
-# # time gatk SelectVariants \
-# #        -R ${ref_genome} \
-# #        -V ${output_directory}/Full_cohort.vcf \
-# #        -O ${output_directory}/test.vcf \
-# #        -sample-expressions '!vc.getGenotype('HM-D1-A').isHet()'
+#   # remove filtered sites (these were set to no calls ./.)
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
+#    -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+#    --exclude-filtered TRUE
 #
-#        # time gatk SelectVariants \
-#        #        -R ${ref_genome} \
-#        #        -V ${output_directory}/Full_cohort_VF_SV.vcf \
-#        #        -O ${output_directory}/Full_cohort_VF_SV_noNoCalls.vcf \
-#        #        --max-nocall-number 45
-#        #
-#        #
-#        #
-#        #        gatk VariantsToTable \
-#        #             -V ${output_directory}/Full_cohort_VF_SV_noNoCalls.vcf \
-#        #             -F CHROM -F POS -F REF -F ALT -F QUAL -F DP \
-#        #             -GF AD -GF GT -GF DP \
-#        #             -O ${output_directory}/Full_cohort_VF_SV_noNoCalls.txt
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
+#    -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -select 'vc.getGenotype("D1-A_").isCalled()'
 #
+# # cd ${output_directory}
+# #
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+#    --max-nocall-fraction 0 \
+#    --exclude-non-variants TRUE \
+#    -select-type SNP
 #
-# # -G_filter isHet == 1
-# # -G_filterName
-# # --filterName One --filterExpression "X < 1" --filterName Two --filterExpression "X > 2"
+#    gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#    -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+#       --max-nocall-fraction 0.001 \
+#       -select-type INDEL
 #
+# #
+# #    -select-type INDEL \
+# #    -select-type MIXED \
+# #    -select-type MNP \
+# #    -select-type SYMBOLIC
+# #
+# # #
+# # # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
+# # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
+# # #
+# # # #Variants to table
+# gatk VariantsToTable \
+#      -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#      -F CHROM -F POS -F REF -F ALT -F QUAL \
+#      -GF AD -GF DP -GF GQ -GF GT \
+#      -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
 #
+#      gatk VariantsToTable \
+#           -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+#           -F CHROM -F POS -F REF -F ALT -F QUAL \
+#           -GF AD -GF DP -GF GQ -GF GT \
+#           -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
 #
-# # gatk VariantFiltration \
-# # -V ${output_directory}/Full_cohort.vcf \
-# # -O ${output_directory}/Full_cohort_VF.vcf \
-# # --genotype-filter-expression "isHet == 1" \
-# # --genotype-filter-name "isHetFilter"
+#           gatk VariantsToTable \
+#                -V ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+#                -F CHROM -F POS -F REF -F ALT -F QUAL \
+#                -GF AD -GF DP -GF GQ -GF GT \
+#                -O ${output_directory}/D1_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
+#
+# # # time gatk SelectVariants \
+# # #        -R ${ref_genome} \
+# # #        -V ${output_directory}/Full_cohort.vcf \
+# # #        -O ${output_directory}/test.vcf \
+# # #        -sample-expressions '!vc.getGenotype('HM-D1-A').isHet()'
+# #
+# #        # time gatk SelectVariants \
+# #        #        -R ${ref_genome} \
+# #        #        -V ${output_directory}/Full_cohort_VF_SV.vcf \
+# #        #        -O ${output_directory}/Full_cohort_VF_SV_noNoCalls.vcf \
+# #        #        --max-nocall-number 45
+# #        #
+# #        #
+# #        #
+# #        #        gatk VariantsToTable \
+# #        #             -V ${output_directory}/Full_cohort_VF_SV_noNoCalls.vcf \
+# #        #             -F CHROM -F POS -F REF -F ALT -F QUAL -F DP \
+# #        #             -GF AD -GF GT -GF DP \
+# #        #             -O ${output_directory}/Full_cohort_VF_SV_noNoCalls.txt
 # #
 # #
-# # gatk SelectVariants \
-# # -V ${output_directory}/Full_cohort_VF.vcf \
-# # --set-filtered-gt-to-nocall \
-# # -O ${output_directory}/Full_cohort_VF_SV.vcf
-#
-#
-# ### What if I individually genotype all of my GVCFs
-# # Then in the Ancestor, remove everything that is heterozygous
-# # Then combine my VCFs based on POS and CHROM
-# # That should give me a giant file with every site in every line that is NOT variant in the Ancestor
-#       # in theory...
-# # env means esclude not variant loci
-# # ef means exclude filtered loci
-#
-#             # vc.getGenotype('sample08').isHomVar()
-#             # vc.getGenotype('sample08').isHomRef()
+# # # -G_filter isHet == 1
+# # # -G_filterName
+# # # --filterName One --filterExpression "X < 1" --filterName Two --filterExpression "X > 2"
+# #
+# #
+# #
+# # # gatk VariantFiltration \
+# # # -V ${output_directory}/Full_cohort.vcf \
+# # # -O ${output_directory}/Full_cohort_VF.vcf \
+# # # --genotype-filter-expression "isHet == 1" \
+# # # --genotype-filter-name "isHetFilter"
+# # #
+# # #
+# # # gatk SelectVariants \
+# # # -V ${output_directory}/Full_cohort_VF.vcf \
+# # # --set-filtered-gt-to-nocall \
+# # # -O ${output_directory}/Full_cohort_VF_SV.vcf
+# #
+# #
+# # ### What if I individually genotype all of my GVCFs
+# # # Then in the Ancestor, remove everything that is heterozygous
+# # # Then combine my VCFs based on POS and CHROM
+# # # That should give me a giant file with every site in every line that is NOT variant in the Ancestor
+# #       # in theory...
+# # # env means esclude not variant loci
+# # # ef means exclude filtered loci
+# #
+# #             # vc.getGenotype('sample08').isHomVar()
+# #             # vc.getGenotype('sample08').isHomRef()
