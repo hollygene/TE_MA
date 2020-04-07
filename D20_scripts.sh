@@ -36,14 +36,14 @@ ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome
 #directory reference genome is located in
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20"
 # mkdir $output_directory
 #location of data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
 mcc_bams="/scratch/jc33471/paradoxusHolly/run0217all"
 mcc_bam_indiv="/scratch/jc33471/paradoxusHolly/run0217all/out/Spar"
 
-# cd ${output_directory}
+cd ${output_directory}
 # rm *
 
 module load ${picard_module}
@@ -601,56 +601,55 @@ module load ${GATK_module}
 # -ploidy 2 \
 # -O ${output_directory}/D20-A__variants.Recal.g.vcf
 
-# time gatk CombineGVCFs \
-# -R ${ref_genome} \
-# -O ${output_directory}/D20_FullCohort.g.vcf \
-# -V ${output_directory}/D20-A__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-1_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-2_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-3_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-4_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-5_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-6_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-8_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-9_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-10_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-11_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-12_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-13_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-14_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-15_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-16_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-17_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-18_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-19_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-20_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-21_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-22_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-23_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-24_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-25_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-26_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-27_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-28_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-29_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-30_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-31_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-32_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-33_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-34_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-35_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-36_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-37_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-38_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-39_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-40_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-42_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-43_variants.Recal.g.vcf \
-# -V ${output_directory}/D20-44__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-45_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-46_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-47_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D20-48_variants.Recal.g.vcf
+time gatk CombineGVCFs \
+-R ${ref_genome} \
+-O ${output_directory}/D20_FullCohort.g.vcf \
+-V ${output_directory}/D20_anc_switched/D20-A-switched__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-1_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-2_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-3_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-5_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-6_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-8_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-9_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-10_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-11_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-12_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-13_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-14_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-15_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-16_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-17_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-18_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-19_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-20_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-21_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-22_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-23_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-24_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-25_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-26_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-27_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-28_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-29_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-30_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-31_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-32_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-33_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-34_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-35_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-36_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-37_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-38_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-39_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-40_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-42_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-43_variants.Recal.g.vcf \
+-V ${output_directory}/D20-44__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-45_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-46_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-47_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-48_variants.Recal.g.vcf
 #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)
@@ -658,15 +657,24 @@ module load ${GATK_module}
 #              ###################################################################################################
 #
 #
-             time gatk GenotypeGVCFs \
-                  -R ${ref_genome} \
-                  -ploidy 2 \
-                  --variant ${output_directory}/D20_FullCohort.g.vcf \
-                  -O ${output_directory}/D20_FullCohort.vcf
+time gatk GenotypeGVCFs \
+-R ${ref_genome} \
+-ploidy 2 \
+--variant ${output_directory}/D20_FullCohort.g.vcf \
+-O ${output_directory}/D20_FullCohort.vcf
 
 # ###################################################################################################
 # ### Find coverage and put into 10k chunks
 # ###################################################################################################
+
+module load ${bedtools_module}
+# report gives per-base depth across entire genome
+
+bedtools genomecov -d -ibam ${output_directory}/D20/D20-A__recalibratedNewRef.bam > ${output_directory}/D20/D20-A_depth.txt
+
+
+
+
 
 # module load ${deeptools_module}
 #
@@ -719,61 +727,74 @@ module load ${GATK_module}
 # # Can easily run these interactively
 # # ###################################################################################################
 #
-# Get only those lines where there is actually a genotype call in the ancestor
+
+########################################################################
+#### Remove low and high read depth first
 gatk SelectVariants \
 -R ${ref_genome} \
 -V ${output_directory}/D20_FullCohort.vcf \
--O ${output_directory}/D20_FullCohort_AncCalls.vcf \
--select 'vc.getGenotype("D20-A_").isCalled()'
+-O ${output_directory}/D20_noLow.vcf \
+-select 'vc.getGenotype("D1-A_").getDP() > 70'
 
-#
-# remove all lines in the ancestor that have a heterozygous genotype
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/D20_FullCohort_AncCalls.vcf \
--O ${output_directory}/D20_FullCohort_AncCalls_NoHets.vcf \
--select '!vc.getGenotype("D20-A_").isHet()'
+-V ${output_directory}/D20_noLow.vcf \
+-O ${output_directory}/D20_noLow_noHigh.vcf \
+-select 'vc.getGenotype("D1-A_").getDP() < 188'
 
-# filter out sites with low read depth
-gatk VariantFiltration \
-   -R ${ref_genome} \
-   -V ${output_directory}/D20_FullCohort_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   --set-filtered-genotype-to-no-call TRUE \
-   -G-filter "DP < 10"  -G-filter-name "depthGr10" \
-   -filter "MQ < 50.0" -filter-name "MQ50" \
-   -filter "SOR < 0.01" -filter-name "strandBias"
+low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
+module load ${bedtools_module}
 
-#
-  # remove filtered sites (these were set to no calls ./.)
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBias.vcf \
-   -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   --exclude-filtered TRUE
+# bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
+bedtools intersect -v -a ${output_directory}/D20_noLow_noHigh.vcf -b ${low_mappability} -header > ${output_directory}/D20_noLow_noHigh_redGem.vcf
 
-   gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil.vcf \
-   -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -select 'vc.getGenotype("D20-A_").isCalled()'
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D20_noLow_noHigh_redGem.vcf \
+-O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
+-select 'vc.getGenotype("D1-A_").isCalled()'
 
-# cd ${output_directory}
-#
-   gatk SelectVariants \
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
+-O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+-select '!vc.getGenotype("D1-A_").isHet()'
+
+### select snps and indels and make into tables
+gatk SelectVariants \
    -R ${ref_genome} \
-   -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+   -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
    --max-nocall-fraction 0 \
    --exclude-non-variants TRUE \
    -select-type SNP
-
-   gatk SelectVariants \
+#
+gatk SelectVariants \
    -R ${ref_genome} \
-   -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-   -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-      --max-nocall-fraction 0.001 \
-      -select-type INDEL
+   -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
+   --max-nocall-fraction 0.001 \
+   -select-type INDEL
+
+
+gatk VariantsToTable \
+	 -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+	 -F CHROM -F POS -F REF -F ALT -F QUAL \
+	 -GF AD -GF DP -GF GQ -GF GT \
+	 -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
+
+gatk VariantsToTable \
+	-V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
+	-F CHROM -F POS -F REF -F ALT -F QUAL \
+	-GF AD -GF DP -GF GQ -GF GT \
+	-O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.txt
+
+gatk VariantsToTable \
+-V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
+-F CHROM -F POS -F REF -F ALT -F QUAL \
+-GF AD -GF DP -GF GQ -GF GT \
+-O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.txt
 
 #
 #    -select-type INDEL \
@@ -786,26 +807,40 @@ gatk VariantFiltration \
 # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
 # #
 # # #Variants to table
-gatk VariantsToTable \
-     -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-     -F CHROM -F POS -F REF -F ALT -F QUAL \
-     -GF AD -GF DP -GF GQ -GF GT \
-     -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-
-     gatk VariantsToTable \
-          -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-          -F CHROM -F POS -F REF -F ALT -F QUAL \
-          -GF AD -GF DP -GF GQ -GF GT \
-          -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
-
-          gatk VariantsToTable \
-               -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-               -F CHROM -F POS -F REF -F ALT -F QUAL \
-               -GF AD -GF DP -GF GQ -GF GT \
-               -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
-
+# gatk VariantsToTable \
+#      -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+#      -F CHROM -F POS -F REF -F ALT -F QUAL \
+#      -GF AD -GF DP -GF GQ -GF GT \
+#      -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
+#
+#      gatk VariantsToTable \
+#           -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+#           -F CHROM -F POS -F REF -F ALT -F QUAL \
+#           -GF AD -GF DP -GF GQ -GF GT \
+#           -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
+#
+#           gatk VariantsToTable \
+#                -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+#                -F CHROM -F POS -F REF -F ALT -F QUAL \
+#                -GF AD -GF DP -GF GQ -GF GT \
+#                -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
+#
+# #
+# #
+# gatk VariantsToTable \
+#      -V ${output_directory}/D20_FullCohort_AncCalls.vcf \
+#      -F CHROM -F POS -F REF -F ALT -F QUAL \
+#      -GF AD -GF DP -GF GQ -GF GT \
+#      -O ${output_directory}/D20_FullCohort_AncCalls.txt
 #
 #
+#
+#
+# ## VCF tools to extract all of the GT entries:
+#
+# vcftools --vcf file.vcf --extract-FORMAT-info GT
+
+
 #            # ###################################################################################################
 #            # ### Find coverage and put into 10k chunks
 #            # ###################################################################################################

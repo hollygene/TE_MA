@@ -98,7 +98,7 @@ raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fas
 #
 # module unload ${trimgalore_module}
 #######################################################################################
-# convert fastq to unmapped bam (ubam) 
+# convert fastq to unmapped bam (ubam)
 # add read group information
 #######################################################################################
 
@@ -143,23 +143,7 @@ bwa mem -M -t 12 ${ref_genome} ${raw_data}/${BASE}_R1_001.fastq ${raw_data}/${BA
 #
 module load ${samtools_module}
 #
-# #index reference genome
-#
-# samtools faidx ${ref_genome}
-#
-# #convert sam files to bam files
-# for file in ${output_directory}/D1/*_aln.sam
-#
-# do
-#
-# FBASE=$(basename $file _aln.sam)
-# BASE=${FBASE%_aln.sam}
-#
-# samtools view -bt -@ 12 ${ref_genome_dir}/*.fai \
-# ${output_directory}/D1/${BASE}_aln.sam \
-#   > ${output_directory}/D1/${BASE}.bam
-#
-# done
+
 #
 # #convert sam files to bam files
 # for file in ${output_directory}/D0/*_aln.sam

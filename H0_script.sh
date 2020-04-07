@@ -1362,31 +1362,31 @@ time gatk GenotypeGVCFs \
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # ###################################################################################################
 #
-for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-OUT="${BASE}_BR.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_BR" >> ${OUT}
-echo "#PBS -l walltime=24:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-echo "#PBS -q batch" >> ${OUT}
-echo "#PBS -l mem=50gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "time gatk BaseRecalibrator \
--I ${output_directory}/${BASE}_removedDuplicates.bam \
---known-sites ${output_directory}/H0_variants_8SamplesNewRef_ploidy1.vcf \
--O ${output_directory}/${BASE}_recal_dataPl.table \
--R ${ref_genome}" >> ${OUT}
-qsub ${OUT}
-
-done
+# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# OUT="${BASE}_BR.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_BR" >> ${OUT}
+# echo "#PBS -l walltime=24:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# echo "#PBS -q batch" >> ${OUT}
+# echo "#PBS -l mem=50gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "time gatk BaseRecalibrator \
+# -I ${output_directory}/${BASE}_removedDuplicates.bam \
+# --known-sites ${output_directory}/H0_variants_8SamplesNewRef_ploidy1.vcf \
+# -O ${output_directory}/${BASE}_recal_dataP1.table \
+# -R ${ref_genome}" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 # ###################################################################################################
@@ -1395,31 +1395,31 @@ done
 #
 module load ${GATK_module}
 
-for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-
-do
-
-FBASE=$(basename $file _removedDuplicates.bam)
-BASE=${FBASE%_removedDuplicates.bam}
-OUT="${BASE}_HC.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_HC" >> ${OUT}
-echo "#PBS -l walltime=72:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=200gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "gatk ApplyBQSR \
--R ${ref_genome} \
--I ${output_directory}/${BASE}_removedDuplicates.bam \
--bqsr ${output_directory}/${BASE}_recal_dataPl.table \
--O ${output_directory}/${BASE}_recalibratedNewRefPl.bam" >> ${OUT}
-qsub ${OUT}
-
-done
+# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
+#
+# do
+#
+# FBASE=$(basename $file _removedDuplicates.bam)
+# BASE=${FBASE%_removedDuplicates.bam}
+# OUT="${BASE}_HC.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_HC" >> ${OUT}
+# echo "#PBS -l walltime=72:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=200gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "gatk ApplyBQSR \
+# -R ${ref_genome} \
+# -I ${output_directory}/${BASE}_removedDuplicates.bam \
+# -bqsr ${output_directory}/${BASE}_recal_dataP1.table \
+# -O ${output_directory}/${BASE}_recalibratedNewRefP1.bam" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 
@@ -1444,12 +1444,12 @@ done
         # -ploidy 1 \
         # -O ${output_directory}/${BASE}_variants.Recal.g.vcf
         # done
-for file in ${output_directory}/${BASE}*_recalibratedNewRefPl.bam
+for file in ${output_directory}/${BASE}*_recalibratedNewRefP1.bam
 
 do
 
-FBASE=$(basename $file _recalibratedNewRef.bam)
-BASE=${FBASE%_recalibratedNewRef.bam}
+FBASE=$(basename $file _recalibratedNewRefP1.bam)
+BASE=${FBASE%_recalibratedNewRefP1.bam}
 OUT="${BASE}_HaplotypeCaller.sh"
 echo "#!/bin/bash" > ${OUT}
 echo "#PBS -N ${BASE}_HaplotypeCaller" >> ${OUT}
@@ -1464,9 +1464,9 @@ echo "" >> ${OUT}
 echo "time gatk HaplotypeCaller \
 -R ${ref_genome} \
 -ERC GVCF \
--I ${output_directory}/${BASE}_recalibratedNewRefPl.bam \
+-I ${output_directory}/${BASE}_recalibratedNewRefP1.bam \
 -ploidy 1 \
--O ${output_directory}/${BASE}_variants.RecalPl.g.vcf" >> ${OUT}
+-O ${output_directory}/${BASE}_variants.RecalP1.g.vcf" >> ${OUT}
 qsub ${OUT}
 
 done
