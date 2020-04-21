@@ -1137,23 +1137,46 @@ gatk SelectVariants \
    -R ${ref_genome} \
    -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
    -O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
-   --max-nocall-fraction 0 \
+   --max-nocall-number 0 \
    --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC \
    -select-type SNP
 #
 gatk SelectVariants \
    -R ${ref_genome} \
    -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
    -O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
-   --max-nocall-fraction 0.001 \
+   --max-nocall-number 0 \
+	 --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC \
    -select-type INDEL
+
+gatk SelectVariants \
+	 -R ${ref_genome} \
+   -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
+   --max-nocall-number 0 \
+	 --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC
 
 
 gatk VariantsToTable \
-	 -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+	 -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
 	 -F CHROM -F POS -F REF -F ALT -F QUAL \
 	 -GF AD -GF DP -GF GQ -GF GT \
 	 -O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
+
+	 gatk SelectVariants \
+	 	    -R ${ref_genome} \
+	 	    -V ${output_directory}/D0/D0_FullCohort.vcf \
+	 	    -O ${output_directory}/D0/D0_FullCohortCalls.vcf \
+	 	    --max-nocall-number 0
+
+	 gatk VariantsToTable \
+	 	 -V ${output_directory}/D0/D0_FullCohortCalls.vcf \
+	 	 -F CHROM -F POS -F REF -F ALT -F QUAL \
+	 	 -GF AD -GF DP -GF GQ -GF GT \
+	 	 -O ${output_directory}/D0/D0_FullCohortCalls.txt
 
 gatk VariantsToTable \
 	-V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \

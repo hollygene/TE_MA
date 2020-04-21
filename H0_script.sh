@@ -1538,7 +1538,7 @@ module load ${GATK_module}
 #
 time gatk GenotypeGVCFs \
 -R ${ref_genome} \
---variant ${output_directory}/H0_FullCohort.g.vcf \
+--variant ${output_directory}/H0_FullCohortP1.g.vcf \
 -O ${output_directory}/H0_FullCohort.vcf
 
 # #### bedtools genomecov
@@ -1551,90 +1551,101 @@ time gatk GenotypeGVCFs \
 #
 #
 #
-# #### Remove sites with mappability < 0.9
-# low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
-# module load ${bedtools_module}
-#
+#### Remove sites with mappability < 0.9
+low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
+module load ${bedtools_module}
+
 #
 # ########################################################################
 # #### Remove low and high read depth first
-# gatk SelectVariants \
-# -R ${ref_genome} \
-# -V ${output_directory}/H0_FullCohort.vcf \
-# -O ${output_directory}/H0_noLow.vcf \
-# -select 'vc.getGenotype("H0-A_").getDP() > 90'
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/H0_FullCohort.vcf \
+-O ${output_directory}/H0_noLow.vcf \
+-select 'vc.getGenotype("H0-A_").getDP() > 90'
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/H0_noLow.vcf \
+-O ${output_directory}/H0_noLow_noHigh.vcf \
+-select 'vc.getGenotype("H0-A_").getDP() < 218'
 #
-# gatk SelectVariants \
-# -R ${ref_genome} \
-# -V ${output_directory}/H0_noLow.vcf \
-# -O ${output_directory}/H0_noLow_noHigh.vcf \
-# -select 'vc.getGenotype("H0-A_").getDP() < 218'
-#
-# low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
-# module load ${bedtools_module}
-#
-# # bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
-# bedtools intersect -v -a ${output_directory}/H0_noLow_noHigh.vcf -b ${low_mappability} -header > ${output_directory}/H0_noLow_noHigh_redGem.vcf
-#
-# gatk SelectVariants \
-# -R ${ref_genome} \
-# -V ${output_directory}/H0_noLow_noHigh_redGem.vcf \
-# -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls.vcf \
-# -select 'vc.getGenotype("H0-A_").isCalled()'
+low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
+module load ${bedtools_module}
+
+# bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
+bedtools intersect -v -a ${output_directory}/H0_noLow_noHigh.vcf -b ${low_mappability} -header > ${output_directory}/H0_noLow_noHigh_redGem.vcf
+
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/H0_noLow_noHigh_redGem.vcf \
+-O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls.vcf \
+-select 'vc.getGenotype("H0-A_").isCalled()'
 #
 #
-# gatk SelectVariants \
-# -R ${ref_genome} \
-# -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls.vcf \
-# -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-# -select '!vc.getGenotype("H0-A_").isHet()'
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls.vcf \
+-O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+-select '!vc.getGenotype("H0-A_").isHet()'
 #
 #
 #
 # ### Ancestor hets only
-# gatk SelectVariants \
-# -R ${ref_genome} \
-# -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls.vcf \
-# -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_Hets.vcf \
-# -select 'vc.getGenotype("D0-A_").isHet()'
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls.vcf \
+-O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_Hets.vcf \
+-select 'vc.getGenotype("H0-A_").isHet()'
 #
 #
 #
 #
-# ### select snps and indels and make into tables
-# gatk SelectVariants \
-#    -R ${ref_genome} \
-#    -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-#    -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
-#    --max-nocall-fraction 0 \
-#    --exclude-non-variants TRUE \
-#    -select-type SNP
-# #
-# gatk SelectVariants \
-#    -R ${ref_genome} \
-#    -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-#    -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
-#    --max-nocall-fraction 0.001 \
-#    -select-type INDEL
+### select snps and indels and make into tables
+gatk SelectVariants \
+   -R ${ref_genome} \
+   -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
+   --max-nocall-number 0 \
+   --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC \
+   -select-type SNP
+#
+gatk SelectVariants \
+   -R ${ref_genome} \
+   -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
+   --max-nocall-number 0 \
+	 --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC \
+   -select-type INDEL
+
+gatk SelectVariants \
+	 -R ${ref_genome} \
+   -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
+   --max-nocall-number 0 \
+	 --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC
 #
 #
-# gatk VariantsToTable \
-# 	 -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-# 	 -F CHROM -F POS -F REF -F ALT -F QUAL \
-# 	 -GF AD -GF DP -GF GQ -GF GT \
-# 	 -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
-#
-# gatk VariantsToTable \
-# 	-V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
-# 	-F CHROM -F POS -F REF -F ALT -F QUAL \
-# 	-GF AD -GF DP -GF GQ -GF GT \
-# 	-O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.txt
-#
-# gatk VariantsToTable \
-# -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
-# -F CHROM -F POS -F REF -F ALT -F QUAL \
-# -GF AD -GF DP -GF GQ -GF GT \
-# -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.txt
+gatk VariantsToTable \
+	 -V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
+	 -F CHROM -F POS -F REF -F ALT -F QUAL \
+	 -GF AD -GF DP -GF GQ -GF GT \
+	 -O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
+
+gatk VariantsToTable \
+	-V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
+	-F CHROM -F POS -F REF -F ALT -F QUAL \
+	-GF AD -GF DP -GF GQ -GF GT \
+	-O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.txt
+
+gatk VariantsToTable \
+-V ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
+-F CHROM -F POS -F REF -F ALT -F QUAL \
+-GF AD -GF DP -GF GQ -GF GT \
+-O ${output_directory}/H0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.txt
 #
 #
 #

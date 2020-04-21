@@ -608,6 +608,7 @@ time gatk CombineGVCFs \
 -V ${output_directory}/HM-D20-1_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-2_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-3_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-4_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-5_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-6_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-8_variants.Recal.g.vcf \
@@ -657,11 +658,11 @@ time gatk CombineGVCFs \
 #              ###################################################################################################
 #
 #
-time gatk GenotypeGVCFs \
--R ${ref_genome} \
--ploidy 2 \
---variant ${output_directory}/D20_FullCohort.g.vcf \
--O ${output_directory}/D20_FullCohort.vcf
+  `time gatk GenotypeGVCFs \
+  -R ${ref_genome} \
+  -ploidy 2 \
+  --variant ${output_directory}/D20_FullCohort.g.vcf \
+  -O ${output_directory}/D20_FullCohort.vcf`
 
 # ###################################################################################################
 # ### Find coverage and put into 10k chunks
@@ -734,13 +735,13 @@ gatk SelectVariants \
 -R ${ref_genome} \
 -V ${output_directory}/D20_FullCohort.vcf \
 -O ${output_directory}/D20_noLow.vcf \
--select 'vc.getGenotype("D1-A_").getDP() > 70'
+-select 'vc.getGenotype("D1-A_").getDP() > 82'
 
 gatk SelectVariants \
 -R ${ref_genome} \
 -V ${output_directory}/D20_noLow.vcf \
 -O ${output_directory}/D20_noLow_noHigh.vcf \
--select 'vc.getGenotype("D1-A_").getDP() < 188'
+-select 'vc.getGenotype("D1-A_").getDP() < 206'
 
 low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
 module load ${bedtools_module}
@@ -761,25 +762,37 @@ gatk SelectVariants \
 -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
 -select '!vc.getGenotype("D1-A_").isHet()'
 
-### select snps and indels and make into tables
+
+### Ancestor hets only
 gatk SelectVariants \
    -R ${ref_genome} \
    -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
    -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
-   --max-nocall-fraction 0 \
+   --max-nocall-number 0 \
    --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC \
    -select-type SNP
 #
 gatk SelectVariants \
    -R ${ref_genome} \
    -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
    -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
-   --max-nocall-fraction 0.001 \
+   --max-nocall-number 0 \
+	 --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC \
    -select-type INDEL
+
+gatk SelectVariants \
+	 -R ${ref_genome} \
+   -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
+   --max-nocall-number 0 \
+	 --exclude-non-variants TRUE \
+	 --restrict-alleles-to BIALLELIC
 
 
 gatk VariantsToTable \
-	 -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+	 -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
 	 -F CHROM -F POS -F REF -F ALT -F QUAL \
 	 -GF AD -GF DP -GF GQ -GF GT \
 	 -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
