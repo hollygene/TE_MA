@@ -41,6 +41,7 @@ ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #where should the output be sent
 output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/RedoApril2020/D1"
+mkdir /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/RedoApril2020
 mkdir $output_directory
 #location of data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
