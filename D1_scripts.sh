@@ -61,7 +61,7 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-for file in ${raw_data}/*_R1_001.fastq
+for file in ${raw_data}/*_R1_001.fastq.gz
 
 do
 
