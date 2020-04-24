@@ -21,7 +21,8 @@ D1_ancestor="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas/unmapped_
 D20_ancestor="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas/unmapped_bams/D20-A__markilluminaadapters.bam"
 unmapped_bams="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas/unmapped_bams"
 module load ${bedtools_module}
-
+module load ${picard_module}
+module load ${bwa_module}
 # bedtools maskfasta -fi ${ref_genome} -bed ${to_mask} -fo ${ref_genome_dir}/337_MATmasked.fasta
 
 ###################
