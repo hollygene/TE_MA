@@ -35,6 +35,8 @@ java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
       R=${ref_genome_dir}/337_MATmasked.fasta \
       O=${ref_genome_dir}/337_MATmasked.dict
 
+#index masked reference
+bwa index ${ref_genome_dir}/337_MATmasked.fasta
 
 #D0 ancestor
 
