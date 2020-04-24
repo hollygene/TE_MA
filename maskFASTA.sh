@@ -30,19 +30,39 @@ module load ${bwa_module}
 ## Use piped command like in normal pipeline to map to masked reference genome
 #create sequence dictionary for masked genome
 
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
-      R=${ref_genome_dir}/337_MATmasked.fasta \
-      O=${ref_genome_dir}/337_MATmasked.dict
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
+#       R=${ref_genome_dir}/337_MATmasked.fasta \
+#       O=${ref_genome_dir}/337_MATmasked.dict
 
-#index masked reference
-bwa index ${ref_genome_dir}/337_MATmasked.fasta
+# #index masked reference
+# bwa index ${ref_genome_dir}/337_MATmasked.fasta
+#
+# #D0 ancestor
+#
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+# I=${D0_ancestor} \
+# FASTQ=/dev/stdout \
+# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+# TMP_DIR=${unmapped_bams}/TMP | \
+# bwa mem -M -t 7 -p ${ref_genome_dir}/337_MATmasked.fasta /dev/stdin| \
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+# ALIGNED_BAM=/dev/stdin \
+# UNMAPPED_BAM=${D0_ancestor} \
+# OUTPUT=${unmapped_bams}/D0_ancestor_MATmasked.bam \
+# R=${ref_genome_dir}/337_MATmasked.fasta CREATE_INDEX=true ADD_MATE_CIGAR=true \
+# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+# TMP_DIR=${unmapped_bams}/TMP
 
-#D0 ancestor
+#H0 ancestor
 
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-I=${D0_ancestor} \
+I=${H0_ancestor} \
 FASTQ=/dev/stdout \
 CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
 TMP_DIR=${unmapped_bams}/TMP | \
@@ -50,8 +70,48 @@ bwa mem -M -t 7 -p ${ref_genome_dir}/337_MATmasked.fasta /dev/stdin| \
 java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
 /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
 ALIGNED_BAM=/dev/stdin \
-UNMAPPED_BAM=${D0_ancestor} \
-OUTPUT=${unmapped_bams}/D0_ancestor_MATmasked.bam \
+UNMAPPED_BAM=${H0_ancestor} \
+OUTPUT=${unmapped_bams}/H0_ancestor_MATmasked.bam \
+R=${ref_genome_dir}/337_MATmasked.fasta CREATE_INDEX=true ADD_MATE_CIGAR=true \
+CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+TMP_DIR=${unmapped_bams}/TMP
+
+#D1 ancestor
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+I=${D1_ancestor} \
+FASTQ=/dev/stdout \
+CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+TMP_DIR=${unmapped_bams}/TMP | \
+bwa mem -M -t 7 -p ${ref_genome_dir}/337_MATmasked.fasta /dev/stdin| \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+ALIGNED_BAM=/dev/stdin \
+UNMAPPED_BAM=${D1_ancestor} \
+OUTPUT=${unmapped_bams}/D1_ancestor_MATmasked.bam \
+R=${ref_genome_dir}/337_MATmasked.fasta CREATE_INDEX=true ADD_MATE_CIGAR=true \
+CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+TMP_DIR=${unmapped_bams}/TMP
+
+#D20 ancestor
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+I=${D20_ancestor} \
+FASTQ=/dev/stdout \
+CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+TMP_DIR=${unmapped_bams}/TMP | \
+bwa mem -M -t 7 -p ${ref_genome_dir}/337_MATmasked.fasta /dev/stdin| \
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+ALIGNED_BAM=/dev/stdin \
+UNMAPPED_BAM=${D20_ancestor} \
+OUTPUT=${unmapped_bams}/D20_ancestor_MATmasked.bam \
 R=${ref_genome_dir}/337_MATmasked.fasta CREATE_INDEX=true ADD_MATE_CIGAR=true \
 CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
 INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
