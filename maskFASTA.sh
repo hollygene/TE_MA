@@ -28,6 +28,13 @@ module load ${bwa_module}
 ###################
 ####
 ## Use piped command like in normal pipeline to map to masked reference genome
+#create sequence dictionary for masked genome
+
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar CreateSequenceDictionary \
+      R=${ref_genome_dir}/337_MATmasked.fasta \
+      O=${ref_genome_dir}/337_MATmasked.dict
+
 
 #D0 ancestor
 
