@@ -10,6 +10,7 @@
 bedtools_module="BEDTools/2.28.0-foss-2018a"
 picard_module="picard/2.4.1-Java-1.8.0_144"
 bwa_module="BWA/0.7.15-foss-2016b"
+samtools_module="SAMtools/1.6-foss-2016b"
 ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
 #directory reference genome is located in
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
@@ -49,7 +50,7 @@ mkdir ${raw_data}/Anc_SpikeIns
 cd ${raw_data}/Anc_SpikeIns
 module load ${bwa_module}
 
-
+module load ${samtools_module}
 
 
 for file in ${Anc_SpikeIns}/*.fastq.gz
