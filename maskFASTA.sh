@@ -45,8 +45,8 @@ module load ${bwa_module}
 Anc_SpikeIns="/project/dwhlab/Holly/TE_MA_Paradoxus/Paradoxus_MA/Anc_SpikeIns/Holly_gDNA"
 
 
-mkdir ${AllFastas}/Anc_SpikeIns
-cd ${AllFastas}/Anc_SpikeIns
+mkdir ${raw_data}/Anc_SpikeIns
+cd ${raw_data}/Anc_SpikeIns
 module load ${bwa_module}
 
 
@@ -56,9 +56,9 @@ for file in ${Anc_SpikeIns}/*.fastq.gz
 
 do
 
-bwa mem ${ref_genome} ${Anc_SpikeIns}/${BASE}.fastq.gz > ${AllFastas}/Anc_SpikeIns/${BASE}.sam
-samtools view -b ${AllFastas}/Anc_SpikeIns/${BASE}.sam > ${AllFastas}/Anc_SpikeIns/${BASE}.bam
-samtools index ${AllFastas}/Anc_SpikeIns/${BASE}.bam
+bwa mem ${ref_genome} ${Anc_SpikeIns}/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
+samtools view -b ${raw_data}/Anc_SpikeIns/${BASE}.sam > ${raw_data}/Anc_SpikeIns/${BASE}.bam
+samtools index ${raw_data}/Anc_SpikeIns/${BASE}.bam
 
 done
 
