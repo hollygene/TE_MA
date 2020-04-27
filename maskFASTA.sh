@@ -2,8 +2,8 @@
 #PBS -q batch
 #PBS -N MAT_masking
 #PBS -l nodes=1:ppn=1:AMD
-#PBS -l walltime=1:00:00
-#PBS -l mem=10gb
+#PBS -l walltime=12:00:00
+#PBS -l mem=50gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
