@@ -39,46 +39,70 @@ module load ${bwa_module}
 # bwa index ${ref_genome_dir}/337_MATmasked.fasta
 #
 # #D0 ancestor
-for file in ${unmapped_bams}/*_markilluminaadapters.bam
+
+### ancestor spike ins
+
+Anc_SpikeIns="/project/dwhlab/Holly/TE_MA_Paradoxus/Paradoxus_MA/Anc_SpikeIns/Holly_gDNA"
+
+
+mkdir ${AllFastas}/Anc_SpikeIns
+cd ${AllFastas}/Anc_SpikeIns
+module load ${bwa_module}
+
+
+
+
+for file in ${Anc_SpikeIns}/*.fastq.gz
 
 do
 
-FBASE=$(basename $file _markilluminaadapters.bam)
-BASE=${FBASE%_markilluminaadapters.bam}
-OUT="${BASE}_pipedNewRef.sh"
-echo "#!/bin/bash" >> ${OUT}
-echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-echo "#PBS -q highmem_q" >> ${OUT}
-echo "#PBS -l mem=150gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${unmapped_bams}" >> ${OUT}
-echo "module load ${picard_module}" >> ${OUT}
-echo "module load ${bwa_module}" >> ${OUT}
-echo "module load ${samtools_module}" >> ${OUT}
-echo "module load ${GATK_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
-I=${unmapped_bams}/${BASE}_markilluminaadapters.bam \
-FASTQ=/dev/stdout \
-CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
-TMP_DIR=${unmapped_bams}/TMP | \
-bwa mem -M -t 7 -p ${ref_genome_dir}/337_MATmasked.fasta /dev/stdin| \
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
-/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
-ALIGNED_BAM=/dev/stdin \
-UNMAPPED_BAM=${unmapped_bams}/${BASE}_markilluminaadapters.bam \
-OUTPUT=${unmapped_bams}/${BASE}337_MATmasked.bam \
-R=${ref_genome_dir}/337_MATmasked.fasta CREATE_INDEX=true ADD_MATE_CIGAR=true \
-CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
-INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
-PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
-TMP_DIR=${unmapped_bams}/TMP" >> ${OUT}
-qsub ${OUT}
+bwa mem ${ref_genome} ${Anc_SpikeIns}/${BASE}.fastq.gz > ${AllFastas}/Anc_SpikeIns/${BASE}.sam
+samtools view -b ${AllFastas}/Anc_SpikeIns/${BASE}.sam > ${AllFastas}/Anc_SpikeIns/${BASE}.bam
+samtools index ${AllFastas}/Anc_SpikeIns/${BASE}.bam
 
 done
+
+
+# for file in ${unmapped_bams}/*_markilluminaadapters.bam
+#
+# do
+#
+# FBASE=$(basename $file _markilluminaadapters.bam)
+# BASE=${FBASE%_markilluminaadapters.bam}
+# OUT="${BASE}_pipedNewRef.sh"
+# echo "#!/bin/bash" >> ${OUT}
+# echo "#PBS -N ${BASE}_pipedNewRef" >> ${OUT}
+# echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+# echo "#PBS -q highmem_q" >> ${OUT}
+# echo "#PBS -l mem=150gb" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "cd ${unmapped_bams}" >> ${OUT}
+# echo "module load ${picard_module}" >> ${OUT}
+# echo "module load ${bwa_module}" >> ${OUT}
+# echo "module load ${samtools_module}" >> ${OUT}
+# echo "module load ${GATK_module}" >> ${OUT}
+# echo "" >> ${OUT}
+# echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar SamToFastq \
+# I=${unmapped_bams}/${BASE}_markilluminaadapters.bam \
+# FASTQ=/dev/stdout \
+# CLIPPING_ATTRIBUTE=XT CLIPPING_ACTION=2 INTERLEAVE=true NON_PF=true \
+# TMP_DIR=${unmapped_bams}/TMP | \
+# bwa mem -M -t 7 -p ${ref_genome_dir}/337_MATmasked.fasta /dev/stdin| \
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144" -jar  \
+# /usr/local/apps/eb/picard/2.4.1-Java-1.8.0_144/picard.jar MergeBamAlignment \
+# ALIGNED_BAM=/dev/stdin \
+# UNMAPPED_BAM=${unmapped_bams}/${BASE}_markilluminaadapters.bam \
+# OUTPUT=${unmapped_bams}/${BASE}337_MATmasked.bam \
+# R=${ref_genome_dir}/337_MATmasked.fasta CREATE_INDEX=true ADD_MATE_CIGAR=true \
+# CLIP_ADAPTERS=false CLIP_OVERLAPPING_READS=true \
+# INCLUDE_SECONDARY_ALIGNMENTS=true MAX_INSERTIONS_OR_DELETIONS=-1 \
+# PRIMARY_ALIGNMENT_STRATEGY=MostDistant ATTRIBUTES_TO_RETAIN=XS \
+# TMP_DIR=${unmapped_bams}/TMP" >> ${OUT}
+# qsub ${OUT}
+#
+# done
 
 
 #H0 ancestor
