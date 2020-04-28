@@ -63,7 +63,7 @@ BASE=${FBASE%.bam}
 # bwa samse ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.sai ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
 # samtools view -b ${raw_data}/Anc_SpikeIns/${BASE}.sam > ${raw_data}/Anc_SpikeIns/${BASE}.bam
 # samtools sort ${raw_data}/Anc_SpikeIns/${BASE}.bam > ${raw_data}/Anc_SpikeIns/${BASE}_sorted.bam
-samtools index ${raw_data}/Anc_SpikeIns/${BASE}.sorted.bam
+samtools index ${raw_data}/Anc_SpikeIns/${BASE}_sorted.bam
 
 done
 
