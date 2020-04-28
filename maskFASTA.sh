@@ -59,7 +59,7 @@ do
 FBASE=$(basename $file .fastq.gz)
 BASE=${FBASE%.fastq.gz}
 
-bwa mem ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
+bwa samse ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
 samtools view -b ${raw_data}/Anc_SpikeIns/${BASE}.sam > ${raw_data}/Anc_SpikeIns/${BASE}.bam
 samtools index ${raw_data}/Anc_SpikeIns/${BASE}.bam
 
