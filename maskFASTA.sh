@@ -53,19 +53,25 @@ module load ${bwa_module}
 module load ${samtools_module}
 
 
-for file in ${raw_data}/Anc_SpikeIns/*_sorted.bam
-
-do
-FBASE=$(basename $file _sorted.bam)
-BASE=${FBASE%_sorted.bam}
+# for file in ${raw_data}/Anc_SpikeIns/*_sorted.bam
+#
+# do
+# FBASE=$(basename $file _sorted.bam)
+# BASE=${FBASE%_sorted.bam}
 
 # bwa aln ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sai
 # bwa samse ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.sai ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
 # samtools view -b ${raw_data}/Anc_SpikeIns/${BASE}.sam > ${raw_data}/Anc_SpikeIns/${BASE}.bam
 # samtools sort ${raw_data}/Anc_SpikeIns/${BASE}.bam > ${raw_data}/Anc_SpikeIns/${BASE}_sorted.bam
-samtools index ${raw_data}/Anc_SpikeIns/${BASE}_sorted.bam
+# samtools index ${raw_data}/Anc_SpikeIns/${BASE}_sorted.bam
+#
+# done
 
-done
+
+
+
+samtools view -b HMM_D0_S13_R1_001_sorted.bam Spar_III_RaGOO:210706-211230 | samtools mpileup > HMM_D0_S13_R1_001.HML_depth.txt 
+
 
 
 # for file in ${unmapped_bams}/*_markilluminaadapters.bam
