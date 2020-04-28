@@ -53,11 +53,11 @@ module load ${bwa_module}
 module load ${samtools_module}
 
 
-for file in ${raw_data}/Anc_SpikeIns/*.bam
+for file in ${raw_data}/Anc_SpikeIns/*_sorted.bam
 
 do
-FBASE=$(basename $file .bam)
-BASE=${FBASE%.bam}
+FBASE=$(basename $file _sorted.bam)
+BASE=${FBASE%_sorted.bam}
 
 # bwa aln ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sai
 # bwa samse ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.sai ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
