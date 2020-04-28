@@ -70,9 +70,9 @@ module load ${samtools_module}
 
 
 
-samtools view -b HMM_D0_S13_R1_001_sorted.bam Spar_III_RaGOO:210706-211230 | samtools mpileup > HMM_D0_S13_R1_001.HML_depth.txt 
+samtools view -b HMM_D0_S13_R1_001_sorted.bam Spar_III_RaGOO:210706-211230 > HMM_D0_S13_R1_001.HML.bam
 
-
+samtools mpileup HMM_D0_S13_R1_001.HML.bam | awk '{ count++ ; SUM += $4 } END { print "Total: " SUM "\t" "Nucleotides: " count "\t" "Average_coverage: " SUM/count }' > test.txt
 
 # for file in ${unmapped_bams}/*_markilluminaadapters.bam
 #
