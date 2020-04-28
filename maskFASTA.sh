@@ -67,13 +67,35 @@ module load ${samtools_module}
 #
 # done
 
+for file in ${raw_data}/Anc_SpikeIns/*_sorted.bam
 
+do
+FBASE=$(basename $file _sorted.bam)
+BASE=${FBASE%_sorted.bam}
 
+samtools view -b ${BASE}_sorted.bam Spar_III_RaGOO:210706-211230 > ${BASE}.HML.bam
 
-samtools view -b HMM_D0_S13_R1_001_sorted.bam Spar_III_RaGOO:210706-211230 > HMM_D0_S13_R1_001.HML.bam
+samtools mpileup ${BASE}.HML.bam | awk '{ count++ ; SUM += $4 } END { print "Total: " SUM "\t" "Nucleotides: " count "\t" "Average_coverage: " SUM/count }' >  ${BASE}_HML_Depth.txt
 
-samtools mpileup HMM_D0_S13_R1_001.HML.bam | awk '{ count++ ; SUM += $4 } END { print "Total: " SUM "\t" "Nucleotides: " count "\t" "Average_coverage: " SUM/count }' > test.txt
+done
 
+########## HMR
+
+for file in ${raw_data}/Anc_SpikeIns/*_sorted.bam
+
+do
+FBASE=$(basename $file _sorted.bam)
+BASE=${FBASE%_sorted.bam}
+
+samtools view -b ${BASE}_sorted.bam Spar_III_RaGOO:304110-304598 > ${BASE}.HMR.bam
+
+samtools mpileup ${BASE}.HMR.bam | awk '{ count++ ; SUM += $4 } END { print "Total: " SUM "\t" "Nucleotides: " count "\t" "Average_coverage: " SUM/count }' >  ${BASE}_HMR_Depth.txt
+
+done
+
+#######
+#concatenate files into one
+# cat 
 # for file in ${unmapped_bams}/*_markilluminaadapters.bam
 #
 # do
