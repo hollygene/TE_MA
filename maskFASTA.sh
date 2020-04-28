@@ -53,14 +53,14 @@ module load ${bwa_module}
 module load ${samtools_module}
 
 
-for file in ${raw_data}/Anc_SpikeIns/*.fastq.gz
+for file in ${raw_data}/Anc_SpikeIns/*.sai
 
 do
-FBASE=$(basename $file .fastq.gz)
-BASE=${FBASE%.fastq.gz}
+FBASE=$(basename $file .sai)
+BASE=${FBASE%.sai}
 
-bwa aln ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sai
-# bwa samse ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.sai ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
+# bwa aln ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sai
+bwa samse ${ref_genome} ${raw_data}/Anc_SpikeIns/${BASE}.sai ${raw_data}/Anc_SpikeIns/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
 # samtools view -b ${raw_data}/Anc_SpikeIns/${BASE}.sam > ${raw_data}/Anc_SpikeIns/${BASE}.bam
 # samtools index ${raw_data}/Anc_SpikeIns/${BASE}.bam
 
