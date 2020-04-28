@@ -46,19 +46,20 @@ module load ${bwa_module}
 Anc_SpikeIns="/project/dwhlab/Holly/TE_MA_Paradoxus/Paradoxus_MA/Anc_SpikeIns/Holly_gDNA"
 
 
-mkdir ${raw_data}/Anc_SpikeIns
+# mkdir ${raw_data}/Anc_SpikeIns
 cd ${raw_data}/Anc_SpikeIns
 module load ${bwa_module}
 
 module load ${samtools_module}
 
 
-for file in ${Anc_SpikeIns}/*.gz
+for file in ${Anc_SpikeIns}/*.fastq.gz
 
 do
-FBASE=$(basename $file .gz)
-BASE=${FBASE%.gz}
-bwa mem ${ref_genome} ${Anc_SpikeIns}/${BASE}.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
+FBASE=$(basename $file .fastq.gz)
+BASE=${FBASE%.fastq.gz}
+
+bwa mem ${ref_genome} ${Anc_SpikeIns}/${BASE}.fastq.gz > ${raw_data}/Anc_SpikeIns/${BASE}.sam
 samtools view -b ${raw_data}/Anc_SpikeIns/${BASE}.sam > ${raw_data}/Anc_SpikeIns/${BASE}.bam
 samtools index ${raw_data}/Anc_SpikeIns/${BASE}.bam
 
