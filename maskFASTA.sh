@@ -102,7 +102,7 @@ do
 FBASE=$(basename $file _markilluminaadapters.bam)
 BASE=${FBASE%_markilluminaadapters.bam}
 
-samtools view -b ${unmapped_bams}/${BASE}_sorted.bam Spar_III_RaGOO:210706-211230 > ${unmapped_bams}/${BASE}.HML.bam
+samtools view -b ${unmapped_bams}/${BASE}_markilluminaadapters.bam Spar_III_RaGOO:210706-211230 > ${unmapped_bams}/${BASE}.HML.bam
 
 samtools mpileup ${unmapped_bams}/${BASE}.HML.bam | awk '{ count++ ; SUM += $4 } END { print "Total: " SUM "\t" "Nucleotides: " count "\t" "Average_coverage: " SUM/count }' >  ${unmapped_bams}/${BASE}_HML_Depth.txt
 
@@ -120,7 +120,7 @@ do
 FBASE=$(basename $file _markilluminaadapters.bam)
 BASE=${FBASE%_markilluminaadapters.bam}
 
-samtools view -b ${unmapped_bams}/${BASE}_sorted.bam Spar_III_RaGOO:304110-304598 > ${unmapped_bams}/${BASE}.HMR.bam
+samtools view -b ${unmapped_bams}/${BASE}_markilluminaadapters.bam Spar_III_RaGOO:304110-304598 > ${unmapped_bams}/${BASE}.HMR.bam
 
 samtools mpileup ${unmapped_bams}/${BASE}.HMR.bam | awk '{ count++ ; SUM += $4 } END { print "Total: " SUM "\t" "Nucleotides: " count "\t" "Average_coverage: " SUM/count }' >  ${unmapped_bams}/${BASE}_HMR_Depth.txt
 
