@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q batch
+#PBS -q highmem_q
 #PBS -N MAT_masking
-#PBS -l nodes=1:ppn=1:AMD
-#PBS -l walltime=12:00:00
-#PBS -l mem=50gb
+#PBS -l nodes=1:ppn=1:HIGHMEM
+#PBS -l walltime=36:00:00
+#PBS -l mem=150gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
