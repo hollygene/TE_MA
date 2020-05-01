@@ -106,26 +106,26 @@ module load ${samtools_module}
 #
 # done
 ########################################################
-for file in ${unmapped_bams}/*_sorted.bam
-
-do
-
-FBASE=$(basename $file _sorted.bam)
-BASE=${FBASE%_sorted.bam}
-
-samtools index ${unmapped_bams}/${BASE}_sorted.bam
-
-done
+# for file in ${unmapped_bams}/*_sorted.bam
+#
+# do
+#
+# FBASE=$(basename $file _sorted.bam)
+# BASE=${FBASE%_sorted.bam}
+#
+# samtools index ${unmapped_bams}/${BASE}_sorted.bam
+#
+# done
 
 ########################################################
-for file in ${unmapped_bams}/*_sorted.bam
+for file in ${unmapped_bams}/*_MATmasked.bam
 
 do
 
-FBASE=$(basename $file _sorted.bam)
-BASE=${FBASE%_sorted.bam}
+FBASE=$(basename $file _MATmasked.bam)
+BASE=${FBASE%_MATmasked.bam}
 
-samtools view -b ${unmapped_bams}/${BASE}_sorted.bam Spar_III_RaGOO:210706-211230 > ${unmapped_bams}/${BASE}_HML.bam
+samtools view -b ${unmapped_bams}/${BASE}_MATmasked.bam Spar_III_RaGOO:210706-211230 > ${unmapped_bams}/${BASE}_HML.bam
 
 done
 ########################################################
@@ -148,14 +148,14 @@ grep ^ ${unmapped_bams}/*_HML_Depth.txt > ${unmapped_bams}/HML_depth.txt
 
 
 ########################################################
-for file in ${unmapped_bams}/*_sorted.bam
+for file in ${unmapped_bams}/*_MATmasked.bam
 
 do
 
-FBASE=$(basename $file _sorted.bam)
-BASE=${FBASE%_sorted.bam}
+FBASE=$(basename $file _MATmasked.bam)
+BASE=${FBASE%_MATmasked.bam}
 
-samtools view -b ${unmapped_bams}/${BASE}_sorted.bam Spar_III_RaGOO:304110-304598 > ${unmapped_bams}/${BASE}_HMR.bam
+samtools view -b ${unmapped_bams}/${BASE}_MATmasked.bam Spar_III_RaGOO:304110-304598 > ${unmapped_bams}/${BASE}_HMR.bam
 
 done
 ########################################################
