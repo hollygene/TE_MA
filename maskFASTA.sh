@@ -3,7 +3,7 @@
 #PBS -N MAT_masking
 #PBS -l nodes=1:ppn=1:HIGHMEM
 #PBS -l walltime=36:00:00
-#PBS -l mem=150gb
+#PBS -l mem=200gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
@@ -95,16 +95,16 @@ module load ${samtools_module}
 
 
 ########################################################
-for file in ${unmapped_bams}/*_markilluminaadapters.bam
-
-do
-
-FBASE=$(basename $file _markilluminaadapters.bam)
-BASE=${FBASE%_markilluminaadapters.bam}
-
-samtools sort ${unmapped_bams}/${BASE}_markilluminaadapters.bam > ${unmapped_bams}/${BASE}_sorted.bam
-
-done
+# for file in ${unmapped_bams}/*_markilluminaadapters.bam
+#
+# do
+#
+# FBASE=$(basename $file _markilluminaadapters.bam)
+# BASE=${FBASE%_markilluminaadapters.bam}
+#
+# samtools sort ${unmapped_bams}/${BASE}_markilluminaadapters.bam > ${unmapped_bams}/${BASE}_sorted.bam
+#
+# done
 ########################################################
 for file in ${unmapped_bams}/*_sorted.bam
 
