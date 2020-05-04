@@ -615,58 +615,59 @@ done
 #           ###################################################################################################
 #           #
 #           #
-#   module load ${GATK_module}
-# #
-# time gatk CombineGVCFs \
-# -R ${ref_genome} \
-# -O ${mapped_bams}/D1/D1_FullCohort.g.vcf \
-# -V ${mapped_bams}/D1/D1-A-mismatched__variants.g.vcf \
-# -V ${mapped_bams}/D1/D1-1__variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-2_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-3_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-4_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-5_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/D1-6__variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-7_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-8_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-9_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-10_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-11_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-12_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-13_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-14_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-15_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-16_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-17_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-18_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-19_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-20_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/D1-21__variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/D1-22__variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/D1-23__variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-24_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-25_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-26_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-27_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-28_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-29_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-30_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-31_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-32_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-33_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/D1-34__variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-35_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-36_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-37_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-38_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-39_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-40_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-42_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/D1-43__variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-44_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-45_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/HM-D1-46_variants.Recal.g.vcf \
-# -V ${mapped_bams}/D1/D1-48__variants.Recal.g.vcf
+  module load ${GATK_module}
+#
+time gatk CombineGVCFs \
+-R ${ref_genome} \
+-O ${mapped_bams}/D1/D1_FullCohort.g.vcf \
+-V ${mapped_bams}/D1/D1-A-mismatched__variants.g.vcf \
+-V ${mapped_bams}/D1/D1-1__variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-2_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-3_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-4_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-5_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/D1-6__variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-7_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-8_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-9_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-10_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-11_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-12_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-13_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-14_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-15_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-16_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-17_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-18_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-19_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-20_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/D1-21__variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/D1-22__variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/D1-23__variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-24_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-25_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-26_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-27_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-28_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-29_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-30_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-31_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-32_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-33_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/D1-34__variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-35_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-36_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-37_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-38_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-39_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-40_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-42_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/D1-43__variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-44_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-45_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/HM-D1-46_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-33_variants.Recal.g.vcf \
+-V ${mapped_bams}/D1/D1-48__variants.Recal.g.vcf
 #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)

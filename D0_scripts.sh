@@ -34,7 +34,7 @@ ref_genome="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome
 #directory reference genome is located in
 ref_genome_dir="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/"
 #where should the output be sent
-output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out"
+output_directory="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0"
 # mkdir $output_directory
 #location of data to be used in the analysis
 raw_data="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/AllFastas"
@@ -873,58 +873,59 @@ done
 #           ###################################################################################################
 #           #
 #           #
-# module load ${GATK_module}
-# #
-# time gatk CombineGVCFs \
-# -R ${ref_genome} \
-# -O ${output_directory}/D0_FullCohort.g.vcf \
-# -V ${output_directory}/D0-A__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-1_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-2_variants.Recal.g.vcf \
-# -V ${output_directory}/D0-3__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-4_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-5_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-6_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-7_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-9_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-10_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-11_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-12_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-13_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-14_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-15_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-16_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-17_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-18_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-19_variants.Recal.g.vcf \
-# -V ${output_directory}/D0-20__variants.Recal.g.vcf \
-# -V ${output_directory}/D0-21__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-22_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-23_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-24_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-25_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-26_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-27_variants.Recal.g.vcf \
-# -V ${output_directory}/D0-28__variants.Recal.g.vcf \
-# -V ${output_directory}/D0-29__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-30_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-31_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-32_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-33_variants.Recal.g.vcf \
-# -V ${output_directory}/D0-34__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-35_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-36_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-37_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-38_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-39_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-40_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-42_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-43_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-44_variants.Recal.g.vcf \
-# -V ${output_directory}/D0-45__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-46_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-47_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-D0-48_variants.Recal.g.vcf
+module load ${GATK_module}
+#
+time gatk CombineGVCFs \
+-R ${ref_genome} \
+-O ${output_directory}/D0_FullCohort.g.vcf \
+-V ${output_directory}/D0-A__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-1_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-2_variants.Recal.g.vcf \
+-V ${output_directory}/D0-3__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-4_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-5_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-6_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-7_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-9_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-10_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-11_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-12_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-13_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-14_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-15_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-16_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-17_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-18_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-19_variants.Recal.g.vcf \
+-V ${output_directory}/D0-20__variants.Recal.g.vcf \
+-V ${output_directory}/D0-21__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-22_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-23_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-24_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-25_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-26_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-27_variants.Recal.g.vcf \
+-V ${output_directory}/D0-28__variants.Recal.g.vcf \
+-V ${output_directory}/D0-29__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-30_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-31_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-32_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-33_variants.Recal.g.vcf \
+-V ${output_directory}/D0-34__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-35_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-36_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-37_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-38_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-39_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-40_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-42_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-43_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-44_variants.Recal.g.vcf \
+-V ${output_directory}/D0-45__variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-46_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-47_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D20-4_variants.Recal.g.vcf \
+-V ${output_directory}/HM-D0-48_variants.Recal.g.vcf
 #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)
@@ -932,11 +933,11 @@ done
 #              ###################################################################################################
 #
 # #
-# time gatk GenotypeGVCFs \
-# -R ${ref_genome} \
-# -ploidy 2 \
-# --variant ${output_directory}/D0_FullCohort.g.vcf \
-# -O ${output_directory}/D0_FullCohort.vcf
+time gatk GenotypeGVCFs \
+-R ${ref_genome} \
+-ploidy 2 \
+--variant ${output_directory}/D0_FullCohort.g.vcf \
+-O ${output_directory}/D0_FullCohort.vcf
 
 # ###################################################################################################
 # ### Find coverage and put into 10k chunks
@@ -1088,36 +1089,36 @@ module load ${bedtools_module}
 #### Remove low and high read depth first
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/D0/D0_FullCohort.vcf \
--O ${output_directory}/D0/D0_noLow.vcf \
+-V ${output_directory}/D0_FullCohort.vcf \
+-O ${output_directory}/D0_noLow.vcf \
 -select 'vc.getGenotype("D0-A_").getDP() > 82'
 
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/D0/D0_noLow.vcf \
--O ${output_directory}/D0/D0_noLow_noHigh.vcf \
+-V ${output_directory}/D0_noLow.vcf \
+-O ${output_directory}/D0_noLow_noHigh.vcf \
 -select 'vc.getGenotype("D0-A_").getDP() < 206'
 
 low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
 module load ${bedtools_module}
 
 # bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
-bedtools intersect -v -a ${output_directory}/D0/D0_noLow_noHigh.vcf -b ${low_mappability} -header > ${output_directory}/D0/D0_noLow_noHigh_redGem.vcf
+bedtools intersect -v -a ${output_directory}/D0_noLow_noHigh.vcf -b ${low_mappability} -header > ${output_directory}/D0_noLow_noHigh_redGem.vcf
 
 awk 'NR==FNR{a[$1,$2]; next} !(($1,$2) in a)' ${output_directory}/D0/D0_noLow_noHigh_redGem.vcf ${output_directory}/D0/D0_noLow_noHigh.vcf > ${output_directory}/D0/GEMremoved.txt
 
 
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/D0/D0_noLow_noHigh_redGem.vcf \
--O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls.vcf \
+-V ${output_directory}/D0_noLow_noHigh_redGem.vcf \
+-O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls.vcf \
 -select 'vc.getGenotype("D0-A_").isCalled()'
 
 
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls.vcf \
--O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+-V ${output_directory}/D0_noLow_noHigh_redGem_AncCalls.vcf \
+-O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
 -select '!vc.getGenotype("D0-A_").isHet()'
 
 
@@ -1125,8 +1126,8 @@ gatk SelectVariants \
 ### Ancestor hets only
 gatk SelectVariants \
 -R ${ref_genome} \
--V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls.vcf \
--O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_Hets.vcf \
+-V ${output_directory}/D0_noLow_noHigh_redGem_AncCalls.vcf \
+-O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_Hets.vcf \
 -select 'vc.getGenotype("D0-A_").isHet()'
 
 
@@ -1135,8 +1136,8 @@ gatk SelectVariants \
 ### select snps and indels and make into tables
 gatk SelectVariants \
    -R ${ref_genome} \
-   -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
+   -V ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
    --max-nocall-number 0 \
    --exclude-non-variants TRUE \
 	 --restrict-alleles-to BIALLELIC \
@@ -1144,8 +1145,8 @@ gatk SelectVariants \
 #
 gatk SelectVariants \
    -R ${ref_genome} \
-   -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
+   -V ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
    --max-nocall-number 0 \
 	 --exclude-non-variants TRUE \
 	 --restrict-alleles-to BIALLELIC \
@@ -1153,42 +1154,42 @@ gatk SelectVariants \
 
 gatk SelectVariants \
 	 -R ${ref_genome} \
-   -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
+   -V ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+   -O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
    --max-nocall-number 0 \
 	 --exclude-non-variants TRUE \
 	 --restrict-alleles-to BIALLELIC
 
 
 gatk VariantsToTable \
-	 -V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
+	 -V ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
 	 -F CHROM -F POS -F REF -F ALT -F QUAL \
 	 -GF AD -GF DP -GF GQ -GF GT \
-	 -O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
+	 -O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
 
-	 gatk SelectVariants \
+gatk SelectVariants \
 	 	    -R ${ref_genome} \
-	 	    -V ${output_directory}/D0/D0_FullCohort.vcf \
-	 	    -O ${output_directory}/D0/D0_FullCohortCalls.vcf \
+	 	    -V ${output_directory}/D0_FullCohort.vcf \
+	 	    -O ${output_directory}/D0_FullCohortCalls.vcf \
 	 	    --max-nocall-number 0
 
 	 gatk VariantsToTable \
-	 	 -V ${output_directory}/D0/D0_FullCohortCalls.vcf \
+	 	 -V ${output_directory}/D0_FullCohortCalls.vcf \
 	 	 -F CHROM -F POS -F REF -F ALT -F QUAL \
 	 	 -GF AD -GF DP -GF GQ -GF GT \
-	 	 -O ${output_directory}/D0/D0_FullCohortCalls.txt
+	 	 -O ${output_directory}/D0_FullCohortCalls.txt
 
 gatk VariantsToTable \
-	-V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
+	-V ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
 	-F CHROM -F POS -F REF -F ALT -F QUAL \
 	-GF AD -GF DP -GF GQ -GF GT \
-	-O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.txt
+	-O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.txt
 
 gatk VariantsToTable \
--V ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
+-V ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
 -F CHROM -F POS -F REF -F ALT -F QUAL \
 -GF AD -GF DP -GF GQ -GF GT \
--O ${output_directory}/D0/D0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.txt
+-O ${output_directory}/D0_noLow_noHigh_redGem_AncCalls_NoHets_Indels.txt
 
 
 
@@ -1311,7 +1312,14 @@ awk 'NR==FNR{c[$1$2]++;next};c[$1$2] > 0' D0_noLow_noHigh_redGem_AncCalls_Hets.v
 
 awk 'NR==FNR{c[$1$2]++;next};c[$1$2] > 0' D20_noLow_noHigh_redGem_AncCalls_Hets.vcf D0_D1_common.txt > D0_D1_D20_common.txt
 
-# # ###################################################################################################
+
+
+
+awk 'NR==FNR{a[$1]; next} (($1) in a)' D20-44_R1_val_telocate_raw.TY1.bed D20-A-R_R1_val_telocate_raw.TY1.bed > common.txt
+
+
+
+##################################################################################################
 ### This stuff is in Excel
 # # ###################################################################################################
 #

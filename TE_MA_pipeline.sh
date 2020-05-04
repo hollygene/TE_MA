@@ -464,13 +464,29 @@ done
 #
 # done
 #
-# for file in ${output_directory}/D20/*.sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file .sorted.bam)
-# BASE=${FBASE%.sorted.bam}
-#
-# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D20/${BASE}.sorted.bam
-#
-# done
+for file in ${output_directory}/D20/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/D20/${BASE}.sorted.bam
+
+done
+
+
+
+
+
+
+for file in /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/*.bed
+
+do
+
+FBASE=$(basename $file .bed)
+BASE=${FBASE%.bed}
+
+awk 'NR==FNR{a[$1]; next} (($1) in a)' ${BASE}.bed D20-A-R_R1_val_telocate_raw.TY1.bed > ${BASE}_A_Common.txt
+
+done

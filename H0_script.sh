@@ -54,25 +54,25 @@ module load ${GATK_module}
 # #######################################################################################
 # # create a uBAM file
 # #######################################################################################
-# #
-# for file in ${raw_data}/*_R1_001.fastq
 #
-# do
-#
-# FBASE=$(basename $file _R1_001.fastq)
-# BASE=${FBASE%_R1_001.fastq}
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-# /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#     FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-#     FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-#     OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#     READ_GROUP_NAME=${BASE} \
-#     SAMPLE_NAME=${BASE} \
-#     LIBRARY_NAME=H0 \
-#     PLATFORM=illumina \
-#     SEQUENCING_CENTER=GGBC
-#
-# done
+for file in ${raw_data}/*_R1_001.fastq
+
+do
+
+FBASE=$(basename $file _R1_001.fastq)
+BASE=${FBASE%_R1_001.fastq}
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+    FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+    FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+    OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+    READ_GROUP_NAME=${BASE} \
+    SAMPLE_NAME=${BASE} \
+    LIBRARY_NAME=H0 \
+    PLATFORM=illumina \
+    SEQUENCING_CENTER=GGBC
+
+done
 
 # java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
 # /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
@@ -85,73 +85,73 @@ module load ${GATK_module}
 #     PLATFORM=illumina \
 #     SEQUENCING_CENTER=GGBC
 
-# for file in ${raw_data}/*_R1_001.fastq.gz
+for file in ${raw_data}/*_R1_001.fastq.gz
+
+do
+  FBASE=$(basename $file _R1_001.fastq.gz)
+  BASE=${FBASE%_R1_001.fastq.gz}
+	OUT="${BASE}_FastqToSam.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=40gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+      FASTQ=${raw_data}/${BASE}_R1_001.fastq.gz \
+      FASTQ2=${raw_data}/${BASE}_R2_001.fastq.gz  \
+      OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+      READ_GROUP_NAME=${BASE} \
+      SAMPLE_NAME=${BASE} \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC" >> ${OUT}
+	qsub ${OUT}
+done
 #
-# do
-#   FBASE=$(basename $file _R1_001.fastq.gz)
-#   BASE=${FBASE%_R1_001.fastq.gz}
-# 	OUT="${BASE}_FastqToSam.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=40gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#       FASTQ=${raw_data}/${BASE}_R1_001.fastq.gz \
-#       FASTQ2=${raw_data}/${BASE}_R2_001.fastq.gz  \
-#       OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#       READ_GROUP_NAME=${BASE} \
-#       SAMPLE_NAME=${BASE} \
-#       PLATFORM=illumina \
-#       SEQUENCING_CENTER=GGBC" >> ${OUT}
-# 	qsub ${OUT}
-# done
-#
 # #
 # #
 # #
 # #
 # #
 #
-# for file in ${raw_data}/*R1.fq.gz
-#
-# do
-#   FBASE=$(basename $file R1.fq.gz)
-#   BASE=${FBASE%R1.fq.gz}
-# 	OUT="${BASE}_FastqToSam.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=40gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#       FASTQ=${raw_data}/${BASE}R1.fq.gz \
-#       FASTQ2=${raw_data}/${BASE}R2.fq.gz \
-#       OUTPUT=${output_directory}/${BASE}_fastqtosam.bam \
-#       READ_GROUP_NAME=${BASE} \
-#       SAMPLE_NAME=${BASE} \
-#       PLATFORM=illumina \
-#       SEQUENCING_CENTER=GGBC" >> ${OUT}
-# 	qsub ${OUT}
-# done
+for file in ${raw_data}/*R1.fq.gz
+
+do
+  FBASE=$(basename $file R1.fq.gz)
+  BASE=${FBASE%R1.fq.gz}
+	OUT="${BASE}_FastqToSam.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=40gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+      FASTQ=${raw_data}/${BASE}R1.fq.gz \
+      FASTQ2=${raw_data}/${BASE}R2.fq.gz \
+      OUTPUT=${output_directory}/${BASE}_fastqtosam.bam \
+      READ_GROUP_NAME=${BASE} \
+      SAMPLE_NAME=${BASE} \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC" >> ${OUT}
+	qsub ${OUT}
+done
 
 
 
@@ -1476,59 +1476,58 @@ module load ${GATK_module}
 #           ###################################################################################################
 #           #
 #           #
-# module load ${GATK_module}
-# #
-# time gatk CombineGVCFs \
-# -R ${ref_genome} \
-# -O ${output_directory}/H0_FullCohortP1.g.vcf \
-# -V ${output_directory}/H0-A__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-1_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-2_variants.Recal.g.vcf \
-# -V ${output_directory}/H0-3__variants.Recal.g.vcf \
-# -V ${output_directory}/H0-4__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-5_variants.Recal.g.vcf \
-# -V ${output_directory}/H0-7__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-8_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-9_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-10_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-11_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-12_variants.Recal.g.vcf \
-# -V ${output_directory}/H0-13__variants.Recal.g.vcf \
-# -V ${output_directory}/H0-14__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-15_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-16_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-17_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-18_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-19_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-20_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-21_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-22_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-23_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-24_variants.Recal.g.vcf \
-# -V ${output_directory}/H0-25__variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-26_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-27_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-28_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-29_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-30_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-31_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-32_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-33_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-34_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-35_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-36_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-37_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-38_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-39_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-40_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-41_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-42_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-43_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-44_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-45_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-46_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-47_variants.Recal.g.vcf \
-# -V ${output_directory}/HM-H0-48_variants.Recal.g.vcf
+module load ${GATK_module}
+#
+time gatk CombineGVCFs \
+-R ${ref_genome} \
+-O ${output_directory}/H0_FullCohortP1.g.vcf \
+-V ${output_directory}/H0-A__variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-1_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-2_variants.Recal.g.vcf \
+-V ${output_directory}/H0-3__variants.Recal.g.vcf \
+-V ${output_directory}/H0-4__variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-5_variants.Recal.g.vcf \
+-V ${output_directory}/H0-7__variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-8_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-9_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-10_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-11_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-12_variants.Recal.g.vcf \
+-V ${output_directory}/H0-13__variants.Recal.g.vcf \
+-V ${output_directory}/H0-14__variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-15_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-16_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-17_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-18_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-19_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-20_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-21_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-22_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-23_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-24_variants.Recal.g.vcf \
+-V ${output_directory}/H0-25__variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-26_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-27_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-28_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-29_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-30_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-31_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-32_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-34_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-35_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-36_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-37_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-38_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-39_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-40_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-41_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-42_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-43_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-44_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-45_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-46_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-47_variants.Recal.g.vcf \
+-V ${output_directory}/HM-H0-48_variants.Recal.g.vcf
 #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)

@@ -55,71 +55,71 @@ module load ${GATK_module}
 # create a uBAM file
 #######################################################################################
 
-# for file in ${output_directory}/D20/*_R1_001.fastq.gz
-#
-# do
-#   FBASE=$(basename $file _R1_001.fastq.gz)
-#   BASE=${FBASE%_R1_001.fastq.gz}
-# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar FastqToSam \
-#       FASTQ=${output_directory}/D20/${BASE}_R1_001.fastq.gz \
-#       FASTQ2=${output_directory}/D20/${BASE}_R2_001.fastq.gz  \
-#       OUTPUT=${output_directory}/D20/${BASE}_fastqtosam.bam \
-#       READ_GROUP_NAME=${BASE} \
-#       SAMPLE_NAME=${BASE} \
-#       PLATFORM=illumina \
-#       SEQUENCING_CENTER=GGBC
-# done
+for file in ${output_directory}/D20/*_R1_001.fastq.gz
+
+do
+  FBASE=$(basename $file _R1_001.fastq.gz)
+  BASE=${FBASE%_R1_001.fastq.gz}
+java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar FastqToSam \
+      FASTQ=${output_directory}/D20/${BASE}_R1_001.fastq.gz \
+      FASTQ2=${output_directory}/D20/${BASE}_R2_001.fastq.gz  \
+      OUTPUT=${output_directory}/D20/${BASE}_fastqtosam.bam \
+      READ_GROUP_NAME=${BASE} \
+      SAMPLE_NAME=${BASE} \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC
+done
 
 
 
-# for file in ${output_directory}/D20/*R1.fq.gz
-#
-# do
-#   FBASE=$(basename $file R1.fq.gz)
-#   BASE=${FBASE%R1.fq.gz}
-#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-#     /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar FastqToSam \
-#         FASTQ=${output_directory}/D20/${BASE}R1.fq.gz \
-#         FASTQ2=${output_directory}/D20/${BASE}R2.fq.gz  \
-#         OUTPUT=${output_directory}/D20/${BASE}_fastqtosam.bam \
-#         READ_GROUP_NAME=${BASE} \
-#         SAMPLE_NAME=${BASE} \
-#         PLATFORM=illumina \
-#         SEQUENCING_CENTER=GGBC
-#   done
+for file in ${output_directory}/D20/*R1.fq.gz
 
-# for file in ${raw_data}/*_R1_001.fastq
-#
-# do
-#   FBASE=$(basename $file _R1_001.fastq)
-#   BASE=${FBASE%_R1_001.fastq}
-# 	OUT="${BASE}_FastqToSam.sh"
-# 	echo "#!/bin/bash" > ${OUT}
-# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# 	echo "#PBS -q batch" >> ${OUT}
-# 	echo "#PBS -l mem=40gb" >> ${OUT}
-# 	echo "" >> ${OUT}
-# 	echo "cd ${raw_data}" >> ${OUT}
-# 	echo "module load ${picard_module}" >> ${OUT}
-#   echo "module load ${bwa_module}" >> ${OUT}
-#   echo "module load ${samtools_module}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-# 	echo "" >> ${OUT}
-#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-#       FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-#       FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-#       OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-#       READ_GROUP_NAME=${BASE} \
-#       SAMPLE_NAME=${BASE} \
-#       LIBRARY_NAME=D0 \
-#       PLATFORM=illumina \
-#       SEQUENCING_CENTER=GGBC" >> ${OUT}
-# 	qsub ${OUT}
-# done
+do
+  FBASE=$(basename $file R1.fq.gz)
+  BASE=${FBASE%R1.fq.gz}
+  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+    /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar FastqToSam \
+        FASTQ=${output_directory}/D20/${BASE}R1.fq.gz \
+        FASTQ2=${output_directory}/D20/${BASE}R2.fq.gz  \
+        OUTPUT=${output_directory}/D20/${BASE}_fastqtosam.bam \
+        READ_GROUP_NAME=${BASE} \
+        SAMPLE_NAME=${BASE} \
+        PLATFORM=illumina \
+        SEQUENCING_CENTER=GGBC
+  done
+
+for file in ${raw_data}/*_R1_001.fastq
+
+do
+  FBASE=$(basename $file _R1_001.fastq)
+  BASE=${FBASE%_R1_001.fastq}
+	OUT="${BASE}_FastqToSam.sh"
+	echo "#!/bin/bash" > ${OUT}
+	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+	echo "#PBS -q batch" >> ${OUT}
+	echo "#PBS -l mem=40gb" >> ${OUT}
+	echo "" >> ${OUT}
+	echo "cd ${raw_data}" >> ${OUT}
+	echo "module load ${picard_module}" >> ${OUT}
+  echo "module load ${bwa_module}" >> ${OUT}
+  echo "module load ${samtools_module}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+	echo "" >> ${OUT}
+  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+      FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+      FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+      OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+      READ_GROUP_NAME=${BASE} \
+      SAMPLE_NAME=${BASE} \
+      LIBRARY_NAME=D0 \
+      PLATFORM=illumina \
+      SEQUENCING_CENTER=GGBC" >> ${OUT}
+	qsub ${OUT}
+done
 #######################################################################################
 # mark Illumina adapters
 #######################################################################################
@@ -607,8 +607,6 @@ time gatk CombineGVCFs \
 -V ${output_directory}/D20_anc_switched/D20-A-switched__variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-1_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-2_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-3_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-4_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-5_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-6_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-8_variants.Recal.g.vcf \
@@ -632,8 +630,6 @@ time gatk CombineGVCFs \
 -V ${output_directory}/HM-D20-26_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-27_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-28_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-29_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-30_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-31_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-32_variants.Recal.g.vcf \
 -V ${output_directory}/HM-D20-33_variants.Recal.g.vcf \
@@ -658,11 +654,11 @@ time gatk CombineGVCFs \
 #              ###################################################################################################
 #
 #
-  `time gatk GenotypeGVCFs \
+time gatk GenotypeGVCFs \
   -R ${ref_genome} \
   -ploidy 2 \
   --variant ${output_directory}/D20_FullCohort.g.vcf \
-  -O ${output_directory}/D20_FullCohort.vcf`
+  -O ${output_directory}/D20_FullCohort.vcf
 
 # ###################################################################################################
 # ### Find coverage and put into 10k chunks
@@ -677,30 +673,30 @@ bedtools genomecov -d -ibam ${output_directory}/D20/D20-A__recalibratedNewRef.ba
 
 
 
-# module load ${deeptools_module}
-#
-#
-# for file in ${raw_data}/${BASE}*_piped.bam
-#
-# do
-#
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-# OUT="${BASE}_bamCoverage.sh"
-# echo "#!/bin/bash" > ${OUT}
-# echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=20gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
-# echo "module load ${deeptools_module}" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
-# qsub ${OUT}
-#
-# done
+module load ${deeptools_module}
+
+
+for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+
+do
+
+FBASE=$(basename $file _recalibratedNewRef.bam)
+BASE=${FBASE%_recalibratedNewRef.bam}
+OUT="${BASE}_bamCoverage.sh"
+echo "#!/bin/bash" > ${OUT}
+echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
+echo "#PBS -l walltime=12:00:00" >> ${OUT}
+echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+echo "#PBS -q batch" >> ${OUT}
+echo "#PBS -l mem=20gb" >> ${OUT}
+echo "" >> ${OUT}
+echo "cd ${output_directory}" >> ${OUT}
+echo "module load ${deeptools_module}" >> ${OUT}
+echo "" >> ${OUT}
+echo "bamCoverage -b ${output_directory}/${BASE}_recalibratedNewRef.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
+qsub ${OUT}
+
+done
 
 
 # for file in ${raw_data}/${BASE}*_piped.bam
@@ -762,8 +758,14 @@ gatk SelectVariants \
 -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
 -select '!vc.getGenotype("D1-A_").isHet()'
 
-
 ### Ancestor hets only
+gatk SelectVariants \
+-R ${ref_genome} \
+-V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
+-O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_Hets.vcf \
+-select 'vc.getGenotype("D1-A_").isHet()'
+
+
 gatk SelectVariants \
    -R ${ref_genome} \
    -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
