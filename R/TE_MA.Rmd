@@ -1,5 +1,5 @@
 ---
-title: "TE_MA_Paradoxus Practice Analyses"
+title: "TE_MA_Paradoxus Analyses"
 output: html_document
 ---
 
@@ -19,16 +19,6 @@ When you click the **Knit** button a document will be generated that includes bo
 # 
 # BiocManager::install("Sushi")
 # library(sushi)
-# 
-# plotManhattan(bedfile=Sushi_GWAS.bed,pvalues=Sushi_GWAS.bed[,5],
-#                  col=SushiColors(6),genome=Sushi_hg18_genome,cex=0.75)
-# labelgenome(genome=Sushi_hg18_genome,n=4,scale="Mb",
-#                  edgeblankfraction=0.20,cex.axis=.5)
-# axis(side=2,las=2,tcl=.2)
-# mtext("log10(P)",side=2,line=1.75,cex=1,font=2)
-# mtext("chromosome",side=1,line=1.75,cex=1,font=2)
-# 
-# plotBedgraph(Sushi_DNaseI.bedgraph,chrom,chromstart,chromend,colorbycol= SushiColors(5))
 
 library(vcfR)
 library(adegenet)
@@ -42,7 +32,13 @@ library(ggmap)
 library(pinfsc50)
 library(reshape2)
 library(ggplot2)
+library(karyoploteR)
+library(GenomicRanges)
 
+```
+
+VCF Analysis using vcfR 
+```{r VCF analysis, include=TRUE}
 #### Their data 
 # Find and input VCF data.
 # vcf <- system.file("extdata", "pinf_sc50.vcf.gz", package = "pinfsc50")
@@ -152,10 +148,6 @@ plot(chromD0)
 chromoqc(chromD0, dp.alpha=20)
 
 
-
-
-
-
 #vcf@fix[1:10,1:5]
 
 chrom <- create.chromR(name="H0_data",vcf=vcf)
@@ -189,7 +181,7 @@ View(x)
 
 ```
 
-
+Fisher Test for Mutation Rate 
 ```{r mutation rate, echo=FALSE}
 
 # H0vD0.total <- data.frame(matrix(ncol = 2, nrow = 2))
@@ -208,122 +200,100 @@ View(x)
 # test <- fisher.test(H0vD0.total, alternative="two.sided", conf.int=TRUE)
 
 
-
 ```
-## Including Plots
 
+Bedgraph Plots for Coverage - Old Style 
 ```{r plot bedgraphs}
 #file.names -> reads in the files you want to run 
+# 
+# bedgraph.names.H0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/H0", pattern="*.bedgraph",full.names = TRUE)
+# bedgraph.names.H0
 
-bedgraph.names.H0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/H0", pattern="*.bedgraph",full.names = TRUE)
-bedgraph.names.H0
-
-H0_anc <- bedgraph.names.H0[46] 
-H0_anc <- read.table(H0_anc)
-dim(H0_anc)
-colnames(H0_anc) <- c("Chromosome","Start","End","Coverage")
-
-plot(H0_anc$Coverage, col=as.factor(H0_anc$Chromosome), ylab="Coverage",ylim=c(0,30000), xlab="Bins (10kb)")
-# read.table(H0_anc, sep= "\t", header=FALSE)
+# H0_anc <- bedgraph.names.H0[46] 
+# H0_anc <- read.table(H0_anc)
+# dim(H0_anc)
 # colnames(H0_anc) <- c("Chromosome","Start","End","Coverage")
+# 
+# plot(H0_anc$Coverage, col=as.factor(H0_anc$Chromosome), ylab="Coverage",ylim=c(0,30000), xlab="Bins (10kb)")
+# # read.table(H0_anc, sep= "\t", header=FALSE)
+# # colnames(H0_anc) <- c("Chromosome","Start","End","Coverage")
 
-i=1
+# i=1
 
-for(i in 1:length(bedgraph.names.H0)){
-  pdf(paste("",bedgraph.names.H0[i],".CovGraph.pdf", sep=""))
-  file <- read.table(bedgraph.names.H0[i], sep= "\t", header=FALSE)
-  colnames(file) <- c("Chromosome","Start","End","Coverage")
-plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
-dev.off()
-}
+# for(i in 1:length(bedgraph.names.H0)){
+#   pdf(paste("",bedgraph.names.H0[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph.names.H0[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
 
 ############### separate samples into blocks for ylim value
-bedgraph_100.H0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/H0/100/", pattern="*.bedgraph",full.names = TRUE)
-bedgraph_100.H0
-
-for(i in 1:length(bedgraph_100.H0)){
-  pdf(paste("",bedgraph_100.H0[i],".CovGraph.pdf", sep=""))
-  file <- read.table(bedgraph_100.H0[i], sep= "\t", header=FALSE)
-  colnames(file) <- c("Chromosome","Start","End","Coverage")
-plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,10000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
-dev.off()
-}
-
-
+# bedgraph_100.H0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/H0/100/", pattern="*.bedgraph",full.names = TRUE)
+# bedgraph_100.H0
+# 
+# for(i in 1:length(bedgraph_100.H0)){
+#   pdf(paste("",bedgraph_100.H0[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph_100.H0[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,10000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
 
 
+# bedgraph.names.D1 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D1", pattern="*.bedgraph",full.names = TRUE)
+# 
+# for(i in 1:length(bedgraph.names.D1)){
+#   pdf(paste("",bedgraph.names.D1[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph.names.D1[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
 
+# pdf(paste("",bedgraph.names.D1[35],".CovGraph.pdf", sep=""))
+# D1_45 <- read.table(bedgraph.names.D1[35], sep= "\t", header=FALSE)
+#   colnames(D1_45) <- c("Chromosome","Start","End","Coverage")
+# plot(D1_45$Coverage, col=as.factor(D1_45$Chromosome), ylab="Coverage",ylim=c(0,1340000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# 
+# 
 
+# bedgraph.names.D0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D0", pattern="*.bedgraph",full.names = TRUE)
+# 
+# for(i in 1:length(bedgraph.names.D0)){
+#   pdf(paste("",bedgraph.names.D0[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph.names.D0[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
+# 
+# bedgraph.names.D20 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20", pattern="*.bedgraph",full.names = TRUE)
 
+# for(i in 1:length(bedgraph.names.D20)){
+#   pdf(paste("",bedgraph.names.D20[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph.names.D20[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
+# 
+# #### Try plotting graphs of TE Locations
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-bedgraph.names.D1 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D1", pattern="*.bedgraph",full.names = TRUE)
-
-for(i in 1:length(bedgraph.names.D1)){
-  pdf(paste("",bedgraph.names.D1[i],".CovGraph.pdf", sep=""))
-  file <- read.table(bedgraph.names.D1[i], sep= "\t", header=FALSE)
-  colnames(file) <- c("Chromosome","Start","End","Coverage")
-plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
-dev.off()
-}
-
-pdf(paste("",bedgraph.names.D1[35],".CovGraph.pdf", sep=""))
-D1_45 <- read.table(bedgraph.names.D1[35], sep= "\t", header=FALSE)
-  colnames(D1_45) <- c("Chromosome","Start","End","Coverage")
-plot(D1_45$Coverage, col=as.factor(D1_45$Chromosome), ylab="Coverage",ylim=c(0,1340000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
-dev.off()
-
-
-
-bedgraph.names.D0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D0", pattern="*.bedgraph",full.names = TRUE)
-
-for(i in 1:length(bedgraph.names.D0)){
-  pdf(paste("",bedgraph.names.D0[i],".CovGraph.pdf", sep=""))
-  file <- read.table(bedgraph.names.D0[i], sep= "\t", header=FALSE)
-  colnames(file) <- c("Chromosome","Start","End","Coverage")
-plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
-dev.off()
-}
-
-bedgraph.names.D20 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20", pattern="*.bedgraph",full.names = TRUE)
-
-for(i in 1:length(bedgraph.names.D20)){
-  pdf(paste("",bedgraph.names.D20[i],".CovGraph.pdf", sep=""))
-  file <- read.table(bedgraph.names.D20[i], sep= "\t", header=FALSE)
-  colnames(file) <- c("Chromosome","Start","End","Coverage")
-plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
-dev.off()
-}
-
-#### Try plotting graphs of TE Locations
-
-bed.names.D20 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20", pattern="*.bed",full.names = TRUE)
-
-test <- read.table(bed.names.D20[1], sep= "\t", header=FALSE)
-plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
-
-
-for(i in 1:length(bed.names.D20)){
-  pdf(paste("",bed.names.D20[i],".CovGraph.pdf", sep=""))
-  file <- read.table(bed.names.D20[i], sep= "\t", header=FALSE)
-  colnames(file) <- c("Chromosome","Start","End","Coverage")
-plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
-dev.off()
-}
-
-
+# bed.names.D20 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20", pattern="*.bed",full.names = TRUE)
+# 
+# test <- read.table(bed.names.D20[1], sep= "\t", header=FALSE)
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# 
+# 
+# for(i in 1:length(bed.names.D20)){
+#   pdf(paste("",bed.names.D20[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bed.names.D20[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
 
 
 #if you want to try loop: 
@@ -336,39 +306,31 @@ dev.off()
 #  dev.off()
 #}
 
-
-
 ```
 
 
 
-```{r karyoploteR}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+```{r karyoploteR, include=TRUE, echo=FALSE}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("karyoploteR")
 
-BiocManager::install("karyoploteR")
 
-
-browseVignettes("karyoploteR")
-
+# browseVignettes("karyoploteR")
 #Function from Sam 
-make_karyo_Spar337 <- function(mergefile,title) {
-  library(karyoploteR)
-  library(GenomicRanges)
+# make_karyo_Spar337 <- function(mergefile,title) {
   Chr_sizes_GR <- toGRanges("~/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/337_chrm_sizes_red.bed") ## This is just a three column bed file of the chromosome sizes
   gene_bed_GR <- toGRanges("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/337_sites_2.bed") ## This is just a three column bed file of the gene positions (just the gene entries from the gff3 file)
   # supergene_GR <- GRanges(seqnames = "lg16",ranges=IRanges(7311525,18123987)) ## I made this GRanges object to delineate the supergene to add a block for it later
-  
-kp <- plotKaryotype(genome=Chr_sizes_GR)  
+
+chroms <- c("Spar_I_RaGOO", "Spar_II_RaGOO", "Spar_III_RaGOO", "Spar_IV_RaGOO", "Spar_V_RaGOO", "Spar_VI_RaGOO", "Spar_VII_RaGOO", "Spar_VIII_RaGOO", "Spar_IX_RaGOO", "Spar_X_RaGOO", "Spar_XI_RaGOO", "Spar_XII_RaGOO", "Spar_XIII_RaGOO", "Spar_XIV_RaGOO", "Spar_XV_RaGOO","Spar_XVI_RaGOO")
+  kp <- plotKaryotype(genome=Chr_sizes_GR)  
   plot.params <- getDefaultPlotParams(plot.type = 1) ## This defines how the plot will generally be structured. See the options in the karyoploter documentation
   plot.params$data1height=8
   plot.params$data1outmargin = 4
   plot.params$data1inmargin = 2
   plot.params$ideogramheight = 2
-  
-# library(BiocManager)
-#       install("BSgenome.Hsapiens.UCSC.hg19")  
-#   regions <- createRandomRegions(nregions=10000, length.mean = 1e6, mask=NA, non.overlapping=FALSE)
 
 D20_A_cov <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20/D20-A_.bedgraph")
 str(D20_A_cov)
@@ -384,13 +346,7 @@ TEs.2 <- toGRanges(TEs)
 TEs.3 <- toDataframe(TEs.2)
 
 
-
 # kpPlotRegions(kp1,data=TEs.2,col="#AACCFF",later.margin=0.01,border=NA,r0=0,r1=0.5)
-
-
-
-
-
 
 ## Place the DE dots in the region of the plot that I want
   # kpAxis(kp, ymax=fc.ymax, ymin=fc.ymin,side = 2,cex=0.5,r0 = 0.15, r1 = 0.7) ## Add the axis for the DE dots
@@ -398,7 +354,6 @@ TEs.3 <- toDataframe(TEs.2)
   # kpPlotRegions(kp,data = supergene_GR,col="red", r0=0,r1=0.1) ## add a box to show where the supergene is
   # kpPlotMarkers(kp, ordered[1:10], labels = ordered[1:10]$Row.names, text.orientation = "vertical",adjust.label.position = TRUE,r0 = 0.75) ## Add markers for the top 10 most DE genes
   # 
-
 
 ## Load in, filter and format the DE data to be plotted. End result should be a GRanges object with extra columns of differential expression stats (logFC, FDR, etc)
   # temp <- mergefile
@@ -408,25 +363,25 @@ TEs.3 <- toDataframe(TEs.2)
   # DEG_GR <- makeGRangesFromDataFrame(temp.sig, seqnames.field = "chr",start.field = "start",end.field = "end",keep.extra.columns = TRUE)
   # 
   ## Begin generating the plot itself. If you want to change anything in the plot after first generating it, start again here. 
-  kp <- plotKaryotype(genome = Chr_sizes_GR, cytobands = gene_bed_GR,chromosomes = c("lg16"),plot.params = plot.params)
-  ordered <- DEG_GR[order(DEG_GR$FDR, na.last = TRUE),] ## Sorts my DEG data to plot the top ten most DE genes later
-  fc.ymax=ceiling(max(abs(DEG_GR$logFC))) ## Define the maximum axes of the DEG plots
-  fc.ymin=0 ## Define the minimum axes of the DEG plots 
-  cex.val <- -log10(DEG_GR$FDR)/7 ## Sets the size for each gene dot based on significance
-  col.over <- "#FFBD07AA" #Yellow
-  col.under <- "#00A6EDAA" #Blue
-  col.insig <- "#7F7F7F"
-  sign.col <- rep(col.insig, length(DEG_GR)) ## This and the next two lines generate a an array of color entries linked to the genes to color the dots
-  sign.col[(DEG_GR$logFC<0)&(DEG_GR$FDR<=0.01)] <- col.under
-  sign.col[(DEG_GR$logFC>0)&(DEG_GR$FDR<=0.01)] <- col.over
+  # kp <- plotKaryotype(genome = Chr_sizes_GR, cytobands = gene_bed_GR,chromosomes = c("Spar_XVI_RaGOO"),plot.params = plot.params)
+  # ordered <- DEG_GR[order(DEG_GR$FDR, na.last = TRUE),] ## Sorts my DEG data to plot the top ten most DE genes later
+  # fc.ymax=ceiling(max(abs(DEG_GR$logFC))) ## Define the maximum axes of the DEG plots
+  # fc.ymin=0 ## Define the minimum axes of the DEG plots 
+  # cex.val <- -log10(DEG_GR$FDR)/7 ## Sets the size for each gene dot based on significance
+  # col.over <- "#FFBD07AA" #Yellow
+  # col.under <- "#00A6EDAA" #Blue
+  # col.insig <- "#7F7F7F"
+  # sign.col <- rep(col.insig, length(DEG_GR)) ## This and the next two lines generate a an array of color entries linked to the genes to color the dots
+  # sign.col[(DEG_GR$logFC<0)&(DEG_GR$FDR<=0.01)] <- col.under
+  # sign.col[(DEG_GR$logFC>0)&(DEG_GR$FDR<=0.01)] <- col.over
   
-  kpPoints(kp, data=DEG_GR, y=abs(DEG_GR$logFC), ymax=fc.ymax, ymin=fc.ymin,cex=cex.val, col=sign.col,r0 = 0.15, r1 = 0.7) ## Place the DE dots in the region of the plot that I want
-  kpAxis(kp, ymax=fc.ymax, ymin=fc.ymin,side = 2,cex=0.5,r0 = 0.15, r1 = 0.7) ## Add the axis for the DE dots
-  kpAddMainTitle(kp,main=title) ## Add a title to the plot
-  kpPlotRegions(kp,data = supergene_GR,col="red", r0=0,r1=0.1) ## add a box to show where the supergene is
-  kpPlotMarkers(kp, ordered[1:10], labels = ordered[1:10]$Row.names, text.orientation = "vertical",adjust.label.position = TRUE,r0 = 0.75) ## Add markers for the top 10 most DE genes
+  # kpPoints(kp, data=DEG_GR, y=abs(DEG_GR$logFC), ymax=fc.ymax, ymin=fc.ymin,cex=cex.val, col=sign.col,r0 = 0.15, r1 = 0.7) ## Place the DE dots in the region of the plot that I want
+  # kpAxis(kp, ymax=fc.ymax, ymin=fc.ymin,side = 2,cex=0.5,r0 = 0.15, r1 = 0.7) ## Add the axis for the DE dots
+  # kpAddMainTitle(kp,main=title) ## Add a title to the plot
+  # kpPlotRegions(kp,data = supergene_GR,col="red", r0=0,r1=0.1) ## add a box to show where the supergene is
+  # kpPlotMarkers(kp, ordered[1:10], labels = ordered[1:10]$Row.names, text.orientation = "vertical",adjust.label.position = TRUE,r0 = 0.75) ## Add markers for the top 10 most DE genes
   
-} ## Make karyoplot for linearized genome (!!)
+# } ## Make karyoplot for linearized genome (!!)
 
 
 # ##################################################################################################
@@ -472,15 +427,14 @@ TEs.3 <- toDataframe(TEs.2)
 # load in chromosome sizes and cytobands files
 
 
-kp1 <- plotKaryotype(plot.type=2, genome=Chr_sizes_GR,cytobands=gene_bed_GR,chromosomes = c("Spar_XII_RaGOO"))
+{kp1 <- plotKaryotype(plot.type=2, genome=Chr_sizes_GR,cytobands=gene_bed_GR,chromosomes = c("Spar_XII_RaGOO"))
 # this tells the program to add base numbers (self-explanatory)
 kpAddBaseNumbers(kp1)
 # this plots whatever markers you tell it to - in this case, markers of TEs in this genome
 kpPlotMarkers(kp1, chr=TEs$chr, x=TEs$start, labels=TEs$TE,data.panel=2)
 # this plots the coverage in 10kb chunks bc that's what we computed
-kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel=1,col="blue")
+kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel=1,col="blue")}
 # gives a plot of chromosome XII with coverage on top and TE locations on the bottom 
-
 
 
 ## check out D20-1, look at chr VI first, then chr XVI
@@ -496,7 +450,7 @@ str(TEs_1)
 TEs_1 <- toGRanges(TEs_1)
 # TEs.3 <- toDataframe(TEs.2)
 
-kp1 <- plotKaryotype(plot.type=2, genome=Chr_sizes_GR,cytobands=gene_bed_GR,chromosomes = c("Spar_IX_RaGOO"))
+{kp1 <- plotKaryotype(plot.type=2, genome=Chr_sizes_GR,cytobands=gene_bed_GR,chromosomes = c("Spar_XII_RaGOO"))
 # this tells the program to add base numbers (self-explanatory)
 kpAddBaseNumbers(kp1)
 # this plots whatever markers you tell it to - in this case, markers of TEs in this genome
@@ -504,11 +458,46 @@ kpPlotMarkers(kp1, data=TEs_1, chr=TEs_1$chr, x=TEs_1$start, labels=TEs_1$TE, da
 # this plots the coverage in 10kb chunks bc that's what we computed
 kpBars(kp1, data=D20_1_GR, y1=D20_1_GR$coverage, ymax=max(D20_1_GR$coverage)/2, data.panel=1,col="green", r0=0, r1=0.25)
 kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel = 1, col="blue",r0=0.25, r1=0.5)
-kpPlotCoverage(kp1, data=D20_A_GR, data.panel = 1, col="blue",r0=0.25, r1=0.5)
+kpPlotCoverage(kp1, data=D20_A_GR, data.panel = 1, col="blue",r0=0.25, r1=0.5)}
 # gives a plot of chromosome XII with coverage on top and TE locations on the bottom 
 
 # You need to make sure that the chromosome you call in plotKaryotype is present in the TE file and that the chromosome names match (i.e. the TE files don't have _RaGOO at the end of their chromosome names)
 
+####################################################################################################################
+#### Trying with .depth file generated by Audrey (this file has depth at every site in the genome )
+
+D20_10_depth <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20/HM-D20-10.depth")
+str(D20_10_depth)
+colnames(D20_10_depth) <- c("chr","pos","coverage")
+D20_10_GR <- makeGRangesFromDataFrame(D20_10_depth,seqnames.field = "chr", start.field = "pos", end.field = "pos", keep.extra.columns = TRUE)
+
+TEs_10 <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/HM-D20-10_R1_001_val_telocate_raw.TY1.bed")
+colnames(TEs_10) <- c("chr","start","end","TE")
+str(TEs_10)  
+TEs_10 <- toGRanges(TEs_10)
+# TEs.3 <- toDataframe(TEs.2)
+
+# mid.regs <- createRandomRegions(nregions = 6000, length.mean = 5000000, length.sd = 1000000, non.overlapping = FALSE)
+
+
+{pdf("kpPlotD20-10.pdf")
+  kp10 <- plotKaryotype(genome=Chr_sizes_GR,cytobands=gene_bed_GR,chromosomes= chroms, cex=0.5)
+# this tells the program to add base numbers (self-explanatory)
+kpAddBaseNumbers(kp10,tick.dist = 100000,add.units = TRUE)
+# this plots whatever markers you tell it to - in this case, markers of TEs in this genome
+kpPlotMarkers(kp10, data=TEs_10, chr=TEs_10$chr, x=TEs_10$start, labels=TEs_10$TE, data.panel=2,cex=0.5, text.orientation = "horizontal", line.color = "pink", label.color = "purple", label.dist = 0.01, max.iter = 1000)
+# kpPlotRegions(kp10, data=gene_bed_GR,data.panel = 2)
+##### Use kpRect to plot TEs so you can use start and stop positions to show length of TE 
+# kpPlotRegions(kp10, data=TEs_10, border=NA, r0=0.2, r1=1, data.panel = 2)
+# this plots the coverage in 10kb chunks bc that's what we computed
+kpBars(kp10, data=D20_10_GR, y1=D20_10_GR$coverage, ymax=max(D20_10_GR$coverage)/2, data.panel=1)
+dev.off()}
+#, r0=0, r1=0.25)}
+# kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel = 1, col="blue",r0=0.25, r1=0.5)
+# kpPlotCoverage(kp1, data=D20_10_GR, data.panel = 1, col="blue",r0=0.25, r1=0.5)}
+# gives a plot of chromosome XII with coverage on top and TE locations on the bottom 
+
+# You need to make sure that the chromosome you call in plotKaryotype is present in the TE file and that the chromosome names match (i.e. the TE files don't have _RaGOO at the end of their chromosome names)
 
 
 
