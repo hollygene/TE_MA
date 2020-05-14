@@ -444,7 +444,7 @@ D20_1_cov <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedG
 str(D20_1_cov)
 colnames(D20_1_cov) <- c("chr","start","end","coverage")
 D20_1_GR <- makeGRangesFromDataFrame(D20_1_cov,seqnames.field = "chr", start.field = "start", end.field = "end", keep.extra.columns = TRUE)
-TEs_1 <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/HM-D20-1_R1_001_val_telocate_raw.TY1.bed")
+TEs_1 <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/HM-D20-1_R1_001_val_telocate.bed")
 colnames(TEs_1) <- c("chr","start","end","TE")
 str(TEs_1)  
 TEs_1 <- toGRanges(TEs_1)
@@ -457,10 +457,10 @@ kpAddBaseNumbers(kp1)
 kpPlotMarkers(kp1, data=TEs_1, chr=TEs_1$chr, x=TEs_1$start, labels=TEs_1$TE, data.panel=2)
 # this plots the coverage in 10kb chunks bc that's what we computed
 kpBars(kp1, data=D20_1_GR, y1=D20_1_GR$coverage, ymax=max(D20_1_GR$coverage)/2, data.panel=1,col="green", r0=0, r1=0.25)
-kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel = 1, col="blue",r0=0.25, r1=0.5)
-kpPlotCoverage(kp1, data=D20_A_GR, data.panel = 1, col="blue",r0=0.25, r1=0.5)}
+}
 # gives a plot of chromosome XII with coverage on top and TE locations on the bottom 
-
+kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel = 1, col="blue",r0=0.25, r1=0.5)
+kpPlotCoverage(kp1, data=D20_A_GR, data.panel = 1, col="blue",r0=0.25, r1=0.5)
 # You need to make sure that the chromosome you call in plotKaryotype is present in the TE file and that the chromosome names match (i.e. the TE files don't have _RaGOO at the end of their chromosome names)
 
 ####################################################################################################################
@@ -480,25 +480,60 @@ TEs_10 <- toGRanges(TEs_10)
 # mid.regs <- createRandomRegions(nregions = 6000, length.mean = 5000000, length.sd = 1000000, non.overlapping = FALSE)
 
 
-{pdf("kpPlotD20-10.pdf")
-  kp10 <- plotKaryotype(genome=Chr_sizes_GR,cytobands=gene_bed_GR,chromosomes= chroms, cex=0.5)
+plotDepthTELocations <- function(depthFile,teFile,sample,chroms) {
+  # load in depth table 
+  depth <- depthFile
+  #add column names
+colnames(depth) <- c("chr","pos","coverage")
+# turn file into a GRanges object
+depthGR <- makeGRangesFromDataFrame(depth,seqnames.field = "chr", start.field = "pos", end.field = "pos", keep.extra.columns = TRUE)
+# load in TE file (from TELocate)
+TEs <- teFile
+# add column names 
+colnames(TEs) <- c("chr","start","end","TE")
+# make GRanges object from TE file 
+TEs <- toGRanges(TEs)
+# make pdf plot for all chromosomes: depth + TE locations 
+
+{pdf(paste("depthTELocate",sample,".pdf"))
+  #general plotKaryotype command (same for all samples)
+  kp <- plotKaryotype(genome=Chr_sizes_GR, cytobands=gene_bed_GR, chromosomes= chroms, cex=0.5)
 # this tells the program to add base numbers (self-explanatory)
-kpAddBaseNumbers(kp10,tick.dist = 100000,add.units = TRUE)
+  # can specify how spaced out you want them using tick.dist 
+  # units adds "kb", "mb", etc 
+kpAddBaseNumbers(kp,tick.dist = 100000,add.units = TRUE)
 # this plots whatever markers you tell it to - in this case, markers of TEs in this genome
-kpPlotMarkers(kp10, data=TEs_10, chr=TEs_10$chr, x=TEs_10$start, labels=TEs_10$TE, data.panel=2,cex=0.5, text.orientation = "horizontal", line.color = "pink", label.color = "purple", label.dist = 0.01, max.iter = 1000)
-# kpPlotRegions(kp10, data=gene_bed_GR,data.panel = 2)
-##### Use kpRect to plot TEs so you can use start and stop positions to show length of TE 
-# kpPlotRegions(kp10, data=TEs_10, border=NA, r0=0.2, r1=1, data.panel = 2)
-# this plots the coverage in 10kb chunks bc that's what we computed
-kpBars(kp10, data=D20_10_GR, y1=D20_10_GR$coverage, ymax=max(D20_10_GR$coverage)/2, data.panel=1)
-dev.off()}
+# can specify colors of lines and text, distance labels are from each other, etc 
+# data panel = 2 specifies that it is the bottom panel 
+kpPlotMarkers(kp, data=TEs, chr=TEs$chr, x=TEs$start, labels=TEs$TE, data.panel=2,cex=0.5, text.orientation = "horizontal", line.color = "pink", label.color = "purple", label.dist = 0.01, max.iter = 1000)
+# this plots coverage at every base along each chromosome from depth file 
+# data panel = 1 specifies it is the top panel 
+kpBars(kp, data=depthGR, y1=depthGR$coverage, ymax=max(depthGR$coverage)/2, data.panel=1)
+dev.off() }
+
+}
+
+depthFileNamesD20 <- list.files(path = "/Users/hollymcqueary/Dropbox/depthFiles/D20", pattern="*.depth",full.names = TRUE)
+
+testDepth <- read.table("/Users/hollymcqueary/Dropbox/depthFiles/D20/HM-D20-24.depth")
+testLocations <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/HM-D20-24_R1_001_val_telocate.bed")
+plotDepthTELocations(testDepth,testLocations,"Sample24All","Spar_IX_RaGOO")
+plotDepthTELocations(testDepth,testLocations,"Sample24All",chroms)
+
+
+
+for(i in 1:length(depthFileNamesD20)) {
+plotDepthTELocations(depthFileNames[i],testLocations,"Sample24") 
+  dev.off() } 
 #, r0=0, r1=0.25)}
 # kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel = 1, col="blue",r0=0.25, r1=0.5)
 # kpPlotCoverage(kp1, data=D20_10_GR, data.panel = 1, col="blue",r0=0.25, r1=0.5)}
 # gives a plot of chromosome XII with coverage on top and TE locations on the bottom 
 
 # You need to make sure that the chromosome you call in plotKaryotype is present in the TE file and that the chromosome names match (i.e. the TE files don't have _RaGOO at the end of their chromosome names)
-
+# kpPlotRegions(kp10, data=gene_bed_GR,data.panel = 2)
+##### Use kpRect to plot TEs so you can use start and stop positions to show length of TE 
+# kpPlotRegions(kp10, data=TEs_10, border=NA, r0=0.2, r1=1, data.panel = 2)
 
 
 
