@@ -693,7 +693,7 @@ echo "" >> ${OUT}
 echo "cd ${output_directory}" >> ${OUT}
 echo "module load ${deeptools_module}" >> ${OUT}
 echo "" >> ${OUT}
-echo "bamCoverage -b ${output_directory}/${BASE}_recalibratedNewRef.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
+echo "bamCoverage -b ${output_directory}/${BASE}_recalibratedNewRef.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 1" >> ${OUT}
 qsub ${OUT}
 
 done
@@ -854,6 +854,10 @@ gatk VariantsToTable \
 # ## VCF tools to extract all of the GT entries:
 #
 # vcftools --vcf file.vcf --extract-FORMAT-info GT
+
+
+samtools depth -a -d 100000 HM-D20-10_recalibratedNewRef.bam > HM-D20-10.depth
+
 
 
 #            # ###################################################################################################

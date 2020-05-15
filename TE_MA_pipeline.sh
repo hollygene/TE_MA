@@ -430,17 +430,22 @@ done
 # module load ${samtools_module}
 # export PATH=${PATH}:${script_location}
 #
-# ## Loop
-# for file in ${output_directory}/H0/*.sorted.bam
-#
-# do
-#
-# FBASE=$(basename $file .sorted.bam)
-# BASE=${FBASE%.sorted.bam}
-#
-# python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/H0/${BASE}.sorted.bam
-#
-# done
+## Loop
+for file in ${output_directory}/H0/*.sorted.bam
+
+do
+
+FBASE=$(basename $file .sorted.bam)
+BASE=${FBASE%.sorted.bam}
+
+python3 ${bamToBigWig} -sort ${ref_genome_dir}/*.fai ${output_directory}/H0/${BASE}.sorted.bam
+
+done
+
+
+
+python3 /scratch/hcm14449/TE_MA_Paradoxus/bedGraphToBigWigScript -sort /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/*.fai /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D20/HM-D20-37_sorted.bam
+
 #
 # for file in ${output_directory}/D0/*.sorted.bam
 #
