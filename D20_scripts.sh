@@ -860,6 +860,13 @@ samtools depth -a -d 100000 HM-D20-10_recalibratedNewRef.bam > HM-D20-10.depth
 
 
 
+
+
+module load HTSlib/1.6-foss-2016b
+
+cat H0_noLow.vcf | bgzip -c > H0_noLow.vcf.gz
+tabix H0_noLow.vcf.gz
+
 #            # ###################################################################################################
 #            # ### Find coverage and put into 10k chunks
 #            # ###################################################################################################

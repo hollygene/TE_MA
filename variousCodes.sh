@@ -23,7 +23,7 @@ awk -F" " 'BEGIN { OFS = "\t" } {print $0}' 337_sites.bed > 337_sites_2.bed
 sed $'s/ /\t/g' 337_sites.bed > 337_sites_2.bed
 
 
-for file in /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/*_raw.TY1.bed 
+for file in /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/*_raw.TY1.bed
 
 do
 
@@ -42,3 +42,17 @@ do
 
 FBASE=$(basename $file _R1_001.fastq)
 BASE=${FBASE%_R1_001.fastq}
+
+
+
+
+
+#### using bedops, getfasta to find variant context (the surrounding nucleotides)
+
+
+# first we need to get a vcf file of just the variants we want
+# currently we have an excel file of the variants we want, but we need to pull these sites out from the original vcf
+# prints rows of file 2 that match the first two columns of file 1
+awk 'NR==FNR{c[$1$2]++;next};c[$1$2] > 0' H0_FullCohort_Unfiltered.vcf vars_final_HM.csv > H0_variants_final.vcf
+
+awk 'NR==FNR{a[$1,$2]; next} (($1,$2) in a)' vars_final_HM.csv H0_FullCohort_Unfiltered.vcf > H0_variants_final.vcf
