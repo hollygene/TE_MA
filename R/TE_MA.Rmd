@@ -181,7 +181,7 @@ VCF Analysis using vcfR
 
 
 #### Load in data for H0 
-H0_mut <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_vcf_all_NEWCALLSv2_HM.csv",header=TRUE,fill=TRUE,sep=",")
+# H0_mut <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_vcf_all_NEWCALLSv2_HM.csv",header=TRUE,fill=TRUE,sep=",")
 
 
 
@@ -562,7 +562,31 @@ plotDepthTELocations(depthFileNamesD20[i],consensusTEs,sampleNames[i],"Spar_VI_R
 
 
 ```
+
+Plots 
+```{r plots, include=TRUE,echo=FALSE}
+h0_triNT <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_trinucleotideContext.txt",header=TRUE)
+h0_0_1 <- subset(h0_triNT, context=="GCG")
+h0_0_2 <- subset(h0_triNT, context=="CAG")
+
+h0_triNT_plot <- qplot(x=context,y=Relative_Mutation_Rate, data=h0_triNT, geom="point")
+h0_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) + labs(y="Relative Mutation Rate",x="") + scale_y_continuous(n.breaks=13, limits=c(0,14)) + geom_point(data=h0_0_1, colour="red") + geom_point(data=h0_0_2, colour="red")
+last_plot()
+
+ggsave("h0_trNT.pdf",width=6,height=4)
+
+
+
+
+
+
+```
+
+
+
 Packages used in this analysis
+
+
 ```{r packagesUsed, include = TRUE }
 library(vcfR)
 library(adegenet)
