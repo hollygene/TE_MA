@@ -56,3 +56,14 @@ BASE=${FBASE%_R1_001.fastq}
 awk 'NR==FNR{c[$1$2]++;next};c[$1$2] > 0' H0_FullCohort_Unfiltered.vcf vars_final_HM.csv > H0_variants_final.vcf
 
 awk 'NR==FNR{a[$1,$2]; next} (($1,$2) in a)' vars_final_HM.csv H0_FullCohort_Unfiltered.vcf > H0_variants_final.vcf
+
+
+
+
+### BLAST indels in D1 against the ancestor
+# make custom database using ancestor genome
+module spider BLAST+
+module load BLAST+/2.7.1-foss-2016b-Python-2.7.14
+makeblastdb -in /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta -dbtype nucl -parse_seqids
+
+blastn -num_threads 4 -db /db/ncbiblast/nrte/latest/nt [options]

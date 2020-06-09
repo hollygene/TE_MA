@@ -565,22 +565,58 @@ plotDepthTELocations(depthFileNamesD20[i],consensusTEs,sampleNames[i],"Spar_VI_R
 
 Plots 
 ```{r plots, include=TRUE,echo=FALSE}
-h0_triNT <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_trinucleotideContext.txt",header=TRUE)
+h0_triNT <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_snps_tricontext.txt",header=TRUE)
+colnames(h0_triNT) <- c("alt","context","Relative Mutation Rate","Percent")
 h0_0_1 <- subset(h0_triNT, context=="GCG")
 h0_0_2 <- subset(h0_triNT, context=="CAG")
 
-h0_triNT_plot <- qplot(x=context,y=Relative_Mutation_Rate, data=h0_triNT, geom="point")
-h0_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) + labs(y="Relative Mutation Rate",x="") + scale_y_continuous(n.breaks=13, limits=c(0,14)) + geom_point(data=h0_0_1, colour="red") + geom_point(data=h0_0_2, colour="red")
+library(ggplot2)
+h0_triNT_plot <- qplot(x=context,y=`Relative Mutation Rate`, data=h0_triNT, geom="point")
+h0_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) + labs(y="Relative Mutation Rate",x="") + scale_y_continuous(n.breaks=13, limits=c(0,14)) + geom_point(data=h0_0_2, colour="red") + geom_point(data=h0_0_1,colour="red")
 last_plot()
 
 ggsave("h0_trNT.pdf",width=6,height=4)
 
+h0_triNT_plot <- qplot(x=context,y=Percent, data=h0_triNT, geom="point")
+h0_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) + labs(y="Relative Mutation Rate",x="")+ scale_y_continuous(n.breaks=20, limits=c(0,100))
+last_plot()
 
+
+##########################################################
+d0_triNT <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D0/D0_snps_context.txt",header=TRUE)
+d0_triNT$context <- factor(d0_triNT$context, levels = d0_triNT$context)
+
+library(ggplot2)
+d0_triNT_plot <- qplot(x=context,y=Relative_mutation_rate, data=d0_triNT, geom="point")
+d0_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) +  aes(x=context,y=Relative_mutation_rate) + labs(y="Relative Mutation Rate",x="") + scale_y_continuous(n.breaks=13, limits=c(0,14))
+last_plot()
+
+ggsave("d0_trNT.pdf",width=6,height=4)
+
+h0_triNT_plot <- qplot(x=context,y=Percent, data=h0_triNT, geom="point")
+h0_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) + labs(y="Relative Mutation Rate",x="")+ scale_y_continuous(n.breaks=20, limits=c(0,100))
+last_plot()
+
+
+```
+
+Comparison of mutation rates between experiments 
+```{r compare, include=TRUE, echo=FALSE}
+compare <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/compare_table.txt", header=TRUE)
+
+
+library(ggplot2)
+compare$strain <- c("SparHap0","SparHap0.1","SparHap1","S.pombe","S.cer-Hap","S.cer-Dip","S.cer-DipZhu")
+pdf("mutation_rate_comp2.pdf")
+compPlot <- ggplot(data=compare, aes(strain,mutation_rate,ymin=mutation_rate-SE,ymax=mutation_rate+SE))
+compPlot + geom_pointrange() + theme(axis.text.x = element_text(size = 10)) + ggtitle("Mutation Rate Comparison") + labs(x="Study",y="mutation rate per site per generation")
+dev.off()
 
 
 
 
 ```
+
 
 
 
