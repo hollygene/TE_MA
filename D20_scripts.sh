@@ -51,75 +51,75 @@ module load ${bwa_module}
 module load ${samtools_module}
 module load ${GATK_module}
 
-#######################################################################################
-# create a uBAM file
-#######################################################################################
-
-for file in ${output_directory}/D20/*_R1_001.fastq.gz
-
-do
-  FBASE=$(basename $file _R1_001.fastq.gz)
-  BASE=${FBASE%_R1_001.fastq.gz}
-java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-  /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar FastqToSam \
-      FASTQ=${output_directory}/D20/${BASE}_R1_001.fastq.gz \
-      FASTQ2=${output_directory}/D20/${BASE}_R2_001.fastq.gz  \
-      OUTPUT=${output_directory}/D20/${BASE}_fastqtosam.bam \
-      READ_GROUP_NAME=${BASE} \
-      SAMPLE_NAME=${BASE} \
-      PLATFORM=illumina \
-      SEQUENCING_CENTER=GGBC
-done
-
-
-
-for file in ${output_directory}/D20/*R1.fq.gz
-
-do
-  FBASE=$(basename $file R1.fq.gz)
-  BASE=${FBASE%R1.fq.gz}
-  java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
-    /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar FastqToSam \
-        FASTQ=${output_directory}/D20/${BASE}R1.fq.gz \
-        FASTQ2=${output_directory}/D20/${BASE}R2.fq.gz  \
-        OUTPUT=${output_directory}/D20/${BASE}_fastqtosam.bam \
-        READ_GROUP_NAME=${BASE} \
-        SAMPLE_NAME=${BASE} \
-        PLATFORM=illumina \
-        SEQUENCING_CENTER=GGBC
-  done
-
-for file in ${raw_data}/*_R1_001.fastq
-
-do
-  FBASE=$(basename $file _R1_001.fastq)
-  BASE=${FBASE%_R1_001.fastq}
-	OUT="${BASE}_FastqToSam.sh"
-	echo "#!/bin/bash" > ${OUT}
-	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
-	echo "#PBS -l walltime=12:00:00" >> ${OUT}
-	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-	echo "#PBS -q batch" >> ${OUT}
-	echo "#PBS -l mem=40gb" >> ${OUT}
-	echo "" >> ${OUT}
-	echo "cd ${raw_data}" >> ${OUT}
-	echo "module load ${picard_module}" >> ${OUT}
-  echo "module load ${bwa_module}" >> ${OUT}
-  echo "module load ${samtools_module}" >> ${OUT}
-  echo "module load ${GATK_module}" >> ${OUT}
-	echo "" >> ${OUT}
-  echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
-  /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
-      FASTQ=${raw_data}/${BASE}_R1_001.fastq \
-      FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
-      OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
-      READ_GROUP_NAME=${BASE} \
-      SAMPLE_NAME=${BASE} \
-      LIBRARY_NAME=D0 \
-      PLATFORM=illumina \
-      SEQUENCING_CENTER=GGBC" >> ${OUT}
-	qsub ${OUT}
-done
+# #######################################################################################
+# # create a uBAM file
+# #######################################################################################
+#
+# for file in ${output_directory}/D20/*_R1_001.fastq.gz
+#
+# do
+#   FBASE=$(basename $file _R1_001.fastq.gz)
+#   BASE=${FBASE%_R1_001.fastq.gz}
+# java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+#   /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar FastqToSam \
+#       FASTQ=${output_directory}/D20/${BASE}_R1_001.fastq.gz \
+#       FASTQ2=${output_directory}/D20/${BASE}_R2_001.fastq.gz  \
+#       OUTPUT=${output_directory}/D20/${BASE}_fastqtosam.bam \
+#       READ_GROUP_NAME=${BASE} \
+#       SAMPLE_NAME=${BASE} \
+#       PLATFORM=illumina \
+#       SEQUENCING_CENTER=GGBC
+# done
+#
+#
+#
+# for file in ${output_directory}/D20/*R1.fq.gz
+#
+# do
+#   FBASE=$(basename $file R1.fq.gz)
+#   BASE=${FBASE%R1.fq.gz}
+#   java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.21.6-Java-11" -jar  \
+#     /usr/local/apps/eb/picard/2.21.6-Java-11/picard.jar FastqToSam \
+#         FASTQ=${output_directory}/D20/${BASE}R1.fq.gz \
+#         FASTQ2=${output_directory}/D20/${BASE}R2.fq.gz  \
+#         OUTPUT=${output_directory}/D20/${BASE}_fastqtosam.bam \
+#         READ_GROUP_NAME=${BASE} \
+#         SAMPLE_NAME=${BASE} \
+#         PLATFORM=illumina \
+#         SEQUENCING_CENTER=GGBC
+#   done
+#
+# for file in ${raw_data}/*_R1_001.fastq
+#
+# do
+#   FBASE=$(basename $file _R1_001.fastq)
+#   BASE=${FBASE%_R1_001.fastq}
+# 	OUT="${BASE}_FastqToSam.sh"
+# 	echo "#!/bin/bash" > ${OUT}
+# 	echo "#PBS -N ${BASE}_FastqToSam" >> ${OUT}
+# 	echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# 	echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# 	echo "#PBS -q batch" >> ${OUT}
+# 	echo "#PBS -l mem=40gb" >> ${OUT}
+# 	echo "" >> ${OUT}
+# 	echo "cd ${raw_data}" >> ${OUT}
+# 	echo "module load ${picard_module}" >> ${OUT}
+#   echo "module load ${bwa_module}" >> ${OUT}
+#   echo "module load ${samtools_module}" >> ${OUT}
+#   echo "module load ${GATK_module}" >> ${OUT}
+# 	echo "" >> ${OUT}
+#   echo "java -Xmx20g -classpath "/usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144" -jar  \
+#   /usr/local/apps/eb/picard/2.16.0-Java-1.8.0_144/picard.jar FastqToSam \
+#       FASTQ=${raw_data}/${BASE}_R1_001.fastq \
+#       FASTQ2=${raw_data}/${BASE}_R2_001.fastq  \
+#       OUTPUT=${raw_data}/${BASE}_fastqtosam.bam \
+#       READ_GROUP_NAME=${BASE} \
+#       SAMPLE_NAME=${BASE} \
+#       LIBRARY_NAME=D0 \
+#       PLATFORM=illumina \
+#       SEQUENCING_CENTER=GGBC" >> ${OUT}
+# 	qsub ${OUT}
+# done
 #######################################################################################
 # mark Illumina adapters
 #######################################################################################
@@ -447,30 +447,30 @@ done
 
 # module load GATK/4.0.3.0-Java-1.8.0_144
 #
-# time gatk HaplotypeCaller \
-#      -R /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
-#      -ERC GVCF \
-#      -I /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/IL_Data/GW_run3/00_fastq/D0/HM-D0-10_piped.bam \
-#      -ploidy 2 \
-#      -O /scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/D0/HM-D0-10_variants.g.vcf
-#
+time gatk HaplotypeCaller \
+     -R /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
+     -ERC GVCF \
+     -I ${output_directory}/bams/pipedNewRef/D20-A_pipedNewRef.bam \
+     -ploidy 2 \
+     -O ${output_directory}/gVCFs/D20-A_R_variants.g.vcf
+
 #
 # ###################################################################################################
 ### Combine gVCFs before joint genotyping
 # ###################################################################################################
 
 
-# time gatk CombineGVCFs \
-#  -O ${output_directory}/D20_cohortNewRef.g.vcf \
-#  -R ${ref_genome} \
-#  --variant ${output_directory}/D20-A__variants.g.vcf \
-#  --variant ${output_directory}/HM-D20-10_variants.g.vcf \
-#  --variant ${output_directory}/HM-D20-11_variants.g.vcf \
-#  --variant ${output_directory}/HM-D20-12_variants.g.vcf \
-#  --variant ${output_directory}/HM-D20-13_variants.g.vcf \
-#  --variant ${output_directory}/HM-D20-14_variants.g.vcf \
-#  --variant ${output_directory}/HM-D20-15_variants.g.vcf \
-#  --variant ${output_directory}/HM-D20-16_variants.g.vcf
+time gatk CombineGVCFs \
+ -O ${output_directory}/gVCFs/D20_cohortNewRef.g.vcf \
+ -R ${ref_genome} \
+ --variant ${output_directory}/gVCFs/D20-A_R_variants.g.vcf \
+ --variant ${output_directory}/gVCFs/D20-10_variants.g.vcf \
+ --variant ${output_directory}/gVCFs/D20-11_variants.g.vcf \
+ --variant ${output_directory}/gVCFs/D20-12_variants.g.vcf \
+ --variant ${output_directory}/gVCFs/D20-13_variants.g.vcf \
+ --variant ${output_directory}/gVCFs/D20-14_variants.g.vcf \
+ --variant ${output_directory}/gVCFs/D20-15_variants.g.vcf \
+ --variant ${output_directory}/gVCFs/D20-16_variants.g.vcf
 
 
 
@@ -479,30 +479,30 @@ done
 ### Jointly genotype 8 random samples to identify consensus sequences
 ###################################################################################################
 
-# time gatk GenotypeGVCFs \
-#         -R ${ref_genome} \
-#         --variant ${output_directory}/D20_cohortNewRef.g.vcf \
-#         -O ${output_directory}/D20_variants_8SamplesNewRef.vcf
+time gatk GenotypeGVCFs \
+        -R ${ref_genome} \
+        --variant ${output_directory}/gVCFs/D20_cohortNewRef.g.vcf \
+        -O ${output_directory}/gVCFs/D20_variants_8SamplesNewRef.vcf
 
 
 # ###################################################################################################
 # ## Recalibrate base quality scores in all samples to mask any likely consensus variants
 # ###################################################################################################
 #
-# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-#
-# do
-#
-# FBASE=$(basename $file _removedDuplicates.bam)
-# BASE=${FBASE%_removedDuplicates.bam}
-#
-# time gatk BaseRecalibrator \
-# -I ${output_directory}/${BASE}_removedDuplicates.bam \
-# --known-sites ${output_directory}/D20_variants_8SamplesNewRef.vcf \
-# -O ${output_directory}/${BASE}_recal_data.table \
-# -R ${ref_genome}
-#
-# done
+for file in ${output_directory}/bams/_removedDuplicates/${BASE}*_removedDuplicates.bam
+
+do
+
+FBASE=$(basename $file _removedDuplicates.bam)
+BASE=${FBASE%_removedDuplicates.bam}
+
+time gatk BaseRecalibrator \
+-I ${output_directory}/bams/_removedDuplicates/${BASE}_removedDuplicates.bam \
+--known-sites ${output_directory}/gvcfs/D20_variants_8SamplesNewRef.vcf \
+-O ${output_directory}/recalibrated/${BASE}_recal_data.table \
+-R ${ref_genome}
+
+done
 
 
 # ###################################################################################################
@@ -512,30 +512,30 @@ done
 
 
 
-# for file in ${output_directory}/${BASE}*_removedDuplicates.bam
-#
-# do
-#   FBASE=$(basename $file _removedDuplicates.bam)
-#   BASE=${FBASE%_removedDuplicates.bam}
-#   OUT="${BASE}_BQSR.sh"
-#   echo "#!/bin/bash" >> ${OUT}
-#   echo "#PBS -N ${BASE}_HC" >> ${OUT}
-#   echo "#PBS -l walltime=72:00:00" >> ${OUT}
-#   echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
-#   echo "#PBS -q highmem_q" >> ${OUT}
-#   echo "#PBS -l mem=200gb" >> ${OUT}
-#   echo "" >> ${OUT}
-#   echo "cd ${output_directory}" >> ${OUT}
-#   echo "module load ${GATK_module}" >> ${OUT}
-#   echo "" >> ${OUT}
-#   echo "gatk ApplyBQSR \
-#   -R ${ref_genome} \
-#   -I ${output_directory}/${BASE}_removedDuplicates.bam \
-#   -bqsr ${output_directory}/${BASE}_recal_data.table \
-#   -O ${output_directory}/${BASE}_recalibratedNewRef.bam" >> ${OUT}
-#   qsub ${OUT}
-#
-# done
+for file in ${output_directory}/bams/_removedDuplicates/${BASE}*_removedDuplicates.bam
+
+do
+  FBASE=$(basename $file _removedDuplicates.bam)
+  BASE=${FBASE%_removedDuplicates.bam}
+  OUT="${BASE}_BQSR.sh"
+  echo "#!/bin/bash" >> ${OUT}
+  echo "#PBS -N ${BASE}_HC" >> ${OUT}
+  echo "#PBS -l walltime=72:00:00" >> ${OUT}
+  echo "#PBS -l nodes=1:ppn=1:HIGHMEM" >> ${OUT}
+  echo "#PBS -q highmem_q" >> ${OUT}
+  echo "#PBS -l mem=200gb" >> ${OUT}
+  echo "" >> ${OUT}
+  echo "cd ${output_directory}" >> ${OUT}
+  echo "module load ${GATK_module}" >> ${OUT}
+  echo "" >> ${OUT}
+  echo "gatk ApplyBQSR \
+  -R ${ref_genome} \
+  -I ${output_directory}/bams/_removedDuplicates/${BASE}_removedDuplicates.bam \
+  -bqsr ${output_directory}/recalibrated/${BASE}_recal_data.table \
+  -O ${output_directory}/bams/recalibrated/${BASE}_recalibratedNewRef.bam" >> ${OUT}
+  qsub ${OUT}
+
+done
 
 
   # ###################################################################################################
@@ -543,12 +543,12 @@ done
   # ###################################################################################################
   # ###################################################################################################
   # #
-        module load ${GATK_module}
+        # module load ${GATK_module}
 
-        # D1 samples
+### N E X T ####
 
-
-# for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
+#
+# for file in ${output_directory}/bams/recalibrated/${BASE}*_recalibratedNewRef.bam
 #
 # do
 #
@@ -569,9 +569,9 @@ done
 # echo "time gatk HaplotypeCaller \
 # -R ${ref_genome} \
 # -ERC GVCF \
-# -I ${output_directory}/${BASE}_recalibratedNewRef.bam \
+# -I ${output_directory}/bams/recalibrated/${BASE}_recalibratedNewRef.bam \
 # -ploidy 2 \
-# -O ${output_directory}/${BASE}_variants.Recal.g.vcf" >> ${OUT}
+# -O ${output_directory}/gVCFs/${BASE}_variants.Recal.g.vcf" >> ${OUT}
 #
 # qsub ${OUT}
 #
@@ -585,7 +585,7 @@ done
 #           ###################################################################################################
 #           #
 #           #
-  module load ${GATK_module}
+  # module load ${GATK_module}
 #
 
 # gatk ApplyBQSR \
@@ -601,362 +601,365 @@ done
 # -ploidy 2 \
 # -O ${output_directory}/D20-A__variants.Recal.g.vcf
 
-time gatk CombineGVCFs \
--R ${ref_genome} \
--O ${output_directory}/D20_FullCohort.g.vcf \
--V ${output_directory}/D20_anc_switched/D20-A-switched__variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-1_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-2_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-5_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-6_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-8_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-9_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-10_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-11_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-12_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-13_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-14_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-15_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-16_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-17_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-18_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-19_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-20_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-21_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-22_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-23_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-24_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-25_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-26_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-27_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-28_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-31_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-32_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-33_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-34_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-35_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-36_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-37_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-38_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-39_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-40_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-42_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-43_variants.Recal.g.vcf \
--V ${output_directory}/D20-44__variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-45_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-46_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-47_variants.Recal.g.vcf \
--V ${output_directory}/HM-D20-48_variants.Recal.g.vcf
-#
+# interactively
+
+
+# time gatk CombineGVCFs \
+# -R ${ref_genome} \
+# -O ${output_directory}/gVCFs/D20_FullCohort.g.vcf \
+# -V ${output_directory}/gVCFs/D20_anc_switched/D20-A_R_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/D20-1_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-2_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-5_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-6_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-8_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-9_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-10_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-11_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-12_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-13_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-14_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-15_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-16_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-17_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-18_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-19_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-20_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-21_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-22_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-23_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-24_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-25_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-26_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-27_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-28_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-31_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-32_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-33_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-34_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-35_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-36_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-37_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-38_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-39_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-40_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-42_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-43_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/D20-44_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-45_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-46_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-47_variants.Recal.g.vcf \
+# -V ${output_directory}/gVCFs/HM-D20-48_variants.Recal.g.vcf
+# #
 #              ###################################################################################################
 #              ## Genotype gVCFs (jointly)
 #              ###################################################################################################
 #              ###################################################################################################
 #
 #
-time gatk GenotypeGVCFs \
-  -R ${ref_genome} \
-  -ploidy 2 \
-  --variant ${output_directory}/D20_FullCohort.g.vcf \
-  -O ${output_directory}/D20_FullCohort.vcf
-
-# ###################################################################################################
-# ### Find coverage and put into 10k chunks
-# ###################################################################################################
-
-module load ${bedtools_module}
-# report gives per-base depth across entire genome
-
-bedtools genomecov -d -ibam ${output_directory}/D20/D20-A__recalibratedNewRef.bam > ${output_directory}/D20/D20-A_depth.txt
-
-
-
-
-
-module load ${deeptools_module}
-
-
-for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
-
-do
-
-FBASE=$(basename $file _recalibratedNewRef.bam)
-BASE=${FBASE%_recalibratedNewRef.bam}
-OUT="${BASE}_bamCoverage.sh"
-echo "#!/bin/bash" > ${OUT}
-echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
-echo "#PBS -l walltime=12:00:00" >> ${OUT}
-echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-echo "#PBS -q batch" >> ${OUT}
-echo "#PBS -l mem=20gb" >> ${OUT}
-echo "" >> ${OUT}
-echo "cd ${output_directory}" >> ${OUT}
-echo "module load ${deeptools_module}" >> ${OUT}
-echo "" >> ${OUT}
-echo "bamCoverage -b ${output_directory}/${BASE}_recalibratedNewRef.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 1" >> ${OUT}
-qsub ${OUT}
-
-done
-
-
-# for file in ${raw_data}/${BASE}*_piped.bam
+# time gatk GenotypeGVCFs \
+#   -R ${ref_genome} \
+#   -ploidy 2 \
+#   --variant ${output_directory}/D20_FullCohort.g.vcf \
+#   -O ${output_directory}/D20_FullCohort.vcf
+#
+# # ###################################################################################################
+# # ### Find coverage and put into 10k chunks
+# # ###################################################################################################
+#
+# module load ${bedtools_module}
+# # report gives per-base depth across entire genome
+#
+# bedtools genomecov -d -ibam ${output_directory}/D20/D20-A__recalibratedNewRef.bam > ${output_directory}/D20/D20-A_depth.txt
+#
+#
+#
+#
+#
+# module load ${deeptools_module}
+#
+#
+# for file in ${output_directory}/${BASE}*_recalibratedNewRef.bam
 #
 # do
 #
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-# samtools sort ${raw_data}/${BASE}_piped.bam \
-# -o ${raw_data}/${BASE}.sorted.bam
-#
-# samtools depth \
-# ${raw_data}/${BASE}.sorted.bam \
-# |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
-#
-# done
-#
-# #combine depths with filenames into the same file
-# find . -type f -name "*.txt" -exec awk '{s=$0};END{if(s)print FILENAME,s}' {} \; > D0_depth.txt
-
-
-#                  # ################
-# # ###################################################################################################
-# # ### Filter variants
-# # Can easily run these interactively
-# # ###################################################################################################
-#
-
-########################################################################
-#### Remove low and high read depth first
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D20_FullCohort.vcf \
--O ${output_directory}/D20_noLow.vcf \
--select 'vc.getGenotype("D1-A_").getDP() > 82'
-
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D20_noLow.vcf \
--O ${output_directory}/D20_noLow_noHigh.vcf \
--select 'vc.getGenotype("D1-A_").getDP() < 206'
-
-low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
-module load ${bedtools_module}
-
-# bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
-bedtools intersect -v -a ${output_directory}/D20_noLow_noHigh.vcf -b ${low_mappability} -header > ${output_directory}/D20_noLow_noHigh_redGem.vcf
-
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D20_noLow_noHigh_redGem.vcf \
--O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
--select 'vc.getGenotype("D1-A_").isCalled()'
-
-
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
--O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
--select '!vc.getGenotype("D1-A_").isHet()'
-
-### Ancestor hets only
-gatk SelectVariants \
--R ${ref_genome} \
--V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
--O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_Hets.vcf \
--select 'vc.getGenotype("D1-A_").isHet()'
-
-
-gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
-   --max-nocall-number 0 \
-   --exclude-non-variants TRUE \
-	 --restrict-alleles-to BIALLELIC \
-   -select-type SNP
-#
-gatk SelectVariants \
-   -R ${ref_genome} \
-   -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
-   --max-nocall-number 0 \
-	 --exclude-non-variants TRUE \
-	 --restrict-alleles-to BIALLELIC \
-   -select-type INDEL
-
-gatk SelectVariants \
-	 -R ${ref_genome} \
-   -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
-   -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
-   --max-nocall-number 0 \
-	 --exclude-non-variants TRUE \
-	 --restrict-alleles-to BIALLELIC
-
-
-gatk VariantsToTable \
-	 -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
-	 -F CHROM -F POS -F REF -F ALT -F QUAL \
-	 -GF AD -GF DP -GF GQ -GF GT \
-	 -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
-
-gatk VariantsToTable \
-	-V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
-	-F CHROM -F POS -F REF -F ALT -F QUAL \
-	-GF AD -GF DP -GF GQ -GF GT \
-	-O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.txt
-
-gatk VariantsToTable \
--V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
--F CHROM -F POS -F REF -F ALT -F QUAL \
--GF AD -GF DP -GF GQ -GF GT \
--O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.txt
-
-#
-#    -select-type INDEL \
-#    -select-type MIXED \
-#    -select-type MNP \
-#    -select-type SYMBOLIC
-#
-# #
-# # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
-# # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
-# #
-# # #Variants to table
-# gatk VariantsToTable \
-#      -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
-#      -F CHROM -F POS -F REF -F ALT -F QUAL \
-#      -GF AD -GF DP -GF GQ -GF GT \
-#      -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
-#
-#      gatk VariantsToTable \
-#           -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
-#           -F CHROM -F POS -F REF -F ALT -F QUAL \
-#           -GF AD -GF DP -GF GQ -GF GT \
-#           -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
-#
-#           gatk VariantsToTable \
-#                -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
-#                -F CHROM -F POS -F REF -F ALT -F QUAL \
-#                -GF AD -GF DP -GF GQ -GF GT \
-#                -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
-#
-# #
-# #
-# gatk VariantsToTable \
-#      -V ${output_directory}/D20_FullCohort_AncCalls.vcf \
-#      -F CHROM -F POS -F REF -F ALT -F QUAL \
-#      -GF AD -GF DP -GF GQ -GF GT \
-#      -O ${output_directory}/D20_FullCohort_AncCalls.txt
-#
-#
-#
-#
-# ## VCF tools to extract all of the GT entries:
-#
-# vcftools --vcf file.vcf --extract-FORMAT-info GT
-
-
-samtools depth -a -d 100000 HM-D20-10_recalibratedNewRef.bam > HM-D20-10.depth
-
-
-
-
-
-module load HTSlib/1.6-foss-2016b
-
-cat H0_noLow.vcf | bgzip -c > H0_noLow.vcf.gz
-tabix H0_noLow.vcf.gz
-
-#            # ###################################################################################################
-#            # ### Find coverage and put into 10k chunks
-#            # ###################################################################################################
-#
-#            module load ${deeptools_module}
-#
-#
-#            for file in ${raw_data}/${BASE}*_piped.bam
-#
-#            do
-#
-#            FBASE=$(basename $file _piped.bam)
-#            BASE=${FBASE%_piped.bam}
-#
-#            bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
-#
-#            done
-# for file in ${raw_data}/${BASE}*_piped.bam
-#
-# do
-#
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
+# FBASE=$(basename $file _recalibratedNewRef.bam)
+# BASE=${FBASE%_recalibratedNewRef.bam}
 # OUT="${BASE}_bamCoverage.sh"
-# echo "#!/bin/bash" >> ${OUT}
+# echo "#!/bin/bash" > ${OUT}
 # echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
 # echo "#PBS -l walltime=12:00:00" >> ${OUT}
 # echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
 # echo "#PBS -q batch" >> ${OUT}
 # echo "#PBS -l mem=20gb" >> ${OUT}
 # echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
+# echo "cd ${output_directory}" >> ${OUT}
 # echo "module load ${deeptools_module}" >> ${OUT}
 # echo "" >> ${OUT}
-# echo "bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
+# echo "bamCoverage -b ${output_directory}/${BASE}_recalibratedNewRef.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 1" >> ${OUT}
 # qsub ${OUT}
 #
 # done
-
-# for file in ${raw_data}/${BASE}*_piped.bam
 #
-# do
 #
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-# OUT="${BASE}_samtoolsDepth.sh"
-# echo "#!/bin/bash" > ${OUT}
-# echo "#PBS -N ${BASE}_samtoolsDepth" >> ${OUT}
-# echo "#PBS -l walltime=12:00:00" >> ${OUT}
-# echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
-# echo "#PBS -q batch" >> ${OUT}
-# echo "#PBS -l mem=20gb" >> ${OUT}
-# echo "" >> ${OUT}
-# echo "cd ${raw_data}" >> ${OUT}
-# echo "module load ${samtools_module}" >> ${OUT}
-# echo "" >> ${OUT}
-#
-# echo "samtools sort ${raw_data}/${BASE}_piped.bam \
-# -o ${raw_data}/${BASE}.sorted.bam
-#
-# samtools depth \
-# ${raw_data}/${BASE}.sorted.bam \
-# |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt" >> ${OUT}
-# qsub ${OUT}
-# done
-#
-# for file in ${raw_data}/${BASE}*_piped.bam
-#
-# do
-#
-# FBASE=$(basename $file _piped.bam)
-# BASE=${FBASE%_piped.bam}
-# samtools sort ${raw_data}/${BASE}_piped.bam \
-# -o ${raw_data}/${BASE}.sorted.bam
-#
-# samtools depth \
-# ${raw_data}/${BASE}.sorted.bam \
-# |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
-#
-# done
-# # ###################################################################################################
-# # ### Aggregate the GVCF files using GenomicsDBImport
-# # ###################################################################################################
-# # mkdir ${genomicsdb_workspace_path}
-# # mkdir ${tmp_DIR}
+# # for file in ${raw_data}/${BASE}*_piped.bam
 # #
-# # gatk --java-options "-Xmx4g -Xms4g" \
-# #        GenomicsDBImport \
-# #        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
-# #        --batch-size 50 \
-# #        --sample-name-map ${sample_name_map} \
-# #        --TMP_DIR:${tmp_DIR} \
-# #        --reader-threads 12
+# # do
+# #
+# # FBASE=$(basename $file _piped.bam)
+# # BASE=${FBASE%_piped.bam}
+# # samtools sort ${raw_data}/${BASE}_piped.bam \
+# # -o ${raw_data}/${BASE}.sorted.bam
+# #
+# # samtools depth \
+# # ${raw_data}/${BASE}.sorted.bam \
+# # |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
+# #
+# # done
+# #
+# # #combine depths with filenames into the same file
+# # find . -type f -name "*.txt" -exec awk '{s=$0};END{if(s)print FILENAME,s}' {} \; > D0_depth.txt
+#
+#
+# #                  # ################
+# # # ###################################################################################################
+# # # ### Filter variants
+# # # Can easily run these interactively
+# # # ###################################################################################################
+# #
+#
+# ########################################################################
+# #### Remove low and high read depth first
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D20_FullCohort.vcf \
+# -O ${output_directory}/D20_noLow.vcf \
+# -select 'vc.getGenotype("D1-A_").getDP() > 82'
+#
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D20_noLow.vcf \
+# -O ${output_directory}/D20_noLow_noHigh.vcf \
+# -select 'vc.getGenotype("D1-A_").getDP() < 206'
+#
+# low_mappability="/scratch/jc33471/pilon/337/mappability/337_lowmappability.bed"
+# module load ${bedtools_module}
+#
+# # bedtools sort -i ${low_mappability} > ${output_directory}/337_lowmappability_sorted.bed
+# bedtools intersect -v -a ${output_directory}/D20_noLow_noHigh.vcf -b ${low_mappability} -header > ${output_directory}/D20_noLow_noHigh_redGem.vcf
+#
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D20_noLow_noHigh_redGem.vcf \
+# -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
+# -select 'vc.getGenotype("D1-A_").isCalled()'
+#
+#
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
+# -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+# -select '!vc.getGenotype("D1-A_").isHet()'
+#
+# ### Ancestor hets only
+# gatk SelectVariants \
+# -R ${ref_genome} \
+# -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls.vcf \
+# -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_Hets.vcf \
+# -select 'vc.getGenotype("D1-A_").isHet()'
+#
+#
+# gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+#    -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
+#    --max-nocall-number 0 \
+#    --exclude-non-variants TRUE \
+# 	 --restrict-alleles-to BIALLELIC \
+#    -select-type SNP
+# #
+# gatk SelectVariants \
+#    -R ${ref_genome} \
+#    -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+#    -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
+#    --max-nocall-number 0 \
+# 	 --exclude-non-variants TRUE \
+# 	 --restrict-alleles-to BIALLELIC \
+#    -select-type INDEL
+#
+# gatk SelectVariants \
+# 	 -R ${ref_genome} \
+#    -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets.vcf \
+#    -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
+#    --max-nocall-number 0 \
+# 	 --exclude-non-variants TRUE \
+# 	 --restrict-alleles-to BIALLELIC
+#
+#
+# gatk VariantsToTable \
+# 	 -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHetsVars.vcf \
+# 	 -F CHROM -F POS -F REF -F ALT -F QUAL \
+# 	 -GF AD -GF DP -GF GQ -GF GT \
+# 	 -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_vars.txt
+#
+# gatk VariantsToTable \
+# 	-V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.vcf \
+# 	-F CHROM -F POS -F REF -F ALT -F QUAL \
+# 	-GF AD -GF DP -GF GQ -GF GT \
+# 	-O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_SNPs.txt
+#
+# gatk VariantsToTable \
+# -V ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.vcf \
+# -F CHROM -F POS -F REF -F ALT -F QUAL \
+# -GF AD -GF DP -GF GQ -GF GT \
+# -O ${output_directory}/D20_noLow_noHigh_redGem_AncCalls_NoHets_Indels.txt
+#
+# #
+# #    -select-type INDEL \
+# #    -select-type MIXED \
+# #    -select-type MNP \
+# #    -select-type SYMBOLIC
+# #
+# # #
+# # # #gives a final dataset with only called sites in the Ancestor, no heterozygous sites in the ancestor,
+# # # # depth > 10, mapping quality > 50, and strand bias (SOR) > 0.01 (not significant)
+# # #
+# # # #Variants to table
+# # gatk VariantsToTable \
+# #      -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls.vcf \
+# #      -F CHROM -F POS -F REF -F ALT -F QUAL \
+# #      -GF AD -GF DP -GF GQ -GF GT \
+# #      -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_vars.txt
+# #
+# #      gatk VariantsToTable \
+# #           -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.vcf \
+# #           -F CHROM -F POS -F REF -F ALT -F QUAL \
+# #           -GF AD -GF DP -GF GQ -GF GT \
+# #           -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_SNPs.txt
+# #
+# #           gatk VariantsToTable \
+# #                -V ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.vcf \
+# #                -F CHROM -F POS -F REF -F ALT -F QUAL \
+# #                -GF AD -GF DP -GF GQ -GF GT \
+# #                -O ${output_directory}/D20_FullCohort_AnCalls_NoHets_DpGr10_MQGr50_StrBiasFil_Calls_Indels.txt
+# #
+# # #
+# # #
+# # gatk VariantsToTable \
+# #      -V ${output_directory}/D20_FullCohort_AncCalls.vcf \
+# #      -F CHROM -F POS -F REF -F ALT -F QUAL \
+# #      -GF AD -GF DP -GF GQ -GF GT \
+# #      -O ${output_directory}/D20_FullCohort_AncCalls.txt
+# #
+# #
+# #
+# #
+# # ## VCF tools to extract all of the GT entries:
+# #
+# # vcftools --vcf file.vcf --extract-FORMAT-info GT
+#
+#
+# samtools depth -a -d 100000 HM-D20-10_recalibratedNewRef.bam > HM-D20-10.depth
+#
+#
+#
+#
+#
+# module load HTSlib/1.6-foss-2016b
+#
+# cat H0_noLow.vcf | bgzip -c > H0_noLow.vcf.gz
+# tabix H0_noLow.vcf.gz
+#
+# #            # ###################################################################################################
+# #            # ### Find coverage and put into 10k chunks
+# #            # ###################################################################################################
+# #
+# #            module load ${deeptools_module}
+# #
+# #
+# #            for file in ${raw_data}/${BASE}*_piped.bam
+# #
+# #            do
+# #
+# #            FBASE=$(basename $file _piped.bam)
+# #            BASE=${FBASE%_piped.bam}
+# #
+# #            bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000
+# #
+# #            done
+# # for file in ${raw_data}/${BASE}*_piped.bam
+# #
+# # do
+# #
+# # FBASE=$(basename $file _piped.bam)
+# # BASE=${FBASE%_piped.bam}
+# # OUT="${BASE}_bamCoverage.sh"
+# # echo "#!/bin/bash" >> ${OUT}
+# # echo "#PBS -N ${BASE}_bamCoverage" >> ${OUT}
+# # echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# # echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# # echo "#PBS -q batch" >> ${OUT}
+# # echo "#PBS -l mem=20gb" >> ${OUT}
+# # echo "" >> ${OUT}
+# # echo "cd ${raw_data}" >> ${OUT}
+# # echo "module load ${deeptools_module}" >> ${OUT}
+# # echo "" >> ${OUT}
+# # echo "bamCoverage -b ${raw_data}/${BASE}_piped.bam -o ${output_directory}/${BASE}.bedgraph -of bedgraph -bs 10000" >> ${OUT}
+# # qsub ${OUT}
+# #
+# # done
+#
+# # for file in ${raw_data}/${BASE}*_piped.bam
+# #
+# # do
+# #
+# # FBASE=$(basename $file _piped.bam)
+# # BASE=${FBASE%_piped.bam}
+# # OUT="${BASE}_samtoolsDepth.sh"
+# # echo "#!/bin/bash" > ${OUT}
+# # echo "#PBS -N ${BASE}_samtoolsDepth" >> ${OUT}
+# # echo "#PBS -l walltime=12:00:00" >> ${OUT}
+# # echo "#PBS -l nodes=1:ppn=1:AMD" >> ${OUT}
+# # echo "#PBS -q batch" >> ${OUT}
+# # echo "#PBS -l mem=20gb" >> ${OUT}
+# # echo "" >> ${OUT}
+# # echo "cd ${raw_data}" >> ${OUT}
+# # echo "module load ${samtools_module}" >> ${OUT}
+# # echo "" >> ${OUT}
+# #
+# # echo "samtools sort ${raw_data}/${BASE}_piped.bam \
+# # -o ${raw_data}/${BASE}.sorted.bam
+# #
+# # samtools depth \
+# # ${raw_data}/${BASE}.sorted.bam \
+# # |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt" >> ${OUT}
+# # qsub ${OUT}
+# # done
+# #
+# # for file in ${raw_data}/${BASE}*_piped.bam
+# #
+# # do
+# #
+# # FBASE=$(basename $file _piped.bam)
+# # BASE=${FBASE%_piped.bam}
+# # samtools sort ${raw_data}/${BASE}_piped.bam \
+# # -o ${raw_data}/${BASE}.sorted.bam
+# #
+# # samtools depth \
+# # ${raw_data}/${BASE}.sorted.bam \
+# # |  awk '{sum+=$3} END { print "Average = ",sum/NR}' > ${raw_data}/${BASE}.txt
+# #
+# # done
+# # # ###################################################################################################
+# # # ### Aggregate the GVCF files using GenomicsDBImport
+# # # ###################################################################################################
+# # # mkdir ${genomicsdb_workspace_path}
+# # # mkdir ${tmp_DIR}
+# # #
+# # # gatk --java-options "-Xmx4g -Xms4g" \
+# # #        GenomicsDBImport \
+# # #        --genomicsdb-workspace-path ${genomicsdb_workspace_path} \
+# # #        --batch-size 50 \
+# # #        --sample-name-map ${sample_name_map} \
+# # #        --TMP_DIR:${tmp_DIR} \
+# # #        --reader-threads 12
