@@ -448,7 +448,7 @@ module load ${GATK_module}
 # module load GATK/4.0.3.0-Java-1.8.0_144
 #
 time gatk HaplotypeCaller \
-     -R /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/YPS138.genome.fa \
+     -R ${ref_genome} \
      -ERC GVCF \
      -I ${output_directory}/bams/pipedNewRef/D20-A_pipedNewRef.bam \
      -ploidy 2 \
