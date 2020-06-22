@@ -51,8 +51,8 @@ genome_fasta="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/geno
 # ########################################################################################################
 #
 #
-# grep -v "#" data.gff | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > data.gff.gz
-# tabix -p gff data.gff.gz
+grep -v "#" scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3 | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3.gz
+tabix -p gff scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3.gz
 # ./vep -i input.vcf --gff data.gff.gz --fasta genome.fa.gz
 #
 
