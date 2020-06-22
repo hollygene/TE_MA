@@ -59,7 +59,7 @@ module load gffread/0.9.12-foss-2016b
 #
 
 
-singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i /home/hcm14449/Github/TE_MAH0_snps_final.vcf \
+singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i /home/hcm14449/Github/TE_MA/H0_snps_final.vcf \
 -gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gtf.gz \
 --fasta /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta
 
