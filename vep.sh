@@ -19,7 +19,6 @@ vcf_file="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/H0_noLow_noHigh
 out_file="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/vep.test.txt"
 genome_fasta="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
 
-
 # grep -v "#" ${gff_file} | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > ${workDir}/337.nuclear_genome.est_evidence.gff3.gz
 # tabix -p gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.est_evidence.gff3.gz
 # bgzip -c ${genome_fasta} > /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta.gz
@@ -35,7 +34,7 @@ genome_fasta="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/geno
 # perl gtf2vep.pl -i /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/337.nuclear_genome.maker.raw.gtf -f /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/genome.337.fasta -d 78 -s s_par_337
 #
 #
-# module load HTSlib/1.8-foss-2018a
+module load HTSlib/1.8-foss-2018a
 # grep -v "#" /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gtf | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gtf.gz
 #
 # module load tabix/0.2.6-foss-2016b
