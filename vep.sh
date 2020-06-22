@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
-#PBS -q highmem_q
+#PBS -q batch
 #PBS -N genotype
-#PBS -l nodes=1:ppn=1:HIGHMEM
-#PBS -l walltime=72:00:00
-#PBS -l mem=200gb
+#PBS -l nodes=1:ppn=1:AMD
+#PBS -l walltime=2:00:00
+#PBS -l mem=10gb
 #PBS -M hcm14449@uga.edu
 #PBS -m abe
 
