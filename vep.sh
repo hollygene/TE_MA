@@ -19,8 +19,6 @@ vcf_file="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/H0_noLow_noHigh
 out_file="/scratch/hcm14449/TE_MA_Paradoxus/Illumina_Data/Out/H0/vep.test.txt"
 genome_fasta="/scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta"
 
-module load ${HTSlib_module}
-module load gffread/0.9.12-foss-2016b
 
 # grep -v "#" ${gff_file} | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > ${workDir}/337.nuclear_genome.est_evidence.gff3.gz
 # tabix -p gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.est_evidence.gff3.gz
@@ -60,7 +58,7 @@ module load gffread/0.9.12-foss-2016b
 
 
 singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i /home/hcm14449/Github/TE_MA/H0_snps_final.vcf \
--gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gtf.gz \
+-gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3 \
 --fasta /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta
 
 
