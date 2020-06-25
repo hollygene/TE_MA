@@ -50,14 +50,14 @@ module load HTSlib/1.8-foss-2018a
 # ########################################################################################################
 #
 #
-grep -v "#" /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3 | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3.gz
-tabix -p gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3.gz
+# grep -v "#" /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3| sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.est_evidence.gff3.gz
+# tabix -p gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.est_evidence.gff3.gz
 # ./vep -i input.vcf --gff data.gff.gz --fasta genome.fa.gz
 #
 
 
 singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i /home/hcm14449/Github/TE_MA/H0_snps_final.vcf \
--gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3 \
+-gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3.gz \
 --fasta /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta
 
 
