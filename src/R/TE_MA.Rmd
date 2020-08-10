@@ -1,0 +1,1787 @@
+---
+title: "TE_MA_Paradoxus Analyses"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r packages, echo=FALSE}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("Sushi")
+# library(sushi)
+
+library(vcfR)
+library(adegenet)
+library(adegraphics)
+library(pegas)
+library(StAMPP)
+library(lattice)
+library(gplots)
+library(ape)
+# library(ggmap)
+library(pinfsc50)
+library(reshape2)
+library(ggplot2)
+library(karyoploteR)
+library(GenomicRanges)
+library(Biostrings)
+
+```
+
+VCF Analysis using vcfR 
+```{r VCF analysis, include=TRUE,echo=FALSE}
+#### Their data 
+# Find and input VCF data.
+# vcf <- system.file("extdata", "pinf_sc50.vcf.gz", package = "pinfsc50")
+# vcf <- vcfR::read.vcfR(vcf, verbose = FALSE)
+# 
+# # Parse DP from the gt region.
+# dp <- extract.gt(vcf, element="DP", as.numeric = TRUE)
+# 
+# # Reorganize and render violin plots.
+# dpf <- melt(dp, varnames=c("Index", "Sample"), value.name = "Depth", na.rm=TRUE)
+# dpf <- dpf[ dpf$Depth > 0,]
+# p <- ggplot(dpf, aes(x=Sample, y=Depth)) + geom_violin(fill="#C0C0C0", adjust=1.0,
+#                                                      scale = "count", trim=TRUE)
+# 
+# p <-  p + theme_bw()
+# p <- p + ylab("Read Depth (DP)")
+# p <- p + theme(axis.title.x = element_blank(),
+#              axis.text.x = element_text(angle = 60, hjust = 1))
+# p <- p + stat_summary(fun.data=mean_sdl, geom="pointrange", color="black")
+# p <- p + scale_y_continuous(trans=scales::log2_trans(), breaks=c(1, 10, 100, 1000))
+# p 
+# 
+# # Plot as heatmap 
+# heatmap.bp(dp[501:1500,])
+# 
+# # visualization of variant quality 
+# 
+# vcf_file <- system.file("extdata", "pinf_sc50.vcf.gz",
+# package = "pinfsc50")
+# dna_file <- system.file("extdata","pinf_sc50.fasta",package="pinfsc50")
+# gff_file <- system.file("extdata","pinf_sc50.gff",package="pinfsc50")
+# 
+# # Read data into memory 
+# vcf <- read.vcfR(vcf_file)
+# dna <- ape::read.dna(dna_file, format = "fasta")
+# gff <- read.table(gff_file, sep="\t", quote="")
+# 
+# # Create a chromR plot
+# chrom <- create.chromR(name="Supercontig",
+#                       vcf=vcf, seq=dna, 
+#                       ann=gff)
+# # Mask for read depth and mapping quality
+# chrom <- masker(chrom, min_QUAL=0, min_DP=350,
+#                 max_DP=650, min_MQ=59.5,
+#                 max_MQ=60.5)
+# chrom <- proc.chromR(chrom)
+# 
+# # Plot.
+# chromoqc(chrom, dp.alpha=20)
+
+
+########################################
+# MY DATA
+########################################
+
+# vcfD0 <- read.vcfR("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D0/D0_reducedGEM.vcf")
+# head(vcfD0)
+# 
+# # Parse DP from the gt region.
+# dpD0 <- extract.gt(vcfD0, element="DP", as.numeric = TRUE)
+# 
+# # Reorganize and render violin plots.
+# dpfD0 <- melt(dpD0, varnames=c("Index", "Sample"), value.name = "Depth", na.rm=TRUE)
+# dpfD0 <- dpfD0[ dpfD0$Depth > 0,]
+# pD0 <- ggplot(dpfD0, aes(x=Sample, y=Depth)) + geom_violin(fill="#C0C0C0", adjust=1.0,
+#                                                      scale = "count", trim=TRUE)
+# 
+# pD0 <-  pD0 + theme_bw()
+# pD0 <- pD0 + ylab("Read Depth (DP)")
+# pD0 <- pD0 + theme(axis.title.x = element_blank(),
+#              axis.text.x = element_text(angle = 60, hjust = 1))
+# pD0 <- pD0 + stat_summary(fun.data=mean_sdl, geom="pointrange", color="black")
+# pD0 <- pD0 + scale_y_continuous(trans=scales::log2_trans(), breaks=c(1, 10, 100, 1000))
+# pdf("violinD0.pdf")
+# pD0 
+# dev.off()
+# 
+# 
+# # Plot as heatmap 
+# pdf("heatmapD0.pdf")
+# heatmap.bp(dpD0[100:500,])
+# dev.off()
+# 
+# #########
+# # visualization of variant quality 
+# ########
+# dna_fileD0 <- file("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/genome.337.fasta")
+# gff_fileD0 <- file("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/337.nuclear_genome.EVM.gff3")
+# 
+# # Read data into memory 
+# dnaD0 <- ape::read.dna(dna_fileD0, format = "fasta")
+# gffD0 <- read.table(gff_fileD0, sep="\t", quote="")
+# 
+# 
+# # Create a chromR plot
+# chromD0 <- create.chromR(name="Supercontig",
+#                       vcf=vcfD0, seq=dnaD0, 
+#                       ann=gffD0)
+# # Mask for read depth and mapping quality
+# chromD0 <- masker(chromD0, min_QUAL=0, min_DP=100,
+#                max_DP=900)
+# chromD0 <- proc.chromR(chromD0)
+# 
+# plot(chromD0)
+# 
+# # Plot.
+# chromoqc(chromD0, dp.alpha=20)
+# 
+# 
+# #vcf@fix[1:10,1:5]
+# 
+# chrom <- create.chromR(name="H0_data",vcf=vcf)
+# plot(chrom)
+# 
+# dp <- extract.gt(vcf,element="DP",as.numeric = TRUE)
+# 
+# pdf("DP_H0_data.pdf",width=10,height=3) #boxplot
+# boxplot(dp, las=3, col=c("#C0C0C0", "#808080"), ylab="Read Depth (DP)",
+# las=2, cex=0.4, cex.axis=0.5)
+# dev.off()
+# 
+# pdf("DP_sample1_data_zoom.pdf", width = 10, height=3) # boxplot
+# boxplot(dp, las=3, col=c("#C0C0C0", "#808080"), ylab="Read Depth (DP)",
+# las=2, cex=0.4, cex.axis=0.5, ylim=c(0,50))
+# abline(h=8, col="red")
+# dev.off()
+# 
+# getwd()
+# 
+# ### Basic Manipulation of a SNP matrix (genlight)
+# # Convert data into adegenet-native format called genlight:
+# aa.genlight <- vcfR2genlight(vcf,n.cores=1)
+# locNames(aa.genlight) <- paste(vcf@fix[,1]) # add real SNP names
+# pop(aa.genlight) <- substr(indNames(aa.genlight),1,3) # add pop names: here "population" (group) names are 1st 3 chars of ind name 
+# 
+# glPlot(aa.genlight)
+# x <- summary(t(as.matrix(aa.genlight)))
+# View(x)
+
+
+
+#### Load in data for H0 
+# H0_mut <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_vcf_all_NEWCALLSv2_HM.csv",header=TRUE,fill=TRUE,sep=",")
+
+
+
+```
+
+Fisher Test for Mutation Rate 
+```{r mutation rate, echo=FALSE}
+
+# H0vD0.total <- data.frame(matrix(ncol = 2, nrow = 2))
+# x <- c("H0","D0")
+# rownames(H0vD0.total) <- x
+# y <- c("SNPs","Indels")
+# colnames(H0vD0.total) <- y
+# 
+# 
+# 
+# H0vD0.total[1,1] <- 2.23674E-10
+# H0vD0.total[1,2] <- 4.91247E-11
+# H0vD0.total[2,1] <- 3.44006E-10
+# H0vD0.total[2,2] <- 2.67986E-11 
+# 
+# test <- fisher.test(H0vD0.total, alternative="two.sided", conf.int=TRUE)
+
+
+```
+
+Bedgraph Plots for Coverage - Old Style 
+```{r plot bedgraphs,echo=FALSE}
+#file.names -> reads in the files you want to run 
+# 
+# bedgraph.names.H0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/H0", pattern="*.bedgraph",full.names = TRUE)
+# bedgraph.names.H0
+
+# H0_anc <- bedgraph.names.H0[46] 
+# H0_anc <- read.table(H0_anc)
+# dim(H0_anc)
+# colnames(H0_anc) <- c("Chromosome","Start","End","Coverage")
+# 
+# plot(H0_anc$Coverage, col=as.factor(H0_anc$Chromosome), ylab="Coverage",ylim=c(0,30000), xlab="Bins (10kb)")
+# # read.table(H0_anc, sep= "\t", header=FALSE)
+# # colnames(H0_anc) <- c("Chromosome","Start","End","Coverage")
+
+# i=1
+
+# for(i in 1:length(bedgraph.names.H0)){
+#   pdf(paste("",bedgraph.names.H0[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph.names.H0[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
+
+############### separate samples into blocks for ylim value
+# bedgraph_100.H0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/H0/100/", pattern="*.bedgraph",full.names = TRUE)
+# bedgraph_100.H0
+# 
+# for(i in 1:length(bedgraph_100.H0)){
+#   pdf(paste("",bedgraph_100.H0[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph_100.H0[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,10000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
+
+
+# bedgraph.names.D1 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D1", pattern="*.bedgraph",full.names = TRUE)
+# 
+# for(i in 1:length(bedgraph.names.D1)){
+#   pdf(paste("",bedgraph.names.D1[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph.names.D1[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
+
+# pdf(paste("",bedgraph.names.D1[35],".CovGraph.pdf", sep=""))
+# D1_45 <- read.table(bedgraph.names.D1[35], sep= "\t", header=FALSE)
+#   colnames(D1_45) <- c("Chromosome","Start","End","Coverage")
+# plot(D1_45$Coverage, col=as.factor(D1_45$Chromosome), ylab="Coverage",ylim=c(0,1340000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# 
+# 
+
+# bedgraph.names.D0 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D0", pattern="*.bedgraph",full.names = TRUE)
+# 
+# for(i in 1:length(bedgraph.names.D0)){
+#   pdf(paste("",bedgraph.names.D0[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph.names.D0[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
+# 
+# bedgraph.names.D20 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20", pattern="*.bedgraph",full.names = TRUE)
+
+# for(i in 1:length(bedgraph.names.D20)){
+#   pdf(paste("",bedgraph.names.D20[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bedgraph.names.D20[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
+# 
+# #### Try plotting graphs of TE Locations
+
+# bed.names.D20 <- list.files(path = "/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20", pattern="*.bed",full.names = TRUE)
+# 
+# test <- read.table(bed.names.D20[1], sep= "\t", header=FALSE)
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# 
+# 
+# for(i in 1:length(bed.names.D20)){
+#   pdf(paste("",bed.names.D20[i],".CovGraph.pdf", sep=""))
+#   file <- read.table(bed.names.D20[i], sep= "\t", header=FALSE)
+#   colnames(file) <- c("Chromosome","Start","End","Coverage")
+# plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,134000),xlim=c(0,1200), xlab="Bins (10kb)",main="Coverage By Chromosome")
+# dev.off()
+# }
+
+
+#if you want to try loop: 
+
+#for(i in 1:length(file.names)){
+  
+#  pdf(paste("Graphs",file.names[i],".CovGraph.pdf", sep=""))
+#  files <- read.table(file.names[i], sep= "\t", header=TRUE)
+#  plot(file$Coverage, col=as.factor(file$Chromosome), ylab="Coverage",ylim=c(0,30000), xlab="Bins (10kb)")
+#  dev.off()
+#}
+
+```
+
+
+```{r karyoploteR, include=TRUE}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("karyoploteR")
+
+
+# browseVignettes("karyoploteR")
+library("karyoploteR")
+#Function from Sam 
+# make_karyo_Spar337 <- function(mergefile,title) {
+  Chr_sizes_GR <- toGRanges("~/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/337_chrm_sizes_red.bed") ## This is just a three column bed file of the chromosome sizes
+  gene_bed_GR <- toGRanges("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/337_sites_2.bed") ## This is just a three column bed file of the gene positions (just the gene entries from the gff3 file)
+  # supergene_GR <- GRanges(seqnames = "lg16",ranges=IRanges(7311525,18123987)) ## I made this GRanges object to delineate the supergene to add a block for it later
+
+chroms <- c("Spar_I_RaGOO", "Spar_II_RaGOO", "Spar_III_RaGOO", "Spar_IV_RaGOO", "Spar_V_RaGOO", "Spar_VI_RaGOO", "Spar_VII_RaGOO", "Spar_VIII_RaGOO", "Spar_IX_RaGOO", "Spar_X_RaGOO", "Spar_XI_RaGOO", "Spar_XII_RaGOO", "Spar_XIII_RaGOO", "Spar_XIV_RaGOO", "Spar_XV_RaGOO","Spar_XVI_RaGOO")
+  # kp <- plotKaryotype(genome=Chr_sizes_GR)  
+
+
+  # plot.params <- getDefaultPlotParams(plot.type = 1) ## This defines how the plot will generally be structured. See the options in the karyoploter documentation
+  # plot.params$data1height=8
+  # plot.params$data1outmargin = 4
+  # plot.params$data1inmargin = 2
+  # plot.params$ideogramheight = 2
+
+# D20_A_cov <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20/D20-A_.bedgraph")
+# str(D20_A_cov)
+# colnames(D20_A_cov) <- c("chr","start","end","coverage")
+# D20_A_GR <- makeGRangesFromDataFrame(D20_A_cov,seqnames.field = "chr", start.field = "start", end.field = "end", keep.extra.columns = TRUE)
+#   # ordered <- D20_A_GR[order(D20_A_GR$coverage, na.last = TRUE),] ## Sorts my DEG data to plot the top ten most DE genes later
+#   fc.ymax=ceiling(max(abs(D20_A_GR$coverage))) ## Define the maximum axes of the DEG plots
+#   fc.ymin=0 ## Define the minimum axes of the DEG plots 
+# TEs <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/D20-A-R_R1_val_telocate_raw.TY1.bed")
+# colnames(TEs) <- c("chr","start","end","TE")
+# str(TEs)  
+# TEs.2 <- toGRanges(TEs)
+# TEs.3 <- toDataframe(TEs.2)
+
+
+# kpPlotRegions(kp1,data=TEs.2,col="#AACCFF",later.margin=0.01,border=NA,r0=0,r1=0.5)
+
+## Place the DE dots in the region of the plot that I want
+  # kpAxis(kp, ymax=fc.ymax, ymin=fc.ymin,side = 2,cex=0.5,r0 = 0.15, r1 = 0.7) ## Add the axis for the DE dots
+  # kpAddMainTitle(kp,main=title) ## Add a title to the plot
+  # kpPlotRegions(kp,data = supergene_GR,col="red", r0=0,r1=0.1) ## add a box to show where the supergene is
+  # kpPlotMarkers(kp, ordered[1:10], labels = ordered[1:10]$Row.names, text.orientation = "vertical",adjust.label.position = TRUE,r0 = 0.75) ## Add markers for the top 10 most DE genes
+  # 
+
+## Load in, filter and format the DE data to be plotted. End result should be a GRanges object with extra columns of differential expression stats (logFC, FDR, etc)
+  # temp <- mergefile
+  # temp$chr <- as.character(temp$chr)
+  # temp.sig<-temp[(temp$FDR<=0.01 & grepl("lg",temp$chr)),]
+  # temp.sig <- temp.sig[complete.cases(temp.sig), ]
+  # DEG_GR <- makeGRangesFromDataFrame(temp.sig, seqnames.field = "chr",start.field = "start",end.field = "end",keep.extra.columns = TRUE)
+  # 
+  ## Begin generating the plot itself. If you want to change anything in the plot after first generating it, start again here. 
+  # kp <- plotKaryotype(genome = Chr_sizes_GR, cytobands = gene_bed_GR,chromosomes = c("Spar_XVI_RaGOO"),plot.params = plot.params)
+  # ordered <- DEG_GR[order(DEG_GR$FDR, na.last = TRUE),] ## Sorts my DEG data to plot the top ten most DE genes later
+  # fc.ymax=ceiling(max(abs(DEG_GR$logFC))) ## Define the maximum axes of the DEG plots
+  # fc.ymin=0 ## Define the minimum axes of the DEG plots 
+  # cex.val <- -log10(DEG_GR$FDR)/7 ## Sets the size for each gene dot based on significance
+  # col.over <- "#FFBD07AA" #Yellow
+  # col.under <- "#00A6EDAA" #Blue
+  # col.insig <- "#7F7F7F"
+  # sign.col <- rep(col.insig, length(DEG_GR)) ## This and the next two lines generate a an array of color entries linked to the genes to color the dots
+  # sign.col[(DEG_GR$logFC<0)&(DEG_GR$FDR<=0.01)] <- col.under
+  # sign.col[(DEG_GR$logFC>0)&(DEG_GR$FDR<=0.01)] <- col.over
+  
+  # kpPoints(kp, data=DEG_GR, y=abs(DEG_GR$logFC), ymax=fc.ymax, ymin=fc.ymin,cex=cex.val, col=sign.col,r0 = 0.15, r1 = 0.7) ## Place the DE dots in the region of the plot that I want
+  # kpAxis(kp, ymax=fc.ymax, ymin=fc.ymin,side = 2,cex=0.5,r0 = 0.15, r1 = 0.7) ## Add the axis for the DE dots
+  # kpAddMainTitle(kp,main=title) ## Add a title to the plot
+  # kpPlotRegions(kp,data = supergene_GR,col="red", r0=0,r1=0.1) ## add a box to show where the supergene is
+  # kpPlotMarkers(kp, ordered[1:10], labels = ordered[1:10]$Row.names, text.orientation = "vertical",adjust.label.position = TRUE,r0 = 0.75) ## Add markers for the top 10 most DE genes
+  
+# } ## Make karyoplot for linearized genome (!!)
+
+
+# ##################################################################################################
+# ##################################################################################################
+# # library(Sushi)
+# 
+# # data(list=c("Sushi_DNaseI.bedgraph","Sushi_ChIPSeq_CTCF.bedgraph",
+#         # "Sushi_ChIPExo_CTCF.bedgraph"), package="Sushi")
+# 
+# D20 = read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20/D20-A_.bedgraph")
+# D20_TE = read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/D20-A-R_R1_val_telocate_raw.TY1.bed")
+# 
+# dd <- list(D20=D20_A_cov)#, D20_TE=D20_TE)
+# 
+# png("bedgraphPlot.png", width = 1500, height = 1000)
+#   kp <- plotKaryotype(zoom="chr1:1-240865",main = "BedGraphs", cex=1)
+#   kpAddBaseNumbers(kp, tick.dist = 10e4, add.units = TRUE, cex=0.5)
+#   for(i in seq_len(length(dd))) {
+#     names(dd[[i]]) <- c("chr", "start", "end", "value") 
+#     gr <- toGRanges(dd[[i]])
+#     # at <- autotrack(i, length(dd), margin = 0.1)
+#     kpPoints(kp, data=gr, ymax=max(gr$value), col=rainbow(10)[i])
+#     kpAddLabels(kp, labels = names(dd)[i], cex=0.5)
+#   }
+# dev.off()
+# 
+# str(D20)
+# 
+#     names(D20) <- c("chr", "start", "end", "value") 
+#     gr <- toGRanges(D20)
+#     # at <- autotrack(D20, length(D20), margin = 0.1)
+#     kp <- plotKaryotype(main = "BedGraphs", cex=3)
+#     kpAddBaseNumbers(kp, tick.dist = 10e4, add.units = TRUE, cex=1.8)
+#     kpPoints(kp, data=gr, ymax=max(gr$value),col=rainbow(10)D20)
+#     kpAddLabels(kp, labels = names(D20), r0=at$r0, r1=at$r1)
+
+
+
+############## This script works for me ###############
+###################################################
+### Call karyotype plot 
+## Specify which chromosome in this
+# load in chromosome sizes and cytobands files
+
+
+# {kp1 <- plotKaryotype(plot.type=2, genome=Chr_sizes_GR,cytobands=gene_bed_GR,chromosomes = c("Spar_XII_RaGOO"))
+# # this tells the program to add base numbers (self-explanatory)
+# kpAddBaseNumbers(kp1)
+# # this plots whatever markers you tell it to - in this case, markers of TEs in this genome
+# kpPlotMarkers(kp1, chr=TEs$chr, x=TEs$start, labels=TEs$TE,data.panel=2)
+# # this plots the coverage in 10kb chunks bc that's what we computed
+# kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel=1,col="blue")}
+# # gives a plot of chromosome XII with coverage on top and TE locations on the bottom 
+
+
+## check out D20-1, look at chr VI first, then chr XVI
+
+
+# D20_1_cov <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20/HM-D20-1.bedgraph")
+# str(D20_1_cov)
+# colnames(D20_1_cov) <- c("chr","start","end","coverage")
+# D20_1_GR <- makeGRangesFromDataFrame(D20_1_cov,seqnames.field = "chr", start.field = "start", end.field = "end", keep.extra.columns = TRUE)
+# TEs_1 <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/HM-D20-1_R1_001_val_telocate.bed")
+# colnames(TEs_1) <- c("chr","start","end","TE")
+# str(TEs_1)  
+# TEs_1 <- toGRanges(TEs_1)
+# TEs.3 <- toDataframe(TEs.2)
+
+# {kp1 <- plotKaryotype(plot.type=2, genome=Chr_sizes_GR,cytobands=gene_bed_GR,chromosomes = c("Spar_XII_RaGOO"))
+# # this tells the program to add base numbers (self-explanatory)
+# kpAddBaseNumbers(kp1)
+# # this plots whatever markers you tell it to - in this case, markers of TEs in this genome
+# kpPlotMarkers(kp1, data=TEs_1, chr=TEs_1$chr, x=TEs_1$start, labels=TEs_1$TE, data.panel=2)
+# # this plots the coverage in 10kb chunks bc that's what we computed
+# kpBars(kp1, data=D20_1_GR, y1=D20_1_GR$coverage, ymax=max(D20_1_GR$coverage)/2, data.panel=1,col="green", r0=0, r1=0.25)
+# }
+# # gives a plot of chromosome XII with coverage on top and TE locations on the bottom 
+# kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel = 1, col="blue",r0=0.25, r1=0.5)
+# kpPlotCoverage(kp1, data=D20_A_GR, data.panel = 1, col="blue",r0=0.25, r1=0.5)
+# You need to make sure that the chromosome you call in plotKaryotype is present in the TE file and that the chromosome names match (i.e. the TE files don't have _RaGOO at the end of their chromosome names)
+
+####################################################################################################################
+#### Trying with .depth file generated by Audrey (this file has depth at every site in the genome )
+
+# D20_10_depth <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/D20/HM-D20-10.depth")
+# str(D20_10_depth)
+# colnames(D20_10_depth) <- c("chr","pos","coverage")
+# D20_10_GR <- makeGRangesFromDataFrame(D20_10_depth,seqnames.field = "chr", start.field = "pos", end.field = "pos", keep.extra.columns = TRUE)
+# 
+# TEs_10 <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/D20/raw/HM-D20-10_R1_001_val_telocate_raw.TY1.bed")
+# colnames(TEs_10) <- c("chr","start","end","TE")
+# str(TEs_10)  
+# TEs_10 <- toGRanges(TEs_10)
+# TEs.3 <- toDataframe(TEs.2)
+
+# mid.regs <- createRandomRegions(nregions = 6000, length.mean = 5000000, length.sd = 1000000, non.overlapping = FALSE)
+
+
+plotDepthTELocations <- function(depthFile,teFile,sample,chroms) {
+  # load in depth table 
+  depth <- read.table(depthFile)
+  #add column names
+colnames(depth) <- c("chr","pos","coverage")
+# turn file into a GRanges object
+depthGR <- makeGRangesFromDataFrame(depth,seqnames.field = "chr", start.field = "pos", end.field = "pos", keep.extra.columns = TRUE)
+# load in TE file (from TELocate)
+TEs <- teFile
+# add column names 
+colnames(TEs) <- c("chr","start","end","TE")
+# make GRanges object from TE file 
+TEs <- toGRanges(TEs)
+# make pdf plot for all chromosomes: depth + TE locations 
+# {pdf(paste("depthTELocate",sample,chroms,".pdf",sep=""))
+  #general plotKaryotype command (same for all samples)
+  kp <- plotKaryotype(genome=Chr_sizes_GR, cytobands=gene_bed_GR, chromosomes= chroms, cex=0.5, main = paste(sample,chroms,sep="_"))
+# this tells the program to add base numbers (self-explanatory)
+  # can specify how spaced out you want them using tick.dist 
+  # units adds "kb", "mb", etc 
+kpAddBaseNumbers(kp,tick.dist = 100000,add.units = TRUE)
+# this plots whatever markers you tell it to - in this case, markers of TEs in this genome
+# can specify colors of lines and text, distance labels are from each other, etc 
+# data panel = 2 specifies that it is the bottom panel 
+kpPlotMarkers(kp, data=TEs, chr=TEs$chr, x=TEs$start, labels=TEs$TE, data.panel=2,cex=0.5, text.orientation = "horizontal", line.color = "pink", label.color = "purple", label.dist = 0.01, max.iter = 1000)
+# this plots coverage at every base along each chromosome from depth file 
+# data panel = 1 specifies it is the top panel 
+kpBars(kp, data=depthGR, y1=depthGR$coverage, ymax=max(depthGR$coverage)/2, data.panel=1)
+# dev.off() }
+
+}
+
+depthFileNamesD20 <- list.files(path = "/Users/hollymcqueary/Dropbox/depthFiles/D20", pattern="*.depth",full.names = TRUE)
+
+testDepth <- read.table("/Users/hollymcqueary/Dropbox/depthFiles/D20/HM-D20-24.depth")
+consensusTEs <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/BedGraphs/TELocate/consensusTEs.txt")
+# plotDepthTELocations(testDepth,consensusTEs,"Sample24All","Spar_II_RaGOO")
+# plotDepthTELocations(testDepth,consensusTEs,"Sample24All",chroms)
+
+# i=1
+sampleNames <- c("Sample1","Sample10","Sample11","Sample12","Sample13","Sample14","Sample15","Sample16","Sample17","Sample18","Sample19","Sample2","Sample20","Sample21","Sample22","Sample23","Sample24","Sample25","Sample26","Sample27","Sample28","Sample29","Sample3","Sample30","Sample31","Sample32","Sample33","Sample34","Sample35","Sample36","Sample37","Sample38","Sample39","Sample4","Sample40","Sample41","Sample42","Sample43","Sample44","Sample45","Sample46","Sample47","Sample48","Sample5","Sample6","Sample8","Sample9","Ancestor")
+sampleNames[12]
+
+length(sampleNames)
+
+length(depthFileNamesD20)
+{
+pdf("D20_24_ChrII.pdf")
+plotDepthTELocations(depthFileNamesD20[17],consensusTEs,sampleNames[17],"Spar_II_RaGOO")
+dev.off()}
+plotDepthTELocations(depthFileNamesD20[17],consensusTEs,sampleNames[17],"Spar_II_RaGOO")
+{
+pdf("D20_11_ChrX.pdf")
+plotDepthTELocations(depthFileNamesD20[3],consensusTEs,sampleNames[3],"Spar_X_RaGOO")
+dev.off()}
+plotDepthTELocations(depthFileNamesD20[3],consensusTEs,sampleNames[3],"Spar_X_RaGOO")
+{
+pdf("D20_24_ChrIX.pdf")
+plotDepthTELocations(depthFileNamesD20[17],consensusTEs,sampleNames[17],"Spar_IX_RaGOO")
+dev.off()}
+plotDepthTELocations(depthFileNamesD20[17],consensusTEs,sampleNames[17],"Spar_IX_RaGOO")
+{
+pdf("D20_11_ChrXIV.pdf")
+plotDepthTELocations(depthFileNamesD20[3],consensusTEs,sampleNames[3],"Spar_XIV_RaGOO")
+dev.off()}
+plotDepthTELocations(depthFileNamesD20[3],consensusTEs,sampleNames[3],"Spar_XIV_RaGOO")
+{
+pdf("D20_2_ChrXIV.pdf")
+plotDepthTELocations(depthFileNamesD20[12],consensusTEs,sampleNames[12],"Spar_XIV_RaGOO")
+dev.off()}
+plotDepthTELocations(depthFileNamesD20[12],consensusTEs,sampleNames[12],"Spar_XIV_RaGOO")
+{
+pdf("D20_20_ChrXV.pdf")
+plotDepthTELocations(depthFileNamesD20[13],consensusTEs,sampleNames[13],"Spar_XV_RaGOO")
+dev.off()}
+plotDepthTELocations(depthFileNamesD20[13],consensusTEs,sampleNames[13],"Spar_XV_RaGOO")
+
+
+# for(i in 1:48) {
+# plotDepthTELocations(depthFileNamesD20[i],consensusTEs,sampleNames[i],"Spar_VI_RaGOO")
+# }
+
+
+
+
+
+#, r0=0, r1=0.25)}
+# kpBars(kp1, data=D20_A_GR, y1=D20_A_GR$coverage, ymax=max(D20_A_GR$coverage)/2, data.panel = 1, col="blue",r0=0.25, r1=0.5)
+# kpPlotCoverage(kp1, data=D20_10_GR, data.panel = 1, col="blue",r0=0.25, r1=0.5)}
+# gives a plot of chromosome XII with coverage on top and TE locations on the bottom 
+
+# You need to make sure that the chromosome you call in plotKaryotype is present in the TE file and that the chromosome names match (i.e. the TE files don't have _RaGOO at the end of their chromosome names)
+# kpPlotRegions(kp10, data=gene_bed_GR,data.panel = 2)
+##### Use kpRect to plot TEs so you can use start and stop positions to show length of TE 
+# kpPlotRegions(kp10, data=TEs_10, border=NA, r0=0.2, r1=1, data.panel = 2)
+
+
+
+```
+
+
+
+```{r karyploteR for MNMs, include=TRUE, echo=FALSE}
+# plotDepthTELocations <- function(depthFile,teFile,sample,chroms) {
+  # load in depth table 
+
+## Goal: Plot karyoploteR of MNMs locations relative to TEs and gene density 
+# Need MNMs files in formats similar to TElocate files 
+# depth <- read.table(depthFile)
+  #add column names
+# colnames(depth) <- c("chr","pos","coverage")
+# turn file into a GRanges object
+# depthGR <- makeGRangesFromDataFrame(depth,seqnames.field = "chr", start.field = "pos", end.field = "pos", keep.extra.columns = TRUE)
+# load in TE file (from TELocate)
+MNMS <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D1/D1_MNMS.txt")
+Ty1s <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D1/ty1_locationsD1.txt",header=TRUE)
+# add column names 
+colnames(MNMS) <- c("chr","start","end","name")
+colnames(Ty1s) <- c("chr","start","end","name")
+# make GRanges object from TE file 
+MNMS <- toGRanges(MNMS)
+Ty1s <- toGRanges(Ty1s)
+  #general plotKaryotype command (same for all samples)
+### for all chromosomes on same plot 
+chroms1.8 <- c("Spar_I_RaGOO", "Spar_II_RaGOO", "Spar_III_RaGOO", "Spar_IV_RaGOO", "Spar_V_RaGOO", "Spar_VI_RaGOO", "Spar_VII_RaGOO", "Spar_VIII_RaGOO")
+chroms9.16 <- c("Spar_IX_RaGOO", "Spar_X_RaGOO", "Spar_XI_RaGOO", "Spar_XII_RaGOO", "Spar_XIII_RaGOO", "Spar_XIV_RaGOO", "Spar_XV_RaGOO","Spar_XVI_RaGOO")
+
+
+
+plotMNMsTy1s <- function(chrom,mnms,ty1s) {
+pdf(paste("plotD1_",chrom,"_Ty1s_MNMS.pdf",sep=""))
+kpMNM <- plotKaryotype(genome=Chr_sizes_GR, cytobands=gene_bed_GR, chromosomes = chrom, cex=0.5, main = paste(chrom,"Ty+ MNMs/Ty1s",sep=" "))
+# this tells the program to add base numbers (self-explanatory)
+  # can specify how spaced out you want them using tick.dist 
+  # units adds "kb", "mb", etc 
+kpAddBaseNumbers(kpMNM,tick.dist = 100000,add.units = TRUE)
+# this plots whatever markers you tell it to - in this case, markers of TEs in this genome
+# can specify colors of lines and text, distance labels are from each other, etc 
+# data panel = 2 specifies that it is the bottom panel 
+kpPlotRegions(kpMNM, data=mnms,col="purple", data.panel = 2)
+kpPlotMarkers(kpMNM, data=ty1s,labels =Ty1s$name, text.orientation = "horizontal", cex=0.5, line.color = "turquoise", label.color = "black", label.dist = 0.001, max.iter = 1000, data.panel = 1, label.margin = 2)
+dev.off()
+}
+
+
+plotMNMsTy1s("Spar_I_RaGOO",MNMS,Ty1s)
+
+
+
+length(Ty1s)
+# this plots coverage at every base along each chromosome from depth file 
+# data panel = 1 specifies it is the top panel 
+kpBars(kp, data=depthGR, y1=depthGR$coverage, ymax=max(depthGR$coverage)/2, data.panel=1)
+
+
+
+## plot gene density 
+
+kp <- plotKaryotype(plot.type=1, chromosomes="chr1")
+kp <- kpPlotDensity(kp, )
+
+
+# dev.off() }
+
+
+
+
+
+
+
+
+```
+
+
+
+Biostrings for finding trinucleotide frequencies in the reference genome 
+```{r biostrings, include=TRUE, echo=FALSE}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("Biostrings")
+
+
+library(Biostrings)
+
+sParRef = readDNAStringSet("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/genome.337.fasta")
+
+sParRefTriFreq <- trinucleotideFrequency(sParRef)
+
+write.csv(sParRefTriFreq,file="sParRefTriFreq.csv")
+
+```
+
+
+Trinucleotide Context Plots 
+```{r trint context plots, include=TRUE,echo=FALSE}
+# h0_triNT <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/snps_context_H0.txt",header=TRUE)
+# h0_ACG <- subset(h0_triNT, context=="ACG")
+# h0_CCG <- subset(h0_triNT, context=="CCG")
+# h0_GCA <- subset(h0_triNT, context=="GCA")
+# h0_GCC <- subset(h0_triNT, context=="GCC")
+# h0_GCG <- subset(h0_triNT, context=="GCG")
+# h0_GCT <- subset(h0_triNT, context=="GCT")
+# h0_TCG <- subset(h0_triNT, context=="TCG")
+# h0_triNT$context <- factor(h0_triNT$context, levels = h0_triNT$context)
+# h0_triNT$rate <- as.numeric(h0_triNT$rate)
+# h0_triNT$StDev <- as.numeric(h0_triNT$StDev)
+# 
+# # Get standard deviation and average for each context in each line 
+# # First import manipulated data frame that contains the genotype calls + trinucleotide context for every SNP
+# context_GtH0 <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_SNPs_context_GT_Merged.txt")
+# dim(context_GtH0)
+# # add col names
+# colnames(context_GtH0) <- c("#CHROM","POS","CONTEXT","REM1","REM2","REF","ALT","H0-A","H0-13","H0-14","H0-25","H0-3","H0-4","H0-7","H0-1","H0-10","H0-11","H0-12","H0-16","H0-17","H0-18","H0-19","H0-2","H0-20","H0-21","H0-23","H0-24","H0-26","H0-27","H0-28","H0-30","H0-31","H0-32","H0-34","H0-35","H0-38","H0-39","H0-41","H0-43","H0-44","H0-45","H0-47","H0-8","H0-9")
+# 
+# contextAll <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/H0_SNPs_context_GT_Merged.txt")
+# library(stringr)
+# 
+# context_GtH0$CONTEXT <- as.character(context_GtH0$CONTEXT)
+# str(context_GtH0)
+# 
+# # replace the derived genotype with the trinucleotide context
+# for (i in 6:44) {
+# context_GtH0[,i] <- str_replace(context_GtH0[,i], "0/0", "NA")
+# context_GtH0[,i] <- str_replace(context_GtH0[,i], "1/1", context_GtH0[,3])
+# }
+# 
+# #export to excel for manipulation and stderr calculation
+# write.csv(context_GtH0,file="contextH0all.csv")
+# 
+
+h0_triNTStDev <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/snps_context_H0.txt",header=TRUE)
+h0_triNTStDev$alt <- factor(h0_triNTStDev$alt, levels = h0_triNTStDev$alt)
+h0_ACG <- subset(h0_triNTStDev, context=="ACG")
+h0_CCG <- subset(h0_triNTStDev, context=="CCG")
+h0_GCG <- subset(h0_triNTStDev, context=="GCG")
+h0_TCG <- subset(h0_triNTStDev, context=="TCG")
+
+## Plot the rate + st err bars
+library(ggplot2)
+rm(h0_triNT_plot)
+h0_triNT_plot <- qplot(x=alt,y=rate, data=h0_triNTStDev, geom="point")
+
+h0_triNT_plot + 
+  theme_classic() + 
+  theme(axis.text.x = element_text(angle = 90)) +
+  aes(x=alt,y=rate) + 
+  labs(y="Mutation Rate",x="",title=c("Context-Specific Mutation Rates: Ty-A")) +
+  geom_errorbar(aes(ymin=h0_triNTStDev$rate-(2*h0_triNTStDev$stderr.site.generation),ymax=h0_triNTStDev$rate+(2*h0_triNTStDev$stderr.site.generation))) + 
+  geom_point(data=h0_ACG, colour="red") + 
+  geom_point(data=h0_CCG, colour="red") + 
+  geom_point(data=h0_GCG, colour="red") + 
+  geom_point(data=h0_TCG, colour="red") 
+
+last_plot()
+
+ggsave("h0_trNT.pdf",width=6,height=4)
+
+```
+
+```{r D0_plots, include=TRUE,echo=FALSE}
+
+##########################################################
+#data frame with calculated rates for each trinucleotide mutation
+# d0_triNTrate <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D0/D0_snps_context_mod.txt",header=TRUE)
+# d0_triNTrate$context <- factor(d0_triNTrate$context, levels = d0_triNTrate$context)
+# 
+# d0_ACG <- subset(d0_triNTrate, context=="ACG")
+# d0_CCG <- subset(d0_triNTrate, context=="CCG")
+# d0_GCG <- subset(d0_triNTrate, context=="GCG")
+# d0_TCG <- subset(d0_triNTrate, context=="TCG")
+
+### trinucleotide context for each SNP
+# d0_triNT <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D0/D0_snps_context.txt")
+# colnames(d0_triNT) <- c("POS","CONTEXT")
+# library(tidyr)
+# d0_triNT <- separate(data = d0_triNT, col = POS, into = c("CHROM", "POS"),sep="\\:")
+# d0_triNT <- separate(data = d0_triNT, col = POS, into = c("START", "END"),sep="\\-")
+# d0_triNT$START <- as.numeric(d0_triNT$START)
+# d0_triNT$START <- d0_triNT$START + 2
+# # data frame of all the snps and genotypes
+# d0_Snps <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D0/snpsAllD0.txt")
+# colnames(d0_Snps) <- c("#CHROM","POS","REF","ALT","D0-A","D0-21","D0-28","D0-29","D0-34","D0-3","D0-45","D0-1","D0-10","D0-11","D0-12","D0-13","D0-14","D0-15","D0-17","D0-18","D0-19","D0-2","D0-23","D0-24","D0-25","D0-26","D0-27","D0-31","D0-32","D0-33","D0-35","D0-36","D0-37","D0-38","D0-39","D0-4_rem","D0-40","D0-42","D0-44","D0-47", "D0-5","D0-6","D0-7","D0-9","D0-4")
+# #get rid of HM-D0-4
+# d0_Snps <- d0_Snps[ , -which(names(d0_Snps) %in% c("D0-4_rem"))]
+# #merge trinucleotide context with snps 
+# d0_triNT2 <- merge(d0_triNT, d0_Snps, by, by.x="START", by.y="POS", sort = TRUE)
+
+# replace the derived genotype with the trinucleotide context
+# library(stringr)
+# d0_triNT2$CONTEXT <- as.character(d0_triNT2$CONTEXT)
+# str(d0_triNT2)
+# for (i in 1:length(d0_triNT2)) {
+# d0_triNT2[,i] <- str_replace(d0_triNT2[,i], "D/D", d0_triNT2[,4])
+# }
+# 
+# # export as csv to use in excel to get std error 
+# write.csv(d0_triNT2, file="d0_triNTsnps.csv")
+
+
+## load in new file with calculations
+d0_TriNtCalcs <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D0/d0_context_calcs.txt",header=TRUE)
+colnames(d0_TriNtCalcs)
+d0_TriNtCalcs$context <- factor(d0_TriNtCalcs$context,levels=d0_TriNtCalcs$context)
+d0_TriNtCalcs$context
+
+## subset into A as middle pos and C as middle pos 
+aMidd0 <- d0_TriNtCalcs[1:16,]
+cMidd0 <- d0_TriNtCalcs[17:32,]
+
+# calculate average rate for each of these 
+aMidAvd0 <- mean(aMidd0$rate)
+cMidAvd0 <- mean(cMidd0$rate)
+
+d0_ACG <- subset(d0_TriNtCalcs, context=="ACG")
+d0_CCG <- subset(d0_TriNtCalcs, context=="CCG")
+d0_GCG <- subset(d0_TriNtCalcs, context=="GCG")
+d0_TCG <- subset(d0_TriNtCalcs, context=="TCG")
+
+cpG <- rbind(d0_ACG,d0_CCG,d0_GCG,d0_TCG)
+
+d0_GCA <- subset(d0_TriNtCalcs, context=="GCA")
+d0_GCC <- subset(d0_TriNtCalcs, context=="GCC")
+d0_GCT <- subset(d0_TriNtCalcs, context=="GCT")
+
+gpC <- rbind(d0_GCA,d0_GCC,d0_GCT)
+
+d0T.test <- t.test(cpG$rate,gpC$rate)
+d0T.test$p.value
+
+# cpg <- c(d0_ACG,d0_CCG,d0_GCG,d0_TCG)
+
+d0_aMid <- d0_TriNtCalcs[1:16,]
+d0_cMid <- d0_TriNtCalcs[17:32,]
+
+t.test(d0_aMid$rate,d0_cMid$rate)
+
+# Plot rate + std err
+library(ggplot2)
+
+d0_triNT_plot <- qplot(x=context,y=rate, data=d0_TriNtCalcs, geom="point")
+
+d0_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) +  aes(x=context,y=rate) + labs(y="Mutation Rate",x="",title="Context-Specific Mutation Rates: Ty-B") + geom_errorbar(aes(ymin=d0_TriNtCalcs$rate-(d0_TriNtCalcs$stderr),ymax=d0_TriNtCalcs$rate+(d0_TriNtCalcs$stderr)),width=0,color="white") + geom_segment(aes(x=1,xend=16,y=aMidAvd0,yend=aMidAvd0),color="magenta") + geom_segment(aes(x=17,xend=32,y=cMidAvd0,yend=cMidAvd0),color="turquoise") + geom_pointrange(data=d0_aMid,color="magenta",ymin=d0_aMid$rate+d0_aMid$stderr, ymax=d0_aMid$rate-d0_aMid$stderr) + geom_pointrange(data=d0_cMid,color="turquoise",ymin=d0_cMid$rate+d0_cMid$stderr, ymax=d0_cMid$rate-d0_cMid$stderr) + geom_point(data=d0_ACG, shape="square",size=3,color="darkturquoise") + geom_point(data=d0_CCG, shape="square",size=3,color="darkturquoise") + geom_point(data=d0_GCG, shape="square",size=3,color="darkturquoise") + geom_point(data=d0_TCG, shape="square",size=3,color="darkturquoise") + ylim(0,8e-10)
+
+last_plot()
+
+ggsave("d0_trNT.pdf",width=6,height=4)
+
+```
+
+```{r D1_plots, include=TRUE,echo=FALSE}
+##########################################################
+
+### trinucleotide context for each SNP
+# d1_triNT <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D1/D1_snps_context.txt")
+# colnames(d1_triNT) <- c("POS","CONTEXT")
+# library(tidyr)
+# d1_triNT <- separate(data = d1_triNT, col = POS, into = c("CHROM", "POS"),sep="\\:")
+# d1_triNT <- separate(data = d1_triNT, col = POS, into = c("START", "END"),sep="\\-")
+# d1_triNT$START <- as.numeric(d1_triNT$START)
+# d1_triNT$START <- d1_triNT$START + 2
+
+# data frame of all the snps and genotypes
+# d1_Snps <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D1/snpsAllD1.txt")
+# colnames(d1_Snps) <- c("#CHROM","POS","REF","ALT","D1-A","D1-1","D1-23","D1-43","D1-6","D1-11","D1-12","D1-13","D1-14","D1-15","D1-17","D1-18","D1-19","D1-2","D1-20","D1-24","D1-27","D1-28","D1-29","D1-3","D1-30","D1-31","D1-32","D1-33","D1-35","D1-36","D1-37","D1-4","D1-40","D1-42","D1-46","D1-5","D1-7","D1-9")
+
+#merge trinucleotide context with snps 
+# d1_triNT2 <- merge(d1_triNT, d1_Snps, by, by.x="START", by.y="POS", sort = TRUE)
+
+# replace the derived genotype with the trinucleotide context
+# library(stringr)
+# d1_triNT2$CONTEXT <- as.character(d1_triNT2$CONTEXT)
+# str(d1_triNT2)
+# for (i in 1:length(d1_triNT2)) {
+# d1_triNT2[,i] <- str_replace(d1_triNT2[,i], "D/D", d1_triNT2[,4])
+# }
+
+# export as csv to use in excel to get std error 
+# write.csv(d1_triNT2, file="d1_triNTsnps.csv")
+
+
+## load in new file with calculations
+d1_TriNtCalcs <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/D1/D1_contextCalcs.txt",header=TRUE)
+colnames(d1_TriNtCalcs)
+d1_TriNtCalcs$context <- factor(d1_TriNtCalcs$context, levels = d1_TriNtCalcs$context)
+
+
+
+# test if sig diff in rate between CpG sites and GpC sites 
+d1_ACG <- subset(d1_TriNtCalcs, context=="ACG")
+d1_CCG <- subset(d1_TriNtCalcs, context=="CCG")
+d1_GCG <- subset(d1_TriNtCalcs, context=="GCG")
+d1_TCG <- subset(d1_TriNtCalcs, context=="TCG")
+
+cpGd1 <- rbind(d1_ACG,d1_CCG,d1_GCG,d1_TCG)
+
+d1_GCA <- subset(d1_TriNtCalcs, context=="GCA")
+d1_GCC <- subset(d1_TriNtCalcs, context=="GCC")
+d1_GCT <- subset(d1_TriNtCalcs, context=="GCT")
+
+gpCd1 <- rbind(d1_GCA,d1_GCC,d1_GCT)
+
+d1T.test <- t.test(cpGd1$mutation_rate,gpCd1$mutation_rate)
+d1T.test$p.value
+
+
+
+
+## subset into A as middle pos and C as middle pos 
+aMidd1 <- d1_TriNtCalcs[1:16,]
+cMidd1 <- d1_TriNtCalcs[17:32,]
+
+# calculate average rate for each of these 
+aMidAvd1 <- mean(aMidd1$mutation_rate)
+cMidAvd1 <- mean(cMidd1$mutation_rate)
+
+d1_ACG <- subset(d1_TriNtCalcs, context=="ACG")
+d1_CCG <- subset(d1_TriNtCalcs, context=="CCG")
+d1_GCG <- subset(d1_TriNtCalcs, context=="GCG")
+d1_TCG <- subset(d1_TriNtCalcs, context=="TCG")
+
+# cpg <- c(d1_ACG,d1_CCG,d1_GCG,d1_TCG)
+
+d1_aMid <- d1_TriNtCalcs[1:16,]
+d1_cMid <- d1_TriNtCalcs[17:32,]
+
+t.test(d1_aMid$mutation_rate,d1_cMid$mutation_rate)
+
+# Plot rate + std err
+library(ggplot2)
+
+d1_triNT_plot <- qplot(x=context,y=rate, data=d1_TriNtCalcs, geom="point")
+
+d1_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) +  aes(x=context,y=mutation_rate) + labs(y="Mutation Rate",x="",title="Context-Specific Mutation Rates: TY+") + geom_errorbar(aes(ymin=d1_TriNtCalcs$mutation_rate-d1_TriNtCalcs$stderr,ymax=d1_TriNtCalcs$mutation_rate+d1_TriNtCalcs$stderr),width=0,color="white") + geom_segment(aes(x=1,xend=16,y=aMidAv,yend=aMidAv),color="magenta") + geom_segment(aes(x=17,xend=32,y=cMidAv,yend=cMidAv),color="turquoise") + geom_pointrange(data=d1_aMid,color="magenta",ymin=d1_aMid$mutation_rate+d1_aMid$stderr, ymax=d1_aMid$mutation_rate-d1_aMid$stderr) + geom_pointrange(data=d1_cMid,color="turquoise",ymin=d1_cMid$mutation_rate+d1_cMid$stderr, ymax=d1_cMid$mutation_rate-d1_cMid$stderr) + geom_point(data=d1_ACG, shape="square",size=3,color="darkturquoise") + geom_point(data=d1_CCG, shape="square",size=3,color="darkturquoise") + geom_point(data=d1_GCG, shape="square",size=3,color="darkturquoise") + geom_point(data=d1_TCG, shape="square",size=3,color="darkturquoise")
+
+
+last_plot()
+
+ggsave("d1_trNT.pdf",width=6,height=4)
+
+### plot all in same graph 
+
+d1_TriNtCalcs$strain <- "D1"
+d1_TriNtCalcs
+colnames(d1_TriNtCalcs)
+colnames(d1_TriNtCalcs) <- c("alt","context","count","Trinucleotides_in_Ref","rate","stdev","stderr","strain")
+
+d0_TriNtCalcs$strain <- "D0"
+d0_TriNtCalcs
+colnames(d0_TriNtCalcs)
+colnames(d0_TriNtCalcs) <- c("alt","context","count","Trinucleotides_in_Ref","rate","stdev","stderr","strain")
+
+
+## load in new file with calculations
+h0_TriNtCalcs <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/H0/snps_context_H0.txt",header=TRUE)
+colnames(h0_TriNtCalcs)
+h0_TriNtCalcs$context <- factor(h0_TriNtCalcs$context, levels = h0_TriNtCalcs$context)
+
+
+h0_ACG <- subset(h0_TriNtCalcs, context=="ACG")
+h0_CCG <- subset(h0_TriNtCalcs, context=="CCG")
+h0_GCG <- subset(h0_TriNtCalcs, context=="GCG")
+h0_TCG <- subset(h0_TriNtCalcs, context=="TCG")
+
+cpGh0 <- rbind(h0_ACG,h0_CCG,h0_GCG,h0_TCG)
+
+h0_GCA <- subset(h0_TriNtCalcs, context=="GCA")
+h0_GCC <- subset(h0_TriNtCalcs, context=="GCC")
+h0_GCT <- subset(h0_TriNtCalcs, context=="GCT")
+
+gpCh0 <- rbind(h0_GCA,h0_GCC,h0_GCT)
+
+h0T.test <- t.test(cpGh0$rate,gpCh0$rate)
+h0T.test$p.value
+
+## subset into A as middle pos and C as middle pos 
+aMidh0 <- h0_TriNtCalcs[1:16,]
+cMidh0 <- h0_TriNtCalcs[17:32,]
+
+# calculate average rate for each of these 
+aMidAvh0 <- mean(aMidh0$rate)
+cMidAvh0 <- mean(cMidh0$rate)
+
+t.test(aMidh0$rate,cMidh0$rate)
+
+h0_ACG <- subset(h0_TriNtCalcs, context=="ACG")
+h0_CCG <- subset(h0_TriNtCalcs, context=="CCG")
+h0_GCG <- subset(h0_TriNtCalcs, context=="GCG")
+h0_TCG <- subset(h0_TriNtCalcs, context=="TCG")
+
+h0_CpGs <- rbind(h0_ACG, h0_CCG, h0_GCG, h0_TCG)
+d0_CpGs <- rbind(d0_ACG, d0_CCG, d0_GCG, d0_TCG)
+d1_CpGs <- rbind(d1_ACG, d1_CCG, d1_GCG, d1_TCG)
+
+t.test(h0_CpGs$rate, d0_CpGs$rate)
+t.test(h0_CpGs$rate, d1_CpGs$mutation_rate)
+t.test(d0_CpGs$rate, d1_CpGs$mutation_rate)
+# cpg <- c(h0_ACG,h0_CCG,h0_GCG,h0_TCG)
+
+h0_aMid <- h0_TriNtCalcs[1:16,]
+h0_cMid <- h0_TriNtCalcs[17:32,]
+
+# Plot rate + std err
+library(ggplot2)
+
+h0_triNT_plot <- qplot(x=context,y=rate, data=h0_TriNtCalcs, geom="point")
+
+h0_triNT_plot + theme_classic() + theme(axis.text.x = element_text(angle = 90)) +  aes(x=context,y=rate) + labs(y="Mutation Rate",x="",title="Context-Specific Mutation Rates: TY-A") + geom_errorbar(aes(ymin=h0_TriNtCalcs$rate-h0_TriNtCalcs$stderr.site.generation,ymax=h0_TriNtCalcs$rate+h0_TriNtCalcs$stderr.site.generation),width=0,color="white") + geom_segment(aes(x=1,xend=16,y=aMidAvh0,yend=aMidAvh0),color="magenta") + geom_segment(aes(x=17,xend=32,y=cMidAvh0,yend=cMidAvh0),color="turquoise") + geom_pointrange(data=h0_aMid,color="magenta",ymin=h0_aMid$rate+h0_aMid$stderr.site.generation, ymax=h0_aMid$rate-h0_aMid$stderr.site.generation) + geom_pointrange(data=h0_cMid,color="turquoise",ymin=h0_cMid$rate+h0_cMid$stderr.site.generation, ymax=h0_cMid$rate-h0_cMid$stderr.site.generation) + geom_point(data=h0_ACG, shape="square",size=3,color="darkturquoise") + geom_point(data=h0_CCG, shape="square",size=3,color="darkturquoise") + geom_point(data=h0_GCG, shape="square",size=3,color="darkturquoise") + geom_point(data=h0_TCG, shape="square",size=3,color="darkturquoise")
+
+
+last_plot()
+
+ggsave("h0_trNT.pdf",width=6,height=4)
+
+
+
+# plotAll <- qplot(x=context,y=rate, data=h0_TriNtCalcs, geom="point")
+# 
+# plotAll + theme_classic() + theme(axis.text.x = element_text(angle = 90)) +  aes(x=context,y=rate) + labs(y="Mutation Rate",x="",title="Context-Specific Mutation Rates: h0") + geom_errorbar(aes(ymin=h0_TriNtCalcs$rate-h0_TriNtCalcs$stderr.site.generation,ymax=h0_TriNtCalcs$rate+h0_TriNtCalcs$stderr.site.generation),width=0,color="white") + geom_segment(aes(x=1,xend=16,y=aMidAvh0,yend=aMidAvh0),color="magenta") + geom_segment(aes(x=17,xend=32,y=cMidAvh0,yend=cMidAvh0),color="magenta") + geom_pointrange(data=h0_aMid,color="magenta",ymin=h0_aMid$rate+h0_aMid$stderr.site.generation, ymax=h0_aMid$rate-h0_aMid$stderr.site.generation) + geom_pointrange(data=h0_cMid,color="magenta",ymin=h0_cMid$rate+h0_cMid$stderr.site.generation, ymax=h0_cMid$rate-h0_cMid$stderr.site.generation) + geom_point(data=h0_ACG, shape="square",size=3,color="magenta") + geom_point(data=h0_CCG, shape="square",size=3,color="magenta") + geom_point(data=h0_GCG, shape="square",size=3,color="magenta") + geom_point(data=h0_TCG, shape="square",size=3,color="magenta") +
+# geom_segment(aes(x=1,xend=16,y=aMidAvd1,yend=aMidAvd1),color="turquoise") +
+#   geom_segment(aes(x=17,xend=32,y=cMidAvd1,yend=cMidAvd1),color="turquoise") + geom_point(y=d1_TriNtCalcs$mutation_rate,x=d1_TriNtCalcs$context,data=d1_TriNtCalcs) +
+# geom_point(data=d1_ACG, shape="square",size=3,color="darkturquoise") + geom_point(data=d1_CCG, shape="square",size=3,color="darkturquoise") + geom_point(data=d1_GCG, shape="square",size=3,color="darkturquoise") +
+# geom_point(data=d1_TCG, shape="square",size=3,color="darkturquoise")
+
+
+
+d0_d1 <- rbind(d0_TriNtCalcs,d1_TriNtCalcs)
+
+
+
+
+```
+
+
+
+
+
+Comparison of mutation rates between experiments 
+```{r compare, include=TRUE, echo=FALSE}
+# compare <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/compare_table.txt", header=TRUE)
+# compare$strain <- c("H0","D0","D1","Scer_Hap","Scer_Dip","Scer_Dip2","Pombe")
+# 
+# library(ggplot2)
+# pdf("mutation_rate_comp2.pdf")
+# compPlot <- qplot(data=compare, x=strain,y=mutation_rate,geom="point")
+# compPlot + theme_classic() + ggtitle("Point Mutation Rate Comparison") + labs(x="Strain",y="SNP mutation rate per site per generation") + geom_errorbar(ymin=compare$mutation_rate-compare$SE,ymax=compare$mutation_rate+compare$SE) +  theme(axis.text.x = element_text(angle = 90)) + ylim(0,2E-9)
+# dev.off()
+
+compare <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/snps_table.txt", header=TRUE)
+compare$strain<- factor(compare$strain,levels = c("TY-A", "TY-B", "TY+"))
+
+library(ggplot2)
+pdf("mutation_rate_SNPs.pdf")
+compPlot <- qplot(data=compare, x=strain,y=SNP_rate,geom="point")
+compPlot + theme_classic() + ggtitle("Point Mutation Rate Comparison") + labs(x="Strain",y="rate per site per generation") + geom_errorbar(ymin=(compare$SNP_rate-(2*compare$SE)),ymax=(compare$SNP_rate+(2*compare$SE))) +  theme(axis.text.x = element_text(angle = 90)) + ylim(0,3E-10)
+dev.off()
+
+
+#######################################
+
+indelCompare <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/indel_rates_comp.txt", header=TRUE)
+# indelCompare$strain <- c("H0","D0","D1","S. cer Hap2019","S. cer Dip2019","S. cer Dip (2014)","Sch. pombe")
+
+indelCompare$strain<- factor(indelCompare$strain,levels=c("TY-A","TY-B","TY+","S_cerHap_Sharp_2018","S_cerDip_Sharp_2018","S_cer_Zhu_2014","Sc_pombe_Behringer_2016"))
+
+indelParadoxus <- indelCompare[1:3,]
+indelParadoxus$strain<- factor(indelParadoxus$strain,levels = c("TY-A", "TY-B", "TY+"))
+# library(ggplot2)
+# pdf("indel_rates_comp.pdf")
+# compPlot <- ggplot(data=indelCompare, aes(strain,Rate,ymin=Lower,ymax=Upper))
+# compPlot + geom_pointrange(aes(color=strain)) + theme_classic() + ggtitle("Indel Mutation Rate Comparison") + labs(y="mutation rate per site per generation") + theme(axis.text.x = element_blank())
+# dev.off()
+# 
+# 
+str(indelCompare)
+
+
+library(rateratio.test)
+
+indelsD0 <- 9
+indelsH0 <- 12
+indelsD1 <- 15
+sitesD0 <- 8.11102E11
+sitesH0 <- 8.78694E11
+sitesD1 <- 7.5933E11
+
+
+
+indelD0vH0 <- rateratio.test(c(indelsD0,indelsH0),c(sitesD0,sitesH0))
+indelD0vH0$p.value
+indelD0vD1 <- rateratio.test(c(indelsD0,indelsD1),c(sitesD0,sitesD1))
+indelD0vD1$p.value
+indelH0vD1 <- rateratio.test(c(indelsH0,indelsD1),c(sitesH0,sitesD1))
+indelH0vD1$p.value
+
+pvals <- data.frame(matrix(data=NA,nrow=3,ncol=4))
+
+snpsD0 <- 153
+snpsH0 <- 152 
+snpsD1 <- 155
+
+snpD0vH0 <- rateratio.test(c(snpsD0,snpsH0),c(sitesD0,sitesH0))
+snpD0vH0$p.value
+
+snpD0vD1 <- rateratio.test(c(snpsD0,snpsD1),c(sitesD0,sitesD1))
+snpD0vD1$p.value
+
+snpD1vH0 <- rateratio.test(c(snpsD1,snpsH0),c(sitesD1,sitesH0))
+snpD1vH0$p.value
+
+
+mnmsD0 <- 9
+mnmsH0 <- 8 
+mnmsD1 <- 21
+
+mnmD0vH0 <- rateratio.test(c(mnmsD0,mnmsH0),c(sitesD0,sitesH0))
+mnmD0vH0$p.value
+
+mnmD0vD1 <- rateratio.test(c(mnmsD0,mnmsD1),c(sitesD0,sitesD1))
+mnmD0vD1$p.value
+
+mnmD1vH0 <- rateratio.test(c(mnmsD1,mnmsH0),c(sitesD1,sitesH0))
+mnmD1vH0$p.value
+
+
+pvals <- data.frame(matrix(data=NA,nrow=3,ncol=4))
+colnames(pvals) <- c("Comparison","SNP Rate pval","Indel Rate pval", "MNM Rate pval")
+pvals$Comparison <- c("H0 v D0", "H0 v D1", "D0 v D1")
+View(pvals)
+pvals[1,2] <- snpD0vH0$p.value
+pvals[1,3] <- indelD0vH0$p.value
+pvals[1,4] <- mnmD0vH0$p.value
+
+pvals[2,2] <- snpD1vH0$p.value
+pvals[2,3] <- indelH0vD1$p.value
+pvals[2,4] <- mnmD1vH0$p.value
+
+pvals[3,2] <- snpD0vD1$p.value
+pvals[3,3] <- indelD0vD1$p.value
+pvals[3,4] <- mnmD0vD1$p.value
+
+
+
+
+
+test
+summary(test)
+
+library(ggplot2)
+
+install.packages("ggsignif")
+library(ggsignif)
+
+pdf("indel_rates_paradoxus.pdf")
+compPara <- ggplot(data=indelParadoxus, aes(strain,Rate,ymin=Rate-SE,ymax=Rate+SE))
+compPara + geom_pointrange(aes(color=strain)) + theme_classic() + ggtitle("Indel Mutation Rate") + labs(y="mutation rate per site per generation") + theme(axis.text.x = element_blank())
+dev.off()
+
+
+
+pdf("indel_rates_comparison.pdf")
+comp <- ggplot(data=indelCompare, aes(strain,Rate,ymin=Rate-SE,ymax=Rate+SE))
+comp + geom_pointrange(aes(color=strain)) + theme_classic() + ggtitle("Indel Mutation Rate") + labs(y="mutation rate per site per generation") + theme(axis.text.x = element_blank())
+dev.off()
+
+
+# 
+# 
+# 
+# # theme(axis.line = , axis.text.x = element_blank(),panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+# 
+# H0 <- 1.54522e-11
+# D0 <- 2.25840e-11	
+# D1 <- 2.80950e-11	
+
+
+
+
+#######################################
+rm(sNPCompare)
+sNPCompare <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/compare_table.txt", header=TRUE)
+paradoxusOnly <- sNPCompare[1:3,]
+paradoxusOnly$strain<- factor(paradoxusOnly$strain,levels = c("TY-A","TY-B","TY+"))
+sNPCompare$strain<- factor(sNPCompare$strain,levels = c("TY-A","TY-B","TY+","S_cerevisiae_haploid(Sharp_et_al_2018)","S_cerevisiae_diploid(Sharp_et_al_2018)","S_cerevisiae_diploid(Zhu_et_al_2014)","S_pombe(Behringer_and_Hall_2016)"))
+
+
+print(aov(SNP_rate~strain,sNPCompare))
+
+
+library(ggplot2)
+pdf("snp_rates_comp.pdf")
+snpPlot <- ggplot(data=sNPCompare, aes(strain,SNP_rate,ymin=Lower,ymax=Upper))
+snpPlot  + geom_pointrange(aes(color=strain)) + theme_classic() + ggtitle("SNP Mutation Rate") + labs(y="mutation rate per site per generation") + theme(axis.text.x = element_blank())
+dev.off()
+
+
+
+### plot paradoxus by itself 
+paradoxusOnly$strain <- as.factor(paradoxusOnly$strain)
+library(ggplot2)
+pdf("snp_rates_paradoxus.pdf")
+paradoxusPlot <- ggplot(data=paradoxusOnly, aes(strain,SNP_rate,ymin=SNP_rate-SE,ymax=SNP_rate+SE))
+paradoxusPlot + geom_pointrange(aes(color=strain)) + theme_classic() + ggtitle("SNP Mutation Rate Comparison") + labs(y="mutation rate per site per generation") + theme(axis.text.x = element_blank())  + theme(legend.text = element_text(size=10,color="black"))
+# + geom_errorbar(ymin=paradoxusOnly$Lower,ymax=paradoxusOnly$Upper, width=0.4, size=0.35)
+dev.off()
+
+# 
+# 
+# 
+# 
+# # sNPCompare$strain
+# # H0sNPrate <- c(1.96e-10)
+# # D0sNPrate <- c(1.82e-10)
+# # D1sNPrate <- c(2.18e-10)
+# # 
+# # H0D0 <- c(1.96e-10,1.82e-10)
+# # str(H0D0)
+# # binom.test(H0D0)
+# 
+# 
+# snpRatesHD0 <- data.frame(y=c(1.82e-10,1.96e-10,2.18e-10),Line=c("D0","H0","D1"))
+# 
+# x <- c("strain","rate")
+# colnames(snpRatesHD0) <- x
+# y <-  
+# snpRatesHD0$strain <- y 
+# 
+# snpRatesHD0[1,2] <- c(1.82e-10)
+# snpRatesHD0[2,2] <- c(1.96e-10)
+# snpRatesHD0[3,2] <- c(2.18e-10)
+# str(snpRatesHD0)
+# 
+# anv <- lm(y~Line,data=snpRatesHD0)
+# anv
+# 
+# aov(y~Line,data=snpRatesHD0)
+# 
+# library(stargazer)
+# str <- stargazer(anv,type="html",out="anv.doc",title="test")
+# str
+# 
+# aov(strain~rate,data=snpRatesHD0)
+# 
+# t.test(snpRatesHD0)
+# 
+# snpRates <- c(1.82e-10,1.96e-10)
+# t.test(snpRates,paired=FALSE,var.equal = FALSE)
+# lhs <- c(1.82e-10,1.96e-10)
+# rhs <- c("H0","D0")
+# length(rhs)
+# t.test(lhs~rhs)
+# 
+# t.test(H0sNPrate,D0sNPrate,) # where y1 and y2 are numeric 
+# # theme(axis.line = , axis.text.x = element_blank(),panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+# 
+
+
+#######################################
+
+spectraCompare <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/comparison_spectrums.txt", header=TRUE)
+View(spectraCompare)
+spectraCompare <- spectraCompare[,c(1,3,4,2,7,8,6,5)]
+spectraCompare$Mutation <- c("C:G>T:A","C:G>A:T","C:G>G:C","A:T>G:C","A:T>C:G","A:T>T:A")
+spectraCompare$Mutation  <- factor(spectraCompare$Mutation,levels=c("C:G>T:A","C:G>A:T","C:G>G:C","A:T>G:C","A:T>C:G","A:T>T:A"))
+colnames(spectraCompare) <- c("Mutation","TY-A","TY-B","TY+","S_cerevisiae_haploid(Sharp_et_al_2018)","S_cerevisiae_diploid(Sharp_et_al_2018)","S_cerevisiae_diploid(Zhu_et_al_2014)","S_pombe(Behringer_and_Hall_2016)")
+
+cGMuts <- subset(spectraCompare, Mutation==c("C:G>T:A","C:G>A:T"))
+aTMuts <- subset(spectraCompare, Mutation==c("A:T>C:G","A:T>G:C"))
+
+cGMuts <- melt(cGMuts,id.vars = "Mutation",variable.name = "Strain")
+aTMuts <- melt(aTMuts,id.vars = "Mutation",variable.name = "Strain")
+
+context <- t.test(cGMuts$value,aTMuts$value)
+context$p.value
+
+
+spectraParadoxus <- spectraCompare[,1:4]
+
+cGMutsPara <- subset(spectraParadoxus, Mutation==c("C:G>T:A","C:G>A:T"))
+aTMutsPara <- subset(spectraParadoxus, Mutation==c("A:T>C:G","A:T>G:C"))
+
+cGMutsPara <- melt(cGMutsPara,id.vars = "Mutation",variable.name = "Strain")
+aTMutsPara <- melt(aTMutsPara,id.vars = "Mutation",variable.name = "Strain")
+
+context <- t.test(cGMutsPara$value,aTMutsPara$value)
+context$p.value
+
+
+cGMutsPara <- subset(spectraParadoxus, Mutation==c("C:G>T:A","C:G>A:T"))
+aTMutsPara <- subset(spectraParadoxus, Mutation==c("A:T>C:G","A:T>G:C"))
+
+cGMutsPara <- melt(cGMutsPara,id.vars = "Mutation",variable.name = "Strain")
+aTMutsPara <- melt(aTMutsPara,id.vars = "Mutation",variable.name = "Strain")
+
+context <- t.test(cGMutsPara$value,aTMutsPara$value)
+context$p.value
+
+# spectraParadoxus <- spectraCompare[,c(1,3,4,2)]
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+
+spectraCompareTest <- melt(spectraCompare, id.vars="Mutation",variable.name = "Study")
+# spectraCompare$Mutation <- as.factor(spectraCompare$Mutation)
+
+spTest <- aov(value~Study,spectraCompareTest)
+summary(spTest)
+TukeyHSD(spTest)
+plot(TukeyHSD(spTest))
+
+spectraCompareParadoxus <- melt(spectraParadoxus, id.vars="Mutation",variable.name = "Strain")
+# spectraParadoxus$Mutation <- as.factor(spectraParadoxus$Mutation)
+spectraCompareParadoxus$Strain <- factor(spectraCompareParadoxus$Strain)
+str(spectraCompareParadoxus)
+summary(aov(value~Strain,spectraCompareParadoxus))
+
+library(ggplot2)
+pdf("spectra_comp.pdf")
+spectraPlot <- ggplot(data=spectraCompareTest)
+ggplot(spectraCompareTest, aes(Mutation,value)) + theme_classic() + geom_col(position = "dodge",aes(fill = Study)) + labs(y="frequency") + theme(axis.text.x = element_text(size=9,color="black"),legend.text = element_text(size=9,color="black"))
+dev.off()
+
+### Get color palette ggplot2 is using so I can change my colors in other plots 
+install.packages("scales")                              # Install scales R package
+library("scales")  
+n1 <- nrow(spectraCompareTest)                                        # Amount of default colors
+hex_codes1 <- hue_pal()(n1)                             # Identify hex codes
+hex_codes1      
+show_col(hex_codes1)   
+
+
+
+library(ggplot2)
+pdf("spectra_paradoxus.pdf")
+spectraPlotParadoxus <- ggplot(data=spectraCompareParadoxus)
+ggplot(spectraCompareParadoxus, aes(Mutation,value)) + theme_classic()  + geom_col(position = "dodge",aes(fill = Strain)) + labs(y="frequency") + theme(axis.text.x = element_text(size=12,color="black"),legend.text = element_text(size=12,color="black"))
+dev.off()
+
+
+# theme(axis.line = , axis.text.x = element_blank(),panel.background = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+
+
+#######################################
+
+mNMCompare <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/VCFs/MNMs_rates.txt", header=TRUE)
+mnmParadoxus <- mNMCompare[1:3,]
+mnmParadoxus$Strain <- factor(mnmParadoxus$Strain,levels = c("TY-A","TY-B","TY+"))
+mNMCompare$Strain <- factor(mNMCompare$Strain,levels = c("TY-A","TY-B","TY+", "S_cerDip_Sharp_2018", "S_cerHap_Sharp_2018"))
+
+### plot paradoxus by itself 
+library(ggplot2)
+pdf("mnm_rates_para.pdf")
+mnmCompPlot <- ggplot(data=mnmParadoxus, aes(Strain,Rate,ymin=Rate-SE,ymax=Rate+SE))
+mnmCompPlot + geom_pointrange(aes(color=Strain)) + theme_classic() + ggtitle("MNM Mutation Rate Comparison") + labs(y="mutation rate per site per generation") + theme(axis.text.x = element_blank()) 
+# + geom_errorbar(ymin=paradoxusOnly$Lower,ymax=paradoxusOnly$Upper, width=0.4, size=0.35)
+dev.off()
+
+
+pdf("mnm_rates_compare.pdf")
+mnmParaPlot <- ggplot(data=mNMCompare, aes(Strain,Rate,ymin=Rate-SE,ymax=Rate+SE))
+mnmParaPlot + geom_pointrange(aes(color=Strain)) + theme_classic() + ggtitle("MNM Mutation Rate Comparison") + labs(y="mutation rate per site per generation") + theme(axis.text.x = element_blank()) 
+# + geom_errorbar(ymin=paradoxusOnly$Lower,ymax=paradoxusOnly$Upper, width=0.4, size=0.35)
+dev.off()
+
+
+
+library(ggplot2)
+pdf("snp_rates_comp.pdf")
+snpPlot <- ggplot(data=sNPCompare, aes(strain,SNP_rate,ymin=Lower,ymax=Upper))
+snpPlot + geom_pointrange(aes(color=strain)) + theme_classic() + ggtitle("SNP Mutation Rate") + labs(y="mutation rate per site per generation") + theme(axis.text.x = element_blank()) 
+dev.off()
+
+# + geom_errorbar(ymin=sNPCompare$Lower,ymax=sNPCompare$Upper,width=0.4, size=0.35)
+
+
+```
+
+```{r transitions/transversions, include=TRUE, echo=FALSE}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+tsTvRatiosAll <- data.frame(matrix(ncol=4,nrow=2))
+yAll <- c("type","H0","D0","D1")
+colnames(tsTvRatiosAll) <- yAll
+tsTvRatiosAll$type <- c("transitions","transversions")
+
+#H0
+tsTvRatiosAll[1,2] <- .41
+tsTvRatiosAll[2,2] <- .59
+#D0
+tsTvRatiosAll[1,3] <-  .54
+tsTvRatiosAll[2,3] <-  .46
+#D1
+tsTvRatiosAll[1,4] <- .5
+tsTvRatiosAll[2,4] <- .5 
+
+tsTvRatios <- melt(tsTvRatiosAll,id.vars = "type",variable.name = "Strain")
+
+
+tsTv <- ggplot(data=tsTvRatios)
+
+pdf("tsTvplot.pdf")
+ggplot(tsTvRatios,aes(type,value)) + geom_col(position="dodge",aes(fill=Strain)) + theme_classic() + labs (y="frequency") 
+dev.off()
+
+
+```
+
+```{r fishers_exact_test,include=TRUE,echo=FALSE}
+snpRatesHD0 <- data.frame(matrix(ncol = 2, nrow = 2))
+x <- c("SNPs","lines")
+colnames(snpRatesHD0) <- x
+y <-  c("D0","H0")
+rownames(snpRatesHD0) <- y 
+
+snpRatesHD0[1,1] <- 153
+snpRatesHD0[1,2] <- 39
+snpRatesHD0[2,1] <- 152
+snpRatesHD0[2,2] <- 36 
+
+fisherDH0 <- fisher.test(snpRatesHD0)#, alternative="two.sided", conf.int=TRUE)
+fisherDH0
+chisq.test(snpRatesHD0)
+
+################### D0 versus D1
+snpRatesD01 <- data.frame(matrix(ncol = 2, nrow = 2))
+x <- c("D0","D1")
+colnames(snpRatesD01) <- x
+y <- c("SNPs","lines")
+rownames(snpRatesD01) <- y 
+
+snpRatesD01[1,1] <- 153
+snpRatesD01[1,2] <- 155
+snpRatesD01[2,1] <- 39
+snpRatesD01[2,2] <- 33 
+
+fisherD01 <- fisher.test(snpRatesD01)#, alternative="two.sided", conf.int=TRUE)
+fisherD01
+chisq.test(snpRatesD01)
+
+################### H0 versus D1
+snpRatesH01 <- data.frame(matrix(ncol = 2, nrow = 2))
+x <- c("H0","D1")
+colnames(snpRatesH01) <- x
+y <- c("SNPs","lines")
+rownames(snpRatesH01) <- y 
+
+snpRatesH01[1,1] <- 152
+snpRatesH01[1,2] <- 155
+snpRatesH01[2,1] <- 36
+snpRatesH01[2,2] <- 33 
+
+fisherD01 <- fisher.test(snpRatesH01)#, alternative="two.sided", conf.int=TRUE)
+fisherD01
+chisq.test(snpRatesH01)
+
+
+
+## Indel rates
+indelRatesD01 <- data.frame(matrix(ncol = 2, nrow = 2))
+x <- c("D0","D1")
+colnames(indelRatesD01) <- x
+y <- c("indels","lines")
+rownames(indelRatesD01) <- y 
+
+indelRatesD01[1,1] <- 12
+indelRatesD01[1,2] <- 19
+indelRatesD01[2,1] <- 36
+indelRatesD01[2,2] <- 39 
+
+fisherD01 <- fisher.test(indelRatesD01)#, alternative="two.sided", conf.int=TRUE)
+fisherD01
+chisq.test(indelRatesD01)
+
+
+
+
+######
+# net gain/loss of nucleotides due to indels 
+indelNetH0D0 <- data.frame(matrix(ncol=2,nrow=2))
+x <- c("H0","D0")
+y <- c("net","lines")
+colnames(indelNetH0D0) <- y
+rownames(indelNetH0D0) <- x
+indelNetH0D0[1,1] <- 10
+indelNetH0D0[1,2] <- 36
+indelNetH0D0[2,1] <- 26
+indelNetH0D0[2,2] <- 39
+fisherDH0 <- fisher.test(indelNetH0D0)
+fisherDH0
+
+
+
+indelNetH0D1 <- data.frame(matrix(ncol=2,nrow=2))
+x <- c("H0","D1")
+y <- c("net","lines")
+colnames(indelNetH0D1) <- y
+rownames(indelNetH0D1) <- x
+indelNetH0D1[1,1] <- 10
+indelNetH0D1[1,2] <- 36
+indelNetH0D1[2,1] <- 9.7
+indelNetH0D1[2,2] <- 33
+fisherD1H0 <- fisher.test(indelNetH0D1)
+fisherD1H0
+
+#### fisher exact test for difference between expected MNMs near RNA pol III transcribed genes and actual 
+mnmsRNApol <- data.frame(matrix(ncol=2,nrow=2))
+x <- c("O","E")
+y <- c("rnaPol","all")
+colnames(mnmsRNApol) <- x
+rownames(mnmsRNApol) <- y
+mnmsRNApol[1,1] <- 30
+mnmsRNApol[1,2] <- .84
+mnmsRNApol[2,1] <- 210
+mnmsRNApol[2,2] <- 210
+fishermnmsRNApol <- fisher.test(mnmsRNApol)
+fishermnmsRNApol
+
+#### fisher exact test for difference between expected Ty1 insertions near RNA pol III transcribed genes and actual 
+ty1RNApol <- data.frame(matrix(ncol=2,nrow=2))
+x <- c("O","E")
+y <- c("rnaPol","all")
+colnames(ty1RNApol) <- x
+rownames(ty1RNApol) <- y
+ty1RNApol[1,1] <- 22
+ty1RNApol[1,2] <- 1.64
+ty1RNApol[2,1] <- 41
+ty1RNApol[2,2] <- 41
+fisherty1RNApol <- fisher.test(ty1RNApol)
+fisherty1RNApol
+
+
+
+#### fisher exact test for difference between expected indels near RNA pol III transcribed genes and actual 
+indelsRNApol <- data.frame(matrix(ncol=2,nrow=2))
+x <- c("O","E")
+y <- c("rnaPol","all")
+colnames(indelsRNApol) <- x
+rownames(indelsRNApol) <- y
+indelsRNApol[1,1] <- 3
+indelsRNApol[1,2] <- 0.6
+indelsRNApol[2,1] <- 15
+indelsRNApol[2,2] <- 15
+fisherindelsRNApol <- fisher.test(indelsRNApol)
+fisherindelsRNApol
+
+
+
+```
+
+
+
+VEP Summaries
+```{r VEP_H0,include=TRUE,echo=FALSE}
+H0_snps_VEP <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/VEP/H0/H0_SNPs_VEP.txt")
+colnames(H0_snps_VEP) <- c("Uploaded_Variation","Location","Allele","Gene","Feature","Feature_Type","Consequence","cDNA_position","CDS_position","Protein_position","Amino_Acids","Codons","Existing_Variation","Impact","Distance","Strand","Flags","Source","337.gff3")
+
+H0_indels_VEP <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/VEP/H0/H0_Indels_VEP.txt")
+colnames(H0_indels_VEP) <- c("Uploaded_Variation","Location","Allele","Gene","Feature","Feature_Type","Consequence","cDNA_position","CDS_position","Protein_position","Amino_Acids","Codons","Existing_Variation","Impact","Distance","Strand","Flags","Source","337.gff3")
+
+# put just indel consequences in one variable
+H0_indel_conseq <- H0_indels_VEP$Consequence
+# same for snps
+H0_snps_conseq <- H0_snps_VEP$Consequence
+
+# find lengths of each so you can make a data frame
+length(H0_indel_conseq)
+length(H0_snps_conseq)
+
+# make dataframe for indels 
+H0_indel_conseq <- data.frame(matrix(data=NA,nrow=58,ncol=2))
+colnames(H0_indel_conseq) <- c("consequence","type")
+H0_indel_conseq$consequence <- H0_indels_VEP$Consequence
+H0_indel_conseq$type <- "Indel"
+
+# and for snps
+H0_snps_conseq <- data.frame(matrix(data=NA,nrow=734,ncol=2))
+colnames(H0_snps_conseq) <- c("consequence","type")
+H0_snps_conseq$consequence <- H0_snps_VEP$Consequence
+H0_snps_conseq$type <- "SNP"
+
+# combine both together 
+H0_conseq <- rbind(H0_indel_conseq,H0_snps_conseq)
+library(ggplot2)
+pdf("H0_indel_conseq.pdf")
+h0plot
+dev.off()
+
+h0plot <- ggplot(H0_indel_conseq, aes(x=consequence,fill=consequence),stat="count") + theme_classic() + geom_bar(aes(y = ..count..),position="dodge", stat = "count") + labs(title="H0 Indel Consequences") + theme(axis.text.x = element_text(size=8.5,angle = 45,hjust = 1,vjust=1))+ geom_text(stat='count', aes(label=..count..), vjust=-.5) + guides(fill="none")
+  
+
+plotConseq <- function(data,title) {
+  ggplot(data, aes(x=consequence,fill=consequence),stat="count") + theme_classic() + geom_bar(aes(y = ..count..),position="dodge", stat = "count") + labs(title=title) + theme(axis.text.x = element_text(size=8.5,angle = 45,hjust = 1,vjust=1))+ geom_text(stat='count', aes(label=..count..), vjust=-.5) + guides(fill="none")
+}
+
+pdf("H0_indelConseq.pdf")
+plotConseq(H0_indel_conseq,"H0 Indel Consequences")
+dev.off()
+
+pdf("H0_snpsConseq.pdf")
+plotConseq(H0_snps_conseq,"H0 SNM Consequences")
+dev.off()
+
+pdf("H0_snpsConseq.pdf")
+plotConseq(H0_snps_conseq,"H0 SNM Consequences")
+dev.off()
+
+# guides(shape=guide_legend(override.aes = list(size=8))) + guides(color=guide_legend(override.aes = list(size=8))) + theme(legend.title = element_text(size=8),legend.text = element_text(size=8))
+
+addSmallLegend <- function(myPlot, pointSize = 5, textSize = 8.5, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+addSmallLegend(h0plot)
+
+library(ggplot2)
+H0_snps <- ggplot(H0_SNPs_VEP,aes(Consequence_Type,Count))
+
+ggplot(H0_SNPs_VEP,aes(x = Consequence_Type, y = Count)) + geom_col(aes(fill=H0_SNPs_VEP$Consequence_Type)) + theme_classic() + labs(y="Count",x="Consequence Type",title="H0 SNP Variant Effects") + guides(fill="none")
+
+
+
+
+#### D0 
+
+D0_snps_VEP <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/VEP/D0/D0_SNPs_VEP.txt")
+colnames(D0_snps_VEP) <- c("Uploaded_Variation","Location","Allele","Gene","Feature","Feature_Type","Consequence","cDNA_position","CDS_position","Protein_position","Amino_Acids","Codons","Existing_Variation","Impact","Distance","Strand","Flags","Source","337.gff3")
+
+D0_indels_VEP <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/VEP/D0/D0_Indels_VEP.txt")
+colnames(D0_indels_VEP) <- c("Uploaded_Variation","Location","Allele","Gene","Feature","Feature_Type","Consequence","cDNA_position","CDS_position","Protein_position","Amino_Acids","Codons","Existing_Variation","Impact","Distance","Strand","Flags","Source","337.gff3")
+
+# put just indel consequences in one variable
+D0_indel_conseq <- D0_indels_VEP$Consequence
+# same for snps
+D0_snps_conseq <- D0_snps_VEP$Consequence
+
+# find lengths of each so you can make a data frame
+length(D0_indel_conseq)
+length(D0_snps_conseq)
+
+# make dataframe for indels 
+D0_indel_conseq <- data.frame(matrix(data=NA,nrow=96,ncol=2))
+colnames(D0_indel_conseq) <- c("consequence","type")
+D0_indel_conseq$consequence <- D0_indels_VEP$Consequence
+D0_indel_conseq$type <- "Indel"
+
+# and for snps
+D0_snps_conseq <- data.frame(matrix(data=NA,nrow=873,ncol=2))
+colnames(D0_snps_conseq) <- c("consequence","type")
+D0_snps_conseq$consequence <- D0_snps_VEP$Consequence
+D0_snps_conseq$type <- "SNP"
+
+
+pdf("D0_indelConseq.pdf")
+plotConseq(D0_indel_conseq,"D0 Indel Consequences")
+dev.off()
+
+pdf("D0_snpConseq.pdf")
+plotConseq(D0_snps_conseq,"D0 SNM Consequences")
+dev.off()
+
+
+#### D1 
+
+D1_snps_VEP <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/VEP/D1/D1_SNPs_VEP.txt")
+colnames(D1_snps_VEP) <- c("Uploaded_Variation","Location","Allele","Gene","Feature","Feature_Type","Consequence","cDNA_position","CDS_position","Protein_position","Amino_Acids","Codons","Existing_Variation","Extra")
+
+D1_indels_VEP <- read.table("/Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/VEP/D1/D1_Indels_VEP.txt")
+colnames(D1_indels_VEP) <- c("Uploaded_Variation","Location","Allele","Gene","Feature","Feature_Type","Consequence","cDNA_position","CDS_position","Protein_position","Amino_Acids","Codons","Existing_Variation","Extra")
+
+# put just indel consequences in one variable
+D1_indel_conseq <- D1_indels_VEP$Consequence
+# same for snps
+D1_snps_conseq <- D1_snps_VEP$Consequence
+
+# find lengths of each so you can make a data frame
+length(D1_indel_conseq)
+length(D1_snps_conseq)
+
+# make dataframe for indels 
+D1_indel_conseq <- data.frame(matrix(data=NA,nrow=94,ncol=2))
+colnames(D1_indel_conseq) <- c("consequence","type")
+D1_indel_conseq$consequence <- D1_indels_VEP$Consequence
+D1_indel_conseq$type <- "Indel"
+
+# and for snps
+D1_snps_conseq <- data.frame(matrix(data=NA,nrow=875,ncol=2))
+colnames(D1_snps_conseq) <- c("consequence","type")
+D1_snps_conseq$consequence <- D1_snps_VEP$Consequence
+D1_snps_conseq$type <- "SNP"
+
+
+pdf("D1_indelConseq.pdf")
+plotConseq(D1_indel_conseq,"D1 Indel Consequences")
+dev.off()
+
+pdf("D1_snpConseq.pdf")
+plotConseq(D1_snps_conseq,"D1 SNM Consequences")
+dev.off()
+
+
+str(D1_indel_conseq)
+D0_indel_conseq$strain <- "D0"
+H0_indel_conseq$strain <- "H0"
+D1_indel_conseq$strain <- "D1"
+indelConseqAll <- rbind(H0_indel_conseq,D0_indel_conseq,D1_indel_conseq)
+
+plotConseq <- function(data,title) {
+  ggplot(data, aes(x=consequence,fill=strain),stat="count") + theme_classic() + geom_bar(aes(y = ..count..),position="dodge", stat = "count") + labs(title=title) + theme(axis.text.x = element_text(size=8.5,angle = 45,hjust = 1,vjust=1)) + theme(legend.position = "right") + guides(shape=guide_legend(override.aes = list(size=5))) + guides(color=guide_legend(override.aes = list(size=5))) + theme(legend.title = element_text(size=5),legend.text = element_text(size=5))
+ }
+
+pdf("Indel_Conseq_All.pdf")
+plotConseq(indelConseqAll,"Indel Consequences")
+dev.off()
+
+
+
+D0_snps_conseq$strain <- "D0"
+H0_snps_conseq$strain <- "H0"
+D1_snps_conseq$strain <- "D1"
+snpsConseqAll <- rbind(H0_snps_conseq,D0_snps_conseq,D1_snps_conseq)
+
+plotConseq <- function(data,title) {
+  ggplot(data, aes(x=consequence,fill=strain),stat="count") + theme_classic() + geom_bar(aes(y = ..count..),position="dodge", stat = "count") + labs(title=title) + theme(axis.text.x = element_text(size=8.5,angle = 45,hjust = 1,vjust=1)) + theme(legend.position = "right") + guides(shape=guide_legend(override.aes = list(size=5))) + guides(color=guide_legend(override.aes = list(size=5))) + theme(legend.title = element_text(size=5),legend.text = element_text(size=5)) + theme(plot.margin = unit(c(0.5,0,0,1), "cm")) + theme(axis.title.x = element_blank())
+ }
+
+pdf("SNPs_Conseq_All.pdf")
+plotConseq(snpsConseqAll,"SNPs Consequences")
+dev.off()
+
+indelPlot <- plotConseq(indelConseqAll,"Indel Consequences")
+snpPlot <- plotConseq(snpsConseqAll,"SNM Consequences")
+library(cowplot)
+
+
+plot_grid(indelPlot, snpPlot, labels = c('A', 'B'), label_size = 12)
+
+prow <- plot_grid(
+  indelPlot + theme(legend.position="none"),
+  snpPlot + theme(legend.position="none"),
+  align = 'vh',
+  labels = c("A", "B"),
+  hjust = -1,
+  nrow = 1
+)
+prow
+
+legend <- get_legend(
+  # create some space to the left of the legend
+  indelPlot + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+
+pdf("consequences_All.pdf")
+plot_grid(prow, legend, rel_widths = c(3, .4))
+dev.off()
+
+library(ggpubr)
+
+
+
+
+```
+
+
+
+
+Packages used in this analysis
+
+
+```{r packagesUsed, include = TRUE }
+sessionInfo()
+library(vcfR)
+library(adegenet)
+library(adegraphics)
+library(pegas)
+library(StAMPP)
+library(lattice)
+library(gplots)
+library(ape)
+library(ggmap)
+library(pinfsc50)
+library(reshape2)
+library(ggplot2)
+library(karyoploteR)
+library(GenomicRanges)
+```
+
+
