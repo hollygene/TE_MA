@@ -26,7 +26,7 @@ bgzip -c /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.33
 
 
 
-337.nuclear_genome.maker.raw.gff3
+# 337.nuclear_genome.maker.raw.gff3
 # # need to make a gtf file from gff3 file for use in cache building for VEP
 gffread ${workDir}/337.nuclear_genome.maker.raw.gff3 -T -o ${workDir}/337.nuclear_genome.maker.raw.gtf
 
@@ -76,9 +76,9 @@ grep -v "#" /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/337.nu
 /Users/hollymcqueary/ensembl-vep/htslib/tabix -p gff /Users/hollymcqueary/Dropbox/McQueary/Paradoxus_MA/Ref_Genome/337.nuclear_genome.est_evidence.gff3.gz
 
 
-singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i /home/hcm14449/Github/TE_MA/H0_snps_final.vcf \
--gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3.gz \
---fasta /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta
+# singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i /home/hcm14449/Github/TE_MA/H0_snps_final.vcf \
+# -gff /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/337.nuclear_genome.maker.raw.gff3.gz \
+# --fasta /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta
 
 
 
@@ -90,7 +90,7 @@ singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i /home/hcm
 #
 #
 #
-singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i ${vcf_file} -o ${out_file} --gff ${workDir}/337.nuclear_genome.est_evidence.gff3.gz --fasta /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta.gz
+# singularity exec /usr/local/singularity-images/ensembl-vep.simg vep -i ${vcf_file} -o ${out_file} --gff ${workDir}/337.nuclear_genome.est_evidence.gff3.gz --fasta /scratch/hcm14449/TE_MA_Paradoxus/ref_genome/paradoxus/337Ref/genome.337.fasta.gz
 
 # singularity exec /usr/local/singularity-images/ensembl-vep.simg/ensembl-vep.simg which vep
 #
